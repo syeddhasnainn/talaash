@@ -67,9 +67,9 @@ export async function POST(request: Request) {
   const streamer = iteratorToStream(iterator)
 
   return new NextResponse(streamer, {headers: {
-        Connection: "keep-alive",
         "Content-Encoding": "none",
         "Cache-Control": "no-cache, no-transform",
         "Content-Type": "text/event-stream; charset=utf-8",
+        "Connection": "keep-alive"
       }})
 }
