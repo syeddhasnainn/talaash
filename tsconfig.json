@@ -12,13 +12,16 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "target": "ES2022",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@components/*": ["/components/*"],
+
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
