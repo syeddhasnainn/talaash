@@ -32,7 +32,7 @@ function LinkIcon(props) {
     </svg>
   )
 }
-export function Component({ items, handleSearch, handleInput, handleSubmit, value, answer }: any) {
+export function Component({ items, handleSearch, handleInput, handleSubmit, value, answer, relatedQuestions }: any) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center w-full max-w-4xl mx-auto p-4 md:p-6">
       <div className="w-full mb-8 relative border border-gray-300 rounded-lg">
@@ -53,7 +53,6 @@ export function Component({ items, handleSearch, handleInput, handleSubmit, valu
           <SearchIcon className="w-5 h-5" />
           <span className="sr-only">Search</span>
         </Button>
-
 
       </div>
       {items.length > 0 &&
@@ -83,95 +82,61 @@ export function Component({ items, handleSearch, handleInput, handleSubmit, valu
               </p>
             </div>
           </div>
+          
           <div className="col-span-1 bg-card rounded-lg p-4">
             <h3 className="text-lg font-medium mb-4">Related Questions</h3>
             <div className="space-y-2">
-              <Link
+
+              {relatedQuestions.map((item:string)=>(
+                <Link
                 href="#"
                 className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
                 prefetch={false}
               >
                 <SearchIcon className="w-4 h-4" />
-                <span>what is ai?</span>
+                <span>{item}</span>
               </Link>
+              ))}
+              
             </div>
           </div>
         </div>
       }
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-        <div className="col-span-1 bg-card rounded-lg p-4">
-          <h3 className="text-lg font-medium mb-4">Sources</h3>
-          {items.map((item: any) => (
-            <div className="space-y-2">
-              <Link
-                href="#"
-                className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
-                prefetch={false}
-              >
-                <LinkIcon className="w-4 h-4" />
-                <span>{item.title}</span>
-              </Link>
-            </div>
-
-          ))}
-
-        </div>
-        <div className="col-span-1 md:col-span-2 bg-card rounded-lg p-4">
-          <h3 className="text-lg font-medium mb-4">Answer</h3>
-          <div className="prose text-muted-foreground">
-            <p>
-              {answer}
-            </p>
-          </div>
-        </div>
-        <div className="col-span-1 bg-card rounded-lg p-4">
-          <h3 className="text-lg font-medium mb-4">Related Questions</h3>
-          <div className="space-y-2">
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
-              prefetch={false}
-            >
-              <SearchIcon className="w-4 h-4" />
-              <span>what is ai?</span>
-            </Link>
-          </div>
-        </div>
-      </div> */}
+      
     </form>
   )
 }
 export function Cards() {
   return (
     <div className="flex flex-col gap-8 w-full max-w-3xl mx-auto p-4 md:p-8">
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      <Card>
-        <CardContent className="p-4 ">
-          <h3 className="text-lg font-medium">Breaking News: Earthquake Hits California</h3>
-          <p className="text-sm text-muted-foreground mt-2">
-            A powerful earthquake has struck the California coast, causing widespread damage and power outages.
-          </p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="text-lg font-medium">Tech Giant Announces Major Acquisition</h3>
-          <p className="text-sm text-muted-foreground mt-2">
-            The tech industry is buzzing with news of a high-profile acquisition that could reshape the market.
-          </p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="text-lg font-medium">New Sustainability Initiative Launched</h3>
-          <p className="text-sm text-muted-foreground mt-2">
-            A leading organization has unveiled a comprehensive plan to address environmental concerns.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4 ">
+            <h3 className="text-lg font-medium">Breaking News: Earthquake Hits California</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              A powerful earthquake has struck the California coast, causing widespread damage and power outages.
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="text-lg font-medium">Tech Giant Announces Major Acquisition</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              The tech industry is buzzing with news of a high-profile acquisition that could reshape the market.
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="text-lg font-medium">New Sustainability Initiative Launched</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              A leading organization has unveiled a comprehensive plan to address environmental concerns.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
     </div>
-    
-  </div>
   )
 }
 
@@ -220,9 +185,10 @@ export default function Home() {
 
 
 
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState('hi');
   const [results, setResults] = useState([])
   const [answer, setAnswer] = useState('')
+  const [relatedQuestions, setRelatedQuestions] = useState([])
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -243,6 +209,15 @@ export default function Home() {
     }).then(res => res.json())
     setResults(searchResponse.data)
 
+    const relatedQuestions = await fetch('/api/relatedQuestions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ question })
+    }).then(res => res.json()).then(res=>res.output.relatedQuestions)    
+    setRelatedQuestions(relatedQuestions)
+
     const llmResponse = await fetch('/api/answer', {
       method: 'POST',
       headers: {
@@ -250,6 +225,8 @@ export default function Home() {
       },
       body: JSON.stringify({ question, sources: searchResponse.data })
     })
+
+
 
     const reader = llmResponse.body.getReader();
     const decoder = new TextDecoder();
@@ -265,7 +242,8 @@ export default function Home() {
       }
     }
   }
-  
+
+
   return (
     <main>
 
@@ -276,10 +254,10 @@ export default function Home() {
         </div>
         {results.length == 0 &&
 
-
-           
+        
           <div className="flex flex-col items-center justify-center h-screen w-full max-w-4xl mx-auto p-4 md:p-6 right-0 left-0 top-0 fixed">
-             <Cards />
+            
+            <Cards />
             <div className="w-full mb-8 relative border border-gray-300 rounded-lg">
               <Input
                 onChange={handleInput}
@@ -301,10 +279,10 @@ export default function Home() {
             </div>
           </div>
 
-          }
+        }
 
 
-        {results.length > 0 && <Component items={results} handleInput={handleInput} handleSearch={handleSearch} handleSubmit={handleSubmit} value={question} answer={answer} />}
+        {results.length > 0 && <Component items={results} handleInput={handleInput} handleSearch={handleSearch} handleSubmit={handleSubmit} value={question} answer={answer} relatedQuestions={relatedQuestions} />}
 
       </div>
     </main>
