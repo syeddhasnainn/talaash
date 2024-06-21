@@ -1,3 +1,4 @@
+import { error } from "console";
 import { NextResponse } from "next/server";
 import Together from "together-ai";
 import { z } from 'zod';
@@ -17,10 +18,16 @@ export async function POST(request: Request) {
         messages: [{ role: "user", content: prompt }],
         model: "mistralai/Mistral-7B-Instruct-v0.1",
         max_tokens: 100,
-        response_format: { type: 'json_object', schema: jsonSchema },
+        response_format: { type: 'json_object', schema: jsonSchema as Record<string, string> },
     });
 
-    const output = JSON.parse(answer.choices[0].message.content!);
+    if (!answer || !answer.choices){
+        throw new Error('Failed to get related questions')
+    }
+
+    const content = answer.choices[0].message?.content
+    
+    const output = JSON.parse(content || "");
 
     return NextResponse.json({ output })
 }

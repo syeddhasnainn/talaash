@@ -80,14 +80,13 @@ export function Results({ results, handleSearch, handleInput, handleSubmit, ques
             <SearchIcon className="w-5 h-5" />
             <span className="sr-only">Search</span>
           </Button>
-  
         </div>
         {results.length > 0 &&
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
             <div className="col-span-1 bg-card rounded-lg p-4">
               <h3 className="text-lg font-medium mb-4">Sources</h3>
-              {results.map((item: any) => (
-                <div className="space-y-2">
+              {results.map((item: SingleResult, index:number) => (
+                <div key={index} className="space-y-2">
                   <Link
                     href="#"
                     className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
@@ -114,8 +113,9 @@ export function Results({ results, handleSearch, handleInput, handleSubmit, ques
               <h3 className="text-lg font-medium mb-4">Related Questions</h3>
               <div className="space-y-2">
   
-                {relatedQuestions.map((item:string)=>(
+                {relatedQuestions.map((item:string, index:number)=>(
                   <Link
+                  key={index}
                   href="#"
                   className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
                   prefetch={false}
