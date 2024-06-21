@@ -82,7 +82,17 @@ export function Results({ results, handleSearch, handleInput, handleSubmit, ques
           </Button>
         </div>
         {results.length > 0 &&
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            
+            <div className="col-span-1 md:col-span-2 bg-card rounded-lg p-4">
+              <h3 className="text-lg font-medium mb-4">Answer</h3>
+              <div className="prose text-muted-foreground">
+                <p>
+                  {answer}
+                </p>
+              </div>
+            </div>
+
             <div className="col-span-1 bg-card rounded-lg p-4">
               <h3 className="text-lg font-medium mb-4">Sources</h3>
               {results.map((item: SingleResult, index:number) => (
@@ -96,17 +106,8 @@ export function Results({ results, handleSearch, handleInput, handleSubmit, ques
                     <span>{item.title}</span>
                   </Link>
                 </div>
-  
               ))}
   
-            </div>
-            <div className="col-span-1 md:col-span-2 bg-card rounded-lg p-4">
-              <h3 className="text-lg font-medium mb-4">Answer</h3>
-              <div className="prose text-muted-foreground">
-                <p>
-                  {answer}
-                </p>
-              </div>
             </div>
             
             <div className="col-span-1 bg-card rounded-lg p-4">
