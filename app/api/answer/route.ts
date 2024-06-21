@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     const parsedHTML = new Readability(doc).parse()?.content
     return parsedHTML
   }
-
+  console.log(question)
   sources = await Promise.all(sources.map(async (source: any) => {
     const parsedHTML = await htmlParser(source.url);
     return { ...source, parsedHTML };

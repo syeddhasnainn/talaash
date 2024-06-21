@@ -6,7 +6,6 @@ import { Results } from '@/components/ui/results';
 import SearchBar from '@/components/ui/search-bar';
 
 export default function Home() {
-  console.log(process.env.TOGETHER_API_KEY)
   interface SearchResults {
     title: string;
     url: string;
