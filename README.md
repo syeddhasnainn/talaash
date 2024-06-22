@@ -1,4 +1,4 @@
-#Talaash
+# Talaash
 
 An AI-Powered All in One Chat App
 
