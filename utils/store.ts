@@ -7,9 +7,15 @@ interface StoreState {
   setAnswer: any
   relatedQuestions: string[];
   setRelatedQuestions: any;
-  results :string,
+  results :SearchResults[],
   setResults:any
 }
+
+interface SearchResults {
+    title: string;
+    url: string;
+    description: string;
+  }
 
 const useStore = create<StoreState>()((set) => ({
   question: "add a toggle for web search",
@@ -21,8 +27,8 @@ const useStore = create<StoreState>()((set) => ({
   relatedQuestions: [],
   setRelatedQuestions: (x: any) => set(() => ({ relatedQuestions: x })),
 
-  results: "",
-  setResults: (x:any)=>set(()=>({answer:x}))
+  results: [],
+  setResults: (x:any)=>set(()=>({results:x}))
 }));
 
 export default useStore;
