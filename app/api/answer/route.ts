@@ -3,6 +3,7 @@ import Together from "together-ai";
 import jsdom, { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 
+
 export const dynamic = "force-dynamic";
 
 const together = new Together({ "apiKey": process.env.TOGETHER_API_KEY });
@@ -30,7 +31,7 @@ function sleep(time: number) {
 async function* makeIterator(prompt: string) {
   const answer = await together.chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "Qwen/Qwen1.5-7B",
+    model: "mistralai/Mistral-7B-Instruct-v0.2",
     max_tokens: 100,
     stream: true
   });
@@ -45,23 +46,60 @@ export async function POST(request: Request) {
   const writer = stream.writable.getWriter()
 
   var { question, sources } = await request.json()
-  const htmlParser = async (url: any) => {
-    const response = await fetch(url)
-    const pageSource = await response.text()
-    const vc = new jsdom.VirtualConsole()
-    const dom = new JSDOM(pageSource, { virtualConsole: vc })
-    const doc = dom.window.document
-    const parsedHTML = new Readability(doc).parse()?.content
-    return parsedHTML
-  }
-  console.log(question)
-  sources = await Promise.all(sources.map(async (source: any) => {
-    const parsedHTML = await htmlParser(source.url);
-    return { ...source, parsedHTML };
-  }));
+  // const htmlParser = async (url: any) => {
+  //   const response = await fetch(url)
+  //   const pageSource = await response.text()
+  //   const vc = new jsdom.VirtualConsole()
+  //   const dom = new JSDOM(pageSource, { virtualConsole: vc })
+  //   const doc = dom.window.document.getElementsByTagName('body').length
+  //   console.log(doc)
 
-  const context = sources.map((source: any) => source.parsedHTML).join("\n")
-  const prompt = `${question} ${context}\n`
+  //   // const parsedHTML = new Readability(doc).parse()?.content
+  //   // console.log(parsedHTML)
+  //   // return parsedHTML
+  // }
+  // var sources = [{
+  //   url: 'https://www.bbc.co.uk/weather/2640354'
+  // },
+  // {
+  //   url: 'https://www.metoffice.gov.uk/weather/forecast/gcrg49fhe'
+  // },
+  // {
+  //   url: 'https://www.accuweather.com/en/gb/peterborough/pe1-2/weather-forecast/330350'
+  // }
+
+
+  // ]
+
+  sources = await Promise.all(sources.map(async (source: any) => {
+    const jinaResponse = await fetch(`https://r.jina.ai/${source.url}`, { headers: { "X-Timeout": "5", "X-Return-Format": "text", } }).then(res => res.text().then(res=>res.replace('\n', '')))
+    return { ...source, jinaResponse }
+  }))
+
+
+  const context = sources.map((item: any) => item.jinaResponse).join("\n")
+
+  const prompt = `${question}\n ${context}`
+
+  // const answer = await together.chat.completions.create({
+  //   messages: [{ role: "user", content: prompt }],
+  //   model: "codellama/CodeLlama-13b-Instruct-hf",
+  //   max_tokens: 100,
+  // });
+
+  // const answer = await together.chat.completions.create({
+  //   messages: [{ role: "system", content: "use the context provided and extract accurate answers, add it with your own knowledge and output a concise answer. Prioritize information over condensation. Provide to the point answers. no yapping" }, { role: "user", content: prompt },],
+  //   model: "codellama/CodeLlama-13b-Instruct-hf",
+  //   max_tokens: 100,
+  // });
+
+  // sources = await Promise.all(sources.map(async (source: any) => {
+  //   const parsedHTML = await htmlParser(source.url);
+  //   return { ...source, parsedHTML };
+  // }));
+
+  // const context = sources.map((source: any) => source.parsedHTML).join("\n")
+  // const prompt = `${question} ${context}\n`
 
   const iterator = makeIterator(prompt)
   const streamer = iteratorToStream(iterator)
