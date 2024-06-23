@@ -9,6 +9,10 @@ interface StoreState {
   setRelatedQuestions: any;
   results :SearchResults[],
   setResults:any
+  isLoading:boolean
+  setIsLoading:any
+  isWebAccess:boolean
+  setIsWebAccess:any
 }
 
 interface SearchResults {
@@ -28,7 +32,13 @@ const useStore = create<StoreState>()((set) => ({
   setRelatedQuestions: (x: any) => set(() => ({ relatedQuestions: x })),
 
   results: [],
-  setResults: (x:any)=>set(()=>({results:x}))
+  setResults: (x:any)=>set(()=>({results:x})),
+  
+  isLoading:false,
+  setIsLoading:(x:any)=>set(()=>({isLoading:x})),
+
+  isWebAccess:false,
+  setIsWebAccess:(x:any)=>set(()=>({isWebAccess:x})),
 }));
 
 export default useStore;
