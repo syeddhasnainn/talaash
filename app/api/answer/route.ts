@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Together from "together-ai";
-import jsdom, { JSDOM } from "jsdom";
-import { Readability } from "@mozilla/readability";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +34,7 @@ async function* makeIterator(prompt: string) {
     max_tokens: 100,
     stream: true,
   });
+
   for await (const chunk of answer) {
     yield encoder.encode(`${chunk.choices[0].delta?.content}`);
     await sleep(50);
@@ -44,63 +45,22 @@ export async function POST(request: Request) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
-  var { question, sources } = await request.json();
-  // const htmlParser = async (url: any) => {
-  //   const response = await fetch(url)
-  //   const pageSource = await response.text()
-  //   const vc = new jsdom.VirtualConsole()
-  //   const dom = new JSDOM(pageSource, { virtualConsole: vc })
-  //   const doc = dom.window.document.getElementsByTagName('body').length
-  //   console.log(doc)
+  var { question, sources, isWebAccess } = await request.json();
+  var context = ""
 
-  //   // const parsedHTML = new Readability(doc).parse()?.content
-  //   // console.log(parsedHTML)
-  //   // return parsedHTML
-  // }
-  // var sources = [{
-  //   url: 'https://www.bbc.co.uk/weather/2640354'
-  // },
-  // {
-  //   url: 'https://www.metoffice.gov.uk/weather/forecast/gcrg49fhe'
-  // },
-  // {
-  //   url: 'https://www.accuweather.com/en/gb/peterborough/pe1-2/weather-forecast/330350'
-  // }
-
-  // ]
-
-  sources = await Promise.all(
-    sources.map(async (source: any) => {
-      const jinaResponse = await fetch(`https://r.jina.ai/${source.url}`, {
-        headers: { "X-Timeout": "5", "X-Return-Format": "text" },
-      }).then((res) => res.text().then((res) => res.replace("\n", "")));
-      return { ...source, jinaResponse };
-    }),
-  );
-
-  const context = sources.map((item: any) => item.jinaResponse).join("\n");
-
+  if(isWebAccess) {
+    sources = await Promise.all(
+      sources.map(async (source: any) => {
+        const jinaResponse = await fetch(`https://r.jina.ai/${source.url}`, {
+          headers: { "X-Timeout": "5", "X-Return-Format": "text" },
+        }).then((res) => res.text().then((res) => res.replace("\n", "")));
+        return { ...source, jinaResponse };
+      }),
+    );
+    context = sources.map((item: any) => item.jinaResponse).join("\n");
+  }
+  
   const prompt = `${question}\n ${context}`;
-
-  // const answer = await together.chat.completions.create({
-  //   messages: [{ role: "user", content: prompt }],
-  //   model: "codellama/CodeLlama-13b-Instruct-hf",
-  //   max_tokens: 100,
-  // });
-
-  // const answer = await together.chat.completions.create({
-  //   messages: [{ role: "system", content: "use the context provided and extract accurate answers, add it with your own knowledge and output a concise answer. Prioritize information over condensation. Provide to the point answers. no yapping" }, { role: "user", content: prompt },],
-  //   model: "codellama/CodeLlama-13b-Instruct-hf",
-  //   max_tokens: 100,
-  // });
-
-  // sources = await Promise.all(sources.map(async (source: any) => {
-  //   const parsedHTML = await htmlParser(source.url);
-  //   return { ...source, parsedHTML };
-  // }));
-
-  // const context = sources.map((source: any) => source.parsedHTML).join("\n")
-  // const prompt = `${question} ${context}\n`
 
   const iterator = makeIterator(prompt);
   const streamer = iteratorToStream(iterator);

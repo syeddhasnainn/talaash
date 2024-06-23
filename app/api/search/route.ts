@@ -14,10 +14,10 @@ import { createToolCallingAgent } from "langchain/agents";
 
 export async function POST(request: Request) {
   const tool = new DuckDuckGoSearch({ maxResults: 3 });
-  const { question } = await request.json();
+  // const { question } = await request.json();
 
   const data = await tool
-    .invoke(question)
+    .invoke('what is life?')
     .then((res) => JSON.parse(res))
     .then((res) =>
       res.map((result: any) => ({
