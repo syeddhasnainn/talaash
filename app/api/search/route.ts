@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   // const { question } = await request.json();
 
   const data = await tool
-    .invoke('what is life?')
+    .invoke("what is life?")
     .then((res) => JSON.parse(res))
     .then((res) =>
       res.map((result: any) => ({

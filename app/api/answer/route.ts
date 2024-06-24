@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import Together from "together-ai";
 
-
-
 export const dynamic = "force-dynamic";
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
@@ -46,9 +44,9 @@ export async function POST(request: Request) {
   const writer = stream.writable.getWriter();
 
   var { question, sources, isWebAccess } = await request.json();
-  var context = ""
+  var context = "";
 
-  if(isWebAccess) {
+  if (isWebAccess) {
     sources = await Promise.all(
       sources.map(async (source: any) => {
         const jinaResponse = await fetch(`https://r.jina.ai/${source.url}`, {
@@ -59,7 +57,7 @@ export async function POST(request: Request) {
     );
     context = sources.map((item: any) => item.jinaResponse).join("\n");
   }
-  
+
   const prompt = `${question}\n ${context}`;
 
   const iterator = makeIterator(prompt);

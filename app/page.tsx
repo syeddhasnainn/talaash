@@ -6,15 +6,12 @@ import SearchBar from "@/components/ui/search-bar";
 import useStore from "@/utils/store";
 
 export default function Home() {
-  var {
-    question,
-    setQuestion,
-    answer,
-    results,
-  } = useStore();
+  var { question, setQuestion, answer, results, isLoading, setIsLoading } =
+    useStore();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -29,13 +26,10 @@ export default function Home() {
             Beta
           </Badge>
         </div>
-        {results.length == 0 && (
-          <SearchBar
-            handleInput={handleInput}
-            handleSubmit={handleSubmit}
-          />
+        {!isLoading && (
+          <SearchBar handleInput={handleInput} handleSubmit={handleSubmit} />
         )}
-        {results.length > 0 && (
+        {isLoading && (
           <Results
             handleInput={handleInput}
             handleSubmit={handleSubmit}

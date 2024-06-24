@@ -52,12 +52,10 @@ type SingleResult = {
   description: string;
 };
 interface ResultProps {
-
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   question: string;
   answer: string;
-
 }
 
 export function Results({
@@ -66,7 +64,16 @@ export function Results({
   question,
   answer,
 }: ResultProps) {
-  const {results, setResults, setRelatedQuestions, setAnswer, relatedQuestions} = useStore()
+  const {
+    results,
+    setResults,
+    setRelatedQuestions,
+    setAnswer,
+    relatedQuestions,
+    isLoading,
+    setIsLoading,
+    isWebAccess,
+  } = useStore();
 
   return (
     <form
@@ -83,12 +90,15 @@ export function Results({
         />
         <Button
           type="submit"
-          onClick={()=>handleSearch({
-            question,
-            setResults,
-            setRelatedQuestions,
-            setAnswer
-          })}
+          onClick={() =>
+            handleSearch({
+              question,
+              setResults,
+              setRelatedQuestions,
+              setAnswer,
+              isWebAccess,
+            })
+          }
           variant="ghost"
           size="icon"
           className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
@@ -97,7 +107,8 @@ export function Results({
           <span className="sr-only">Search</span>
         </Button>
       </div>
-      {results.length > 0 && (
+      {!answer && isLoading && <div>Loading...</div>}
+      {answer && (
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
           <div className="col-span-1 md:col-span-2 bg-card rounded-lg p-2">
             <h3 className="text-lg font-medium mb-4">Answer</h3>
@@ -105,43 +116,50 @@ export function Results({
               <p>{answer}</p>
             </div>
           </div>
-
-          <div className="col-span-2 bg-card rounded-lg p-2">
-            <h3 className="text-lg font-medium mb-4">Sources</h3>
-            {results.map((item: SingleResult, index: number) => (
-              <div key={index} className="space-y-2">
-                <Link
-                  href={item.url}
-                  className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
-                  prefetch={false}
-                >
-                  <LinkIcon className="w-4 h-4" />
-                  <span>{item.title}</span>
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          <div className="col-span-2 bg-card rounded-lg p-2">
-            <h3 className="text-lg font-medium mb-4">Related Questions</h3>
-            <div className="space-y-2">
-              {relatedQuestions.map((item: string, index: number) => (
-                <div
-                onClick={()=>handleSearch({
-                  question:item,
-                  setResults,
-                  setRelatedQuestions,
-                  setAnswer
-                })}
-                  key={index}
-                  className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
-                >
-                  <SearchIcon className="w-4 h-4" />
-                  <span>{item}</span>
+          {isWebAccess && (
+            <div className="col-span-2 bg-card rounded-lg p-2">
+              <h3 className="text-lg font-medium mb-4">Sources</h3>
+              {results.map((item: SingleResult, index: number) => (
+                <div key={index} className="space-y-2">
+                  <Link
+                    href={item.url}
+                    className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
+                    prefetch={false}
+                  >
+                    <LinkIcon className="w-4 h-4" />
+                    <span>{item.title}</span>
+                  </Link>
                 </div>
               ))}
             </div>
-          </div>
+          )}
+
+          {isWebAccess && (
+            <div className="col-span-2 bg-card rounded-lg p-2">
+              <h3 className="text-lg font-medium mb-4">Related Questions</h3>
+              <div className="space-y-2">
+                {relatedQuestions.map((item: string, index: number) => (
+                  <Link
+                    href={"/"}
+                    onClick={() =>
+                      handleSearch({
+                        question: item,
+                        setResults,
+                        setRelatedQuestions,
+                        setAnswer,
+                        isWebAccess,
+                      })
+                    }
+                    key={index}
+                    className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
+                  >
+                    <SearchIcon className="w-4 h-4" />
+                    <span>{item}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </form>
