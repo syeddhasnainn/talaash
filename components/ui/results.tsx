@@ -3,6 +3,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useStore from "@/utils/store";
 import { handleSearch } from "@/utils/get-search";
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface Attr {
   className: string;
@@ -113,7 +117,31 @@ export function Results({
           <div className="col-span-1 md:col-span-2 bg-card rounded-lg p-2">
             <h3 className="text-lg font-medium mb-4">Answer</h3>
             <div className="prose text-muted-foreground">
-              <p>{answer}</p>
+              <div className="prose dark:prose-invert">
+                <Markdown remarkPlugins={[remarkGfm]}
+                  components={{
+                    code(props) {
+                      const { children, className, node, ...rest } = props
+                      const match = /language-(\w+)/.exec(className || '')
+                      return match ? (
+                        <SyntaxHighlighter
+                        
+                          PreTag="div"
+                          children={String(children).replace(/\n$/, '')}
+                          language={match[1]}
+                          style={dark}
+                          wrapLines={true}
+                          wrapLongLines={true}
+                        />
+                      ) : (
+                        <code {...rest} className={className}>
+                          {children}
+                        </code>
+                      )
+                    }
+                  }}
+                >{answer}</Markdown>
+              </div>
             </div>
           </div>
           {isWebAccess && (
