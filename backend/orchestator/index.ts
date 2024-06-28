@@ -29,7 +29,7 @@ const readAndParseYaml = (filepath:string, chatId:string): Array<any>=>{
 }
 
 app.post('/start', async (req,res)=> {
-    const {userId, chatId} = req.body
+    const {chatId} = req.body
     const namespace = "default"
 
     try {
