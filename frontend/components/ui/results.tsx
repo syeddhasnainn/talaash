@@ -190,6 +190,15 @@ export function Results({
           )}
         </div>
       )}
+      <button onClick={() =>
+            handleSearch({
+              question,
+              setResults,
+              setRelatedQuestions,
+              setAnswer,
+              isWebAccess,
+            })
+          }>regenerate</button>
     </form>
   );
 }
