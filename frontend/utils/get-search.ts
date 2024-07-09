@@ -48,6 +48,27 @@ export const handleSearch = async ({
 
   console.log(llmResponse);
 
+  function extractCodeFromChat(chatResponse: string): string | string[] | null {
+    const codeBlockPattern = /```(?:\w+)?\s*\n([\s\S]*?)\n```/g;
+    const codeBlocks: string[] = [];
+    let match: RegExpExecArray | null;
+
+    while ((match = codeBlockPattern.exec(chatResponse)) !== null) {
+      codeBlocks.push(match[1].trim());
+    }
+
+    if (codeBlocks.length === 0) {
+      return null;
+    }
+
+    if (codeBlocks.length === 1) {
+      return codeBlocks[0];
+    }
+
+    //returning array of blocks
+    return codeBlocks;
+  }
+
   if (!llmResponse.ok) {
     throw new Error("Failed to fetch answer");
   }
