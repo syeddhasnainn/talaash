@@ -1,49 +1,43 @@
+
 type Search = {
   question: string;
   setResults: (results: any) => void;
-  setRelatedQuestions: (relatedQuestions: any) => void;
   setAnswer: (answer: string) => void;
-  isWebAccess: boolean;
+  extractedCode:string,
+  setExtractedCode: (extractedCode: string) => void;
+  socket:any,
+  streaming:boolean, 
+  setStreaming:(streaming: boolean) => void;
+  stopStreaming:boolean
 };
 
 export const handleSearch = async ({
   question,
   setResults,
-  setRelatedQuestions,
   setAnswer,
-  isWebAccess,
+  extractedCode,
+  setExtractedCode,
+  socket,
+  streaming,
+  setStreaming,
+  stopStreaming
+
 }: Search) => {
-  console.log(isWebAccess);
+
+  console.log('handleSearch', stopStreaming)
+  console.log('handleSearch', stopStreaming)
+  console.log('handleSearch', stopStreaming)
+
+
+  setStreaming(false)
+  console.log('this is from handleSearch', socket)
   var context = "";
-  if (isWebAccess) {
-    const searchResponse = await fetch("/api/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question }),
-    }).then((res) => res.json());
-    context = searchResponse.data;
-    setResults(context);
-
-    const relatedQuestions = await fetch("/api/relatedQuestions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question }),
-    })
-      .then((res) => res.json())
-      .then((res) => res.output.relatedQuestions);
-    setRelatedQuestions(relatedQuestions);
-  }
-
   const llmResponse = await fetch("/api/answer", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ question, sources: context, isWebAccess }),
+    body: JSON.stringify({ question, sources: context,  }),
   });
 
   console.log(llmResponse);
@@ -61,12 +55,12 @@ export const handleSearch = async ({
       return null;
     }
 
-    if (codeBlocks.length === 1) {
-      return codeBlocks[0];
-    }
+    // if (codeBlocks.length === 1) {
+    //   return codeBlocks[0];
+    // }
 
     //returning array of blocks
-    return codeBlocks;
+    return codeBlocks[0];
   }
 
   if (!llmResponse.ok) {
@@ -84,12 +78,26 @@ export const handleSearch = async ({
   let fullContent = "";
 
   while (!done) {
+    if(stopStreaming){
+      break
+    }
     const { value, done: streamDone } = await reader.read();
     done = streamDone;
+    if(done){
+      setStreaming(done)
+    }
     if (value) {
       fullContent += decoder.decode(value);
       // ()=>setAnswer(fullContent)
       setAnswer(fullContent);
     }
+  }
+
+  const onlyCode = extractCodeFromChat(fullContent) as string;
+  setExtractedCode(onlyCode);
+  console.log('only code',onlyCode)
+
+  if(socket){
+    socket.emit('generation', onlyCode)
   }
 };
