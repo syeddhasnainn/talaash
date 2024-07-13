@@ -7,30 +7,10 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-
+import { streamingController } from "@/utils/streamingController";
 interface Attr {
   className: string;
 }
-function LinkIcon(props: Attr) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
-}
-
 function SearchIcon(props: Attr) {
   return (
     <svg
@@ -50,16 +30,13 @@ function SearchIcon(props: Attr) {
     </svg>
   );
 }
-type SingleResult = {
-  title: string;
-  url: string;
-  description: string;
-};
+
 interface ResultProps {
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   question: string;
   answer: string;
+  socket: any,
 }
 
 export function Results({
@@ -67,138 +44,233 @@ export function Results({
   handleSubmit,
   question,
   answer,
+  socket
 }: ResultProps) {
   const {
-    results,
     setResults,
-    setRelatedQuestions,
     setAnswer,
-    relatedQuestions,
     isLoading,
-    setIsLoading,
-    isWebAccess,
+    extractedCode,
+    setExtractedCode,
+    streaming,
+    setStreaming,
+    allResponses,
+    setAllResponses,
   } = useStore();
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col items-center w-full max-w-2xl mx-auto p-4 md:p-6"
-    >
-      <div className="w-full mb-8 relative rounded-lg">
-        <Input
-          onChange={handleInput}
-          value={question}
-          type="search"
-          placeholder="Ask me anything..."
-          className="w-full h-12 px-4 rounded-lg bg-background"
-        />
-        <Button
-          type="submit"
-          onClick={() =>
-            handleSearch({
-              question,
-              setResults,
-              setRelatedQuestions,
-              setAnswer,
-              isWebAccess,
-            })
-          }
-          variant="ghost"
-          size="icon"
-          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
-        >
-          <SearchIcon className="w-5 h-5" />
-          <span className="sr-only">Search</span>
-        </Button>
-      </div>
-      {!answer && isLoading && <div>Loading...</div>}
-      {answer && (
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
-          <div className="col-span-1 md:col-span-2 bg-card rounded-lg p-2">
-            <h3 className="text-lg font-medium mb-4">Answer</h3>
-            <div className="prose text-muted-foreground">
-              <div className="prose dark:prose-invert">
-                <Markdown remarkPlugins={[remarkGfm]}
-                  components={{
-                    code(props) {
-                      const { children, className, node, ...rest } = props
-                      const match = /language-(\w+)/.exec(className || '')
-                      return match ? (
-                        <SyntaxHighlighter
-                        
-                          PreTag="div"
-                          children={String(children).replace(/\n$/, '')}
-                          language={match[1]}
-                          style={dark}
-                          wrapLines={true}
-                          wrapLongLines={true}
-                        />
-                      ) : (
-                        <code {...rest} className={className}>
-                          {children}
-                        </code>
-                      )
-                    }
-                  }}
-                >{answer}</Markdown>
-              </div>
-            </div>
-          </div>
-          {isWebAccess && (
-            <div className="col-span-2 bg-card rounded-lg p-2">
-              <h3 className="text-lg font-medium mb-4">Sources</h3>
-              {results.map((item: SingleResult, index: number) => (
-                <div key={index} className="space-y-2">
-                  <Link
-                    href={item.url}
-                    className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
-                    prefetch={false}
-                  >
-                    <LinkIcon className="w-4 h-4" />
-                    <span>{item.title}</span>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
 
-          {isWebAccess && (
-            <div className="col-span-2 bg-card rounded-lg p-2">
-              <h3 className="text-lg font-medium mb-4">Related Questions</h3>
-              <div className="space-y-2">
-                {relatedQuestions.map((item: string, index: number) => (
-                  <Link
-                    href={"/"}
-                    onClick={() =>
-                      handleSearch({
-                        question: item,
-                        setResults,
-                        setRelatedQuestions,
-                        setAnswer,
-                        isWebAccess,
-                      })
-                    }
-                    key={index}
-                    className="flex items-center gap-2 text-sm hover:bg-muted/50 rounded-md p-2"
-                  >
-                    <SearchIcon className="w-4 h-4" />
-                    <span>{item}</span>
-                  </Link>
-                ))}
-              </div>
+    // <form
+    //   onSubmit={handleSubmit}
+    //   className="flex flex-col"
+    // >
+    //   <div className="w-full relative rounded-lg">
+    //     <input
+    //       onChange={handleInput}
+    //       value={question}
+    //       type="search"
+    //       placeholder="Ask me anything..."
+    //       className="w-full h-12 px-4 rounded-lg bg-background border border-black"
+    //     />
+    //     <Button
+    //       type="submit"
+    //       onClick={() =>
+    //         handleSearch({
+    //           question,
+    //           setResults,
+    //           setAnswer,
+    //           extractedCode,
+    //           setExtractedCode,
+    //           socket,
+    //           streaming,
+    //           setStreaming,
+    //         })
+    //       }
+    //       variant="ghost"
+    //       size="icon"
+    //       className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
+    //     >
+    //       <SearchIcon className="w-5 h-5" />
+    //       <span className="sr-only">Search</span>
+    //     </Button>
+    //   </div>
+    //   <div className="flex gap-2">
+    //     <button className="border border-black my-2 w-24 rounded-xl p-1" onClick={() =>
+    //       handleSearch({
+    //         question,
+    //         setResults,
+    //         setAnswer,
+    //         extractedCode,
+    //         setExtractedCode,
+    //         socket,
+    //         streaming,
+    //         setStreaming,
+    //       })
+    //     }>regenerate</button>
+
+
+    //     <button className="border border-black my-2 w-24 rounded-xl p-1" onClick={() => streamingController.stopStreaming()} disabled={!streaming}
+    //     >stop</button>
+
+    //   </div>
+
+    //   {!answer && isLoading && <div>Loading...</div>}
+    //   {answer && (
+
+    //     <div className="flex flex-row gap-2 h-full overflow-y-scroll">
+    //       <div className="basis-1/2 border border-black rounded-xl p-1 ">
+    //         <Markdown remarkPlugins={[remarkGfm]}
+    //           components={{
+    //             code(props) {
+    //               const { children, className, node, ...rest } = props
+    //               const match = /language-(\w+)/.exec(className || '')
+    //               return match ? (
+    //                 <SyntaxHighlighter
+    //                   PreTag="div"
+    //                   language={match[1]}
+    //                   style={dark}
+    //                   wrapLines={true}
+    //                   wrapLongLines={true}
+    //                 >
+    //                   {String(children).replace(/\n$/, '')}
+    //                 </SyntaxHighlighter>
+    //               ) : (
+    //                 <code {...rest} className={className}>
+    //                   {children}
+    //                 </code>
+    //               )
+    //             }
+    //           }}
+    //         >{answer}</Markdown>
+    //       </div>
+    //       {<div className="h-full basis-1/2 border border-black rounded-xl p-1 ">
+    //         <iframe
+    //           src="http://localhost:3000"
+    //           style={{ width: '100%', height: '100%', border: 'none' }}
+    //         ></iframe>
+    //       </div>}
+
+    //     </div>
+
+
+    //   )}
+    //   {/* <button className="border border-black my-4 w-24 rounded-xl p-1" onClick={() =>
+    //     handleSearch({
+    //       question,
+    //       setResults,
+    //       setAnswer,
+    //       extractedCode,
+    //       setExtractedCode,
+    //       socket,
+    //       streaming,
+    //       setStreaming,
+    //     })
+    //   }>regenerate</button> */}
+    // </form>
+    <div>
+      <div className="flex h-screen w-full">
+        <div className="left flex-1  flex flex-col">
+          <div className="flex-1 overflow-auto">
+            <Markdown remarkPlugins={[remarkGfm]}
+              components={{
+                code(props) {
+                  const { children, className, node, ...rest } = props
+                  const match = /language-(\w+)/.exec(className || '')
+                  return match ? (
+                    <SyntaxHighlighter
+                      PreTag="div"
+                      language={match[1]}
+                      style={dark}
+                      wrapLines={true}
+                      wrapLongLines={true}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code {...rest} className={className}>
+                      {children}
+                    </code>
+                  )
+                }
+              }}
+            >{answer}</Markdown>
+          </div>
+          <div className="bottom-box">
+            <form onSubmit={handleSubmit}>
+              <input
+              className="border"
+                onChange={handleInput}
+                value={question}
+                type="search"
+                placeholder="Ask me anything..."
+              />
+              <button
+              className="border"
+                type="submit"
+                onClick={() =>
+                  handleSearch({
+                    question,
+                    setResults,
+                    setAnswer,
+                    extractedCode,
+                    setExtractedCode,
+                    socket,
+                    streaming,
+                    setStreaming,
+                    allResponses,
+                    setAllResponses,
+                  })
+                }
+              >
+                search
+              </button>
+
+            </form>
+          </div>
+          {/* <div className="border sticky bottom-0 ">
+            <div>
+
+              <form onSubmit={handleSubmit}>
+                <input
+                  onChange={handleInput}
+                  value={question}
+                  type="search"
+                  placeholder="Ask me anything..."
+                />
+                <button
+                  type="submit"
+                  onClick={() =>
+                    handleSearch({
+                      question,
+                      setResults,
+                      setAnswer,
+                      extractedCode,
+                      setExtractedCode,
+                      socket,
+                      streaming,
+                      setStreaming,
+                    })
+                  }
+                >
+                  search
+                </button>
+
+              </form>
+
             </div>
-          )}
+          </div> */}
+
         </div>
-      )}
-      <button onClick={() =>
-            handleSearch({
-              question,
-              setResults,
-              setRelatedQuestions,
-              setAnswer,
-              isWebAccess,
-            })
-          }>regenerate</button>
-    </form>
+
+
+
+        <div className="right flex-1">
+          <iframe
+            src="http://localhost:3000"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+          ></iframe>
+        </div>
+      </div>
+    </div>
   );
 }
