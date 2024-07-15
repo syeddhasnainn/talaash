@@ -50,14 +50,14 @@ export const handleSearch = async ({
   setStreaming(true);
   const signal = streamingController.startStreaming()
 
-  console.log('this is from handleSearch', socket)
-
+  // console.log('this is from handleSearch', socket)
+  const chatHistory = [...allResponses, {role: 'user', content: question}]
   const llmResponse = await fetch("/api/answer", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ chatHistory }),
     signal
   });
 
@@ -72,8 +72,8 @@ export const handleSearch = async ({
     throw new Error("Response body is null");
   }
   
-  setAllResponses([...allResponses, {question, answer: ""}])
-  console.log('all responses', allResponses)
+  setAllResponses([...chatHistory, {role:"assistant",  content: ""}])
+  // console.log('all responses', allResponses)
 
   const decoder = new TextDecoder();
   let done = false;
@@ -89,11 +89,12 @@ export const handleSearch = async ({
       fullContent += decoder.decode(value);
       setAllResponses((prev:any) => {
         const updated = [...prev]
-        updated[updated.length - 1].answer += decoder.decode(value);
+        updated[updated.length - 1].content += decoder.decode(value);
         return updated;
       })
     }
   }
+
 
   const onlyCode = extractCodeFromChat(fullContent) as string;
   setExtractedCode(onlyCode);

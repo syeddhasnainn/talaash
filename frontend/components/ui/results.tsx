@@ -8,6 +8,8 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { streamingController } from "@/utils/streamingController";
+import { useState } from "react";
+
 interface Attr {
   className: string;
 }
@@ -173,36 +175,37 @@ export function Results({
       <div className="flex h-screen w-full">
         <div className="left flex-1  flex flex-col">
           <div className="flex-1 overflow-auto">
-            {allResponses.map((resp:any)=>(
+            {allResponses.map((resp: any) => (
               <>
-              <div className="bg-slate-300">{resp.question}</div>
-              <Markdown remarkPlugins={[remarkGfm]}
-              components={{
-                code(props) {
-                  const { children, className, node, ...rest } = props
-                  const match = /language-(\w+)/.exec(className || '')
-                  return match ? (
-                    <SyntaxHighlighter
-                      PreTag="div"
-                      language={match[1]}
-                      style={dark}
-                      wrapLines={true}
-                      wrapLongLines={true}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code {...rest} className={className}>
-                      {children}
-                    </code>
-                  )
-                }
-              }}
-            >{resp.answer}</Markdown>
+                {resp.role == "user" && (<div className="bg-slate-300">{resp.content}</div>)}
+                
+                  <Markdown remarkPlugins={[remarkGfm]}
+                    components={{
+                      code(props) {
+                        const { children, className, node, ...rest } = props
+                        const match = /language-(\w+)/.exec(className || '')
+                        return match ? (
+                          <SyntaxHighlighter
+                            PreTag="div"
+                            language={match[1]}
+                            style={dark}
+                            wrapLines={true}
+                            wrapLongLines={true}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code {...rest} className={className}>
+                            {children}
+                          </code>
+                        )
+                      }
+                    }}
+                  >{resp.role == "assistant" ? resp.content : null}</Markdown>
               </>
-              
+
             ))}
-            
+
           </div>
           <div className="bottom-box">
             <form onSubmit={handleSubmit}>

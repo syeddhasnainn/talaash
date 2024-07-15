@@ -25,12 +25,12 @@ function sleep(time: number) {
   });
 }
 
-async function* makeIterator(prompt: string) {
-  var chatMessages: any = [{ role: "user", content: prompt }]
+async function* makeIterator(prompt: any) {
+
   const answer = await together.chat.completions.create({
-    messages: chatMessages,
+    messages: prompt,
     model: "mistralai/Mistral-7B-Instruct-v0.3",
-    max_tokens: 2000,
+    max_tokens: 100,
     stream: true,
   });
 
@@ -44,12 +44,11 @@ export async function POST(request: Request) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
-  var { question } = await request.json();
-  console.log('from api,question', question)
+  var { chatHistory } = await request.json();
 
-  const prompt = `be concise, only write short answer not more than 100 tokens, here is the question:\n${question}\n`;
+  // const prompt = `be concise, only write short answer not more than 100 tokens, here is the question:\n${chatHistory[0].content}\n`;
 
-  const iterator = makeIterator(prompt);
+  const iterator = makeIterator(chatHistory);
   const streamer = iteratorToStream(iterator);
 
   return new NextResponse(streamer, {
