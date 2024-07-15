@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Results } from "@/components/ui/results";
 import SearchBar from "@/components/ui/search-bar";
@@ -11,6 +11,9 @@ export default function Home() {
 
   var { question, setQuestion, answer, results, isLoading, setIsLoading } =
     useStore();
+
+  
+  const [conversation, setConversation] = useState<string[]>([]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
