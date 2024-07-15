@@ -4,8 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Results } from "@/components/ui/results";
 import SearchBar from "@/components/ui/search-bar";
 import useStore from "@/utils/store";
+import { useSocket } from "./socket";
 
 export default function Home() {
+  const socket = useSocket()
+
   var { question, setQuestion, answer, results, isLoading, setIsLoading } =
     useStore();
 
@@ -19,7 +22,8 @@ export default function Home() {
 
   return (
     <main>
-      <div>
+      <div>from chat-history</div>
+      {/* <div className="mx-2">
         <div className="flex flex-row justify-between p-2">
           <Badge variant="default">Talaash</Badge>
           <Badge className="rounded-full" variant="default">
@@ -27,17 +31,23 @@ export default function Home() {
           </Badge>
         </div>
         {!isLoading && (
-          <SearchBar handleInput={handleInput} handleSubmit={handleSubmit} />
+          <SearchBar handleInput={handleInput} handleSubmit={handleSubmit} socket={socket}/>
         )}
-        {isLoading && (
+      </div> */}
+      {!isLoading && (
+          <SearchBar handleInput={handleInput} handleSubmit={handleSubmit} socket={socket}/>
+        )}
+      {isLoading && (
           <Results
             handleInput={handleInput}
             handleSubmit={handleSubmit}
             question={question}
             answer={answer}
+            socket={socket}
+
           />
         )}
-      </div>
+
     </main>
   );
 }
