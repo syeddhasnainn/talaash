@@ -30,22 +30,17 @@ function SearchIcon(props: Attr) {
 interface SearchBarProps {
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  socket:any,
 }
-
-
 
 export default function SearchBar({
   handleInput,
   handleSubmit,
+  socket
 }: SearchBarProps) {
-  const { question, setRelatedQuestions, setAnswer, setResults, isWebAccess,setIsWebAccess } =
+  const { question, setAnswer, setResults, extractedCode, setExtractedCode,streaming, setStreaming, allResponses, setAllResponses } =
     useStore();
 
-    const handleClick = (e)=> {
-      setIsWebAccess(isWebAccess)
-    
-    }
-  console.log(isWebAccess)
   return (
     <div className="flex flex-col">
       {/* <label className="inline-flex items-center cursor-pointer" >
@@ -54,7 +49,7 @@ export default function SearchBar({
         <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
           Internet access
         </span>
-      </label>
+      </label> */}
 
       <form
         onSubmit={handleSubmit}
@@ -73,9 +68,14 @@ export default function SearchBar({
               handleSearch({
                 question,
                 setResults,
-                setRelatedQuestions,
                 setAnswer,
-                isWebAccess,
+                extractedCode,
+                setExtractedCode,
+                socket,
+                streaming,
+                setStreaming,
+                allResponses,
+                setAllResponses,
               })
             }
             type="submit"

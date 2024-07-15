@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build: /Users/hasnain/Desktop/Projects/fe-test
+    ports: 
+      - 3000:3000
+    volumes:
+      - shared-data:/fe
+    
+  backend:
+    build: .
+    ports: 
+      - 3001:3001
+    volumes:
+      - shared-data:/home/app/shared
+    depends_on:
+      - frontend
+
+volumes:
+  shared-data:

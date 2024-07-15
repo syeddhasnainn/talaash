@@ -58,6 +58,8 @@ export function Results({
     setAllResponses,
   } = useStore();
 
+  console.log('result comp:', allResponses)
+
   return (
 
     // <form
@@ -171,7 +173,10 @@ export function Results({
       <div className="flex h-screen w-full">
         <div className="left flex-1  flex flex-col">
           <div className="flex-1 overflow-auto">
-            <Markdown remarkPlugins={[remarkGfm]}
+            {allResponses.map((resp:any)=>(
+              <>
+              <div className="bg-slate-300">{resp.question}</div>
+              <Markdown remarkPlugins={[remarkGfm]}
               components={{
                 code(props) {
                   const { children, className, node, ...rest } = props
@@ -193,19 +198,23 @@ export function Results({
                   )
                 }
               }}
-            >{answer}</Markdown>
+            >{resp.answer}</Markdown>
+              </>
+              
+            ))}
+            
           </div>
           <div className="bottom-box">
             <form onSubmit={handleSubmit}>
               <input
-              className="border"
+                className="border"
                 onChange={handleInput}
                 value={question}
                 type="search"
                 placeholder="Ask me anything..."
               />
               <button
-              className="border"
+                className="border"
                 type="submit"
                 onClick={() =>
                   handleSearch({

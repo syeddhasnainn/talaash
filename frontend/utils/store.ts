@@ -1,3 +1,5 @@
+'use client'
+import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { create } from "zustand";
 
 interface StoreState {
@@ -13,6 +15,13 @@ interface StoreState {
   setIsLoading: any;
   isWebAccess: boolean;
   setIsWebAccess: any;
+  extractedCode: string, 
+  setExtractedCode:any,
+  streaming:boolean,
+  setStreaming:any,
+  allResponses:any,
+  setAllResponses:any,
+
 }
 
 interface SearchResults {
@@ -22,7 +31,7 @@ interface SearchResults {
 }
 
 const useStore = create<StoreState>()((set) => ({
-  question: "what is life?",
+  question: "what is life",
   setQuestion: (x: any) => set(() => ({ question: x })),
 
   answer: "",
@@ -39,6 +48,18 @@ const useStore = create<StoreState>()((set) => ({
 
   isWebAccess: false,
   setIsWebAccess: (x: any) => set(() => ({ isWebAccess: !x })),
+
+  extractedCode: "",
+  setExtractedCode: (x: any) => set(() => ({ extractedCode: x })),
+
+  streaming:true,
+  setStreaming: (x: any) => set(() => ({ streaming: x })),
+
+  allResponses:[],
+  setAllResponses: (x: string[] | ((prev: string[]) => string[])) => set((state) => ({
+    allResponses: typeof x === 'function' ? x(state.allResponses) : x
+  })),
+
 }));
 
 export default useStore;

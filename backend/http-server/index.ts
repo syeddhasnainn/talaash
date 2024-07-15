@@ -19,17 +19,16 @@ app.get('/', (req:Request, res:Response) => {
 
 app.post("/project", async (req:Request, res:Response) => {
     // Hit a database to ensure this slug isn't taken already
-    const { replId, language } = req.body;
-    console.log(replId, language)
-    console.log(replId, language)
-    console.log(replId, language)
+    const { chatId, language } = req.body;
+    console.log(chatId)
 
-    if (!replId) {
+
+    if (!chatId) {
         res.status(400).send("Bad request");
         return;
     }
 
-    await copyS3Folder(`base/${language}`, `code/${replId}`);
+    await copyS3Folder(`base/${language}`, `code/${chatId}`);
 
     res.send("Project created");
 });

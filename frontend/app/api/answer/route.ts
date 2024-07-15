@@ -26,16 +26,17 @@ function sleep(time: number) {
 }
 
 async function* makeIterator(prompt: string) {
+  var chatMessages: any = [{ role: "user", content: prompt }]
   const answer = await together.chat.completions.create({
-    messages: [{ role: "user", content: prompt }],
+    messages: chatMessages,
     model: "mistralai/Mistral-7B-Instruct-v0.3",
-    max_tokens: 100,
+    max_tokens: 2000,
     stream: true,
   });
 
   for await (const chunk of answer) {
     yield encoder.encode(`${chunk.choices[0].delta?.content}`);
-    await sleep(50);
+    await sleep(10);
   }
 }
 
@@ -43,22 +44,10 @@ export async function POST(request: Request) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
-  var { question, sources, isWebAccess } = await request.json();
-  var context = "";
+  var { question } = await request.json();
+  console.log('from api,question', question)
 
-  if (isWebAccess) {
-    sources = await Promise.all(
-      sources.map(async (source: any) => {
-        const jinaResponse = await fetch(`https://r.jina.ai/${source.url}`, {
-          headers: { "X-Timeout": "5", "X-Return-Format": "text" },
-        }).then((res) => res.text().then((res) => res.replace("\n", "")));
-        return { ...source, jinaResponse };
-      }),
-    );
-    context = sources.map((item: any) => item.jinaResponse).join("\n");
-  }
-
-  const prompt = `${question}\n ${context}`;
+  const prompt = `be concise, only write short answer not more than 100 tokens, here is the question:\n${question}\n`;
 
   const iterator = makeIterator(prompt);
   const streamer = iteratorToStream(iterator);
@@ -70,5 +59,5 @@ export async function POST(request: Request) {
       "Content-Type": "text/event-stream; charset=utf-8",
       Connection: "keep-alive",
     },
-  });
+  })
 }

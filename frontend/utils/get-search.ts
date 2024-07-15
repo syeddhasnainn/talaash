@@ -1,3 +1,4 @@
+import { streamingController } from './streamingController';
 
 type Search = {
   question: string;
@@ -8,8 +9,30 @@ type Search = {
   socket:any,
   streaming:boolean, 
   setStreaming:(streaming: boolean) => void;
-  stopStreaming:boolean
+  allResponses:any,
+  setAllResponses:(allResponses:any) => void,
 };
+
+function extractCodeFromChat(chatResponse: string): string | string[] | null {
+  const codeBlockPattern = /```(?:\w+)?\s*\n([\s\S]*?)\n```/g;
+  const codeBlocks: string[] = [];
+  let match: RegExpExecArray | null;
+
+  while ((match = codeBlockPattern.exec(chatResponse)) !== null) {
+    codeBlocks.push(match[1].trim());
+  }
+
+  if (codeBlocks.length === 0) {
+    return null;
+  }
+
+  // if (codeBlocks.length === 1) {
+  //   return codeBlocks[0];
+  // }
+
+  //returning array of blocks
+  return codeBlocks[0];
+}
 
 export const handleSearch = async ({
   question,
@@ -20,82 +43,62 @@ export const handleSearch = async ({
   socket,
   streaming,
   setStreaming,
-  stopStreaming
-
+  allResponses,
+  setAllResponses,
 }: Search) => {
 
-  console.log('handleSearch', stopStreaming)
-  console.log('handleSearch', stopStreaming)
-  console.log('handleSearch', stopStreaming)
+  setStreaming(true);
+  const signal = streamingController.startStreaming()
 
-
-  setStreaming(false)
   console.log('this is from handleSearch', socket)
-  var context = "";
+
   const llmResponse = await fetch("/api/answer", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ question, sources: context,  }),
+    body: JSON.stringify({ question }),
+    signal
   });
 
-  console.log(llmResponse);
-
-  function extractCodeFromChat(chatResponse: string): string | string[] | null {
-    const codeBlockPattern = /```(?:\w+)?\s*\n([\s\S]*?)\n```/g;
-    const codeBlocks: string[] = [];
-    let match: RegExpExecArray | null;
-
-    while ((match = codeBlockPattern.exec(chatResponse)) !== null) {
-      codeBlocks.push(match[1].trim());
-    }
-
-    if (codeBlocks.length === 0) {
-      return null;
-    }
-
-    // if (codeBlocks.length === 1) {
-    //   return codeBlocks[0];
-    // }
-
-    //returning array of blocks
-    return codeBlocks[0];
-  }
+  const reader = llmResponse.body?.getReader();
 
   if (!llmResponse.ok) {
     throw new Error("Failed to fetch answer");
   }
 
-  const reader = llmResponse.body?.getReader();
 
   if (!reader) {
     throw new Error("Response body is null");
   }
+  
+  setAllResponses([...allResponses, {question, answer: ""}])
+  console.log('all responses', allResponses)
 
   const decoder = new TextDecoder();
   let done = false;
   let fullContent = "";
 
   while (!done) {
-    if(stopStreaming){
-      break
-    }
     const { value, done: streamDone } = await reader.read();
     done = streamDone;
     if(done){
-      setStreaming(done)
+      setStreaming(false)
     }
     if (value) {
       fullContent += decoder.decode(value);
-      // ()=>setAnswer(fullContent)
-      setAnswer(fullContent);
+      setAllResponses((prev:any) => {
+        const updated = [...prev]
+        updated[updated.length - 1].answer += decoder.decode(value);
+        return updated;
+      })
     }
   }
 
   const onlyCode = extractCodeFromChat(fullContent) as string;
   setExtractedCode(onlyCode);
-  console.log('only code',onlyCode)
+
+  // setAllResponses(fullContent)
 
   if(socket){
     socket.emit('generation', onlyCode)

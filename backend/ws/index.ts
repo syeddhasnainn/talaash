@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import cors from 'cors'
 import fs from "fs";
 
+const PORT = 3001
 const app = express();
 app.use(cors());
 const server = createServer(app);
@@ -31,17 +32,56 @@ const fetchDir = (dir: string, baseDir: string): Promise<File[]>  => {
 }
 
 app.get('/', (req, res)=> {
-  res.sendFile(__dirname+'/index.html')
+  res.send('ws server')
 })
 
 const html = `
+'use client'
+import React, { useState } from 'react';
 
-<button class="signin-btn" type="submit">Sign In</button>
+const MyComponent = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Handle sign-in logic here
+    console.log('Email:', email);
+    console.log('Password:', password);
+  };
+
+  return (
+    <div>
+      <h2>Sign In</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
+          <input type="email" value={email} onChange={handleEmailChange} required />
+        </div>
+        <div>
+          <label>Test:</label>
+          <input type="password" value={password} onChange={handlePasswordChange} required />
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
+  );
+};
+
+export default MyComponent;
 
 `
 
 app.get('/update', (req, res) => {
-  fs.writeFile(__dirname+'/index.html', html, (err) => {
+  fs.writeFile('/Users/hasnain/Desktop/Projects/fe-test/app/component.tsx', html, (err) => {
     if (err) {
       console.log(err);
     } else {
@@ -54,7 +94,6 @@ app.get('/update', (req, res) => {
 io.on('connection', async(socket) => {
   console.log('A user connected');
 
-
   socket.emit("loaded", {
     rootContent: await fetchDir("/", "")
 });
@@ -65,11 +104,29 @@ io.on('connection', async(socket) => {
 
   });
 
+  socket.on('generation', (msg)=> {
+    io.emit('generation', msg)
+    console.log(msg)
+    if (msg !== null){
+      fs.writeFile('/Users/hasnain/Desktop/Projects/fe-test/app/component.tsx', msg, (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('File updated successfully');
+        }
+      })
+    }
+    else{
+      console.log('Error generating component')
+    }
+    
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
 });
 
-server.listen(3000, () => {
-  console.log('Server is listening on port 3000');
+server.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });

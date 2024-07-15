@@ -28,7 +28,7 @@ export async function copyS3Folder(sourcePrefix: string, destinationPrefix: stri
         
         // Copy each object to the new location
         // We're doing it parallely here, using promise.all()
-        await Promise.all(listedObjects.Contents.map(async (object) => {
+        await Promise.all(listedObjects.Contents.map(async (object:any) => {
             if (!object.Key) return;
             let destinationKey = object.Key.replace(sourcePrefix, destinationPrefix);
             let copyParams = {
