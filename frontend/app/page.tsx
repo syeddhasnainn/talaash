@@ -22,7 +22,6 @@ export default function Home() {
 
   return (
     <main>
-      <div>from chat-history</div>
       {/* <div className="mx-2">
         <div className="flex flex-row justify-between p-2">
           <Badge variant="default">Talaash</Badge>
@@ -44,7 +43,6 @@ export default function Home() {
             question={question}
             answer={answer}
             socket={socket}
-
           />
         )}
 
