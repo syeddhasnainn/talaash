@@ -15,12 +15,14 @@ interface StoreState {
   setIsLoading: any;
   isWebAccess: boolean;
   setIsWebAccess: any;
-  extractedCode: string, 
-  setExtractedCode:any,
-  streaming:boolean,
-  setStreaming:any,
-  allResponses:any,
-  setAllResponses:any,
+  extractedCode: string,
+  setExtractedCode: any,
+  streaming: boolean,
+  setStreaming: any,
+  allResponses: any,
+  setAllResponses: any,
+  chatId:any,
+  setChatId:any
 
 }
 
@@ -52,14 +54,16 @@ const useStore = create<StoreState>()((set) => ({
   extractedCode: "",
   setExtractedCode: (x: any) => set(() => ({ extractedCode: x })),
 
-  streaming:true,
+  streaming: true,
   setStreaming: (x: any) => set(() => ({ streaming: x })),
 
-  allResponses:[],
+  allResponses: [],
   setAllResponses: (x: string[] | ((prev: string[]) => string[])) => set((state) => ({
     allResponses: typeof x === 'function' ? x(state.allResponses) : x
   })),
 
+  chatId: "",
+  setChatId: (x: any) => set(() => ({ chatId: x })),
 }));
 
 export default useStore;
