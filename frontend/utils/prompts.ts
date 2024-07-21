@@ -1,1 +1,1 @@
-export const htmlPrompt = `test`
+export const htmlPrompt = `branch merge test`
