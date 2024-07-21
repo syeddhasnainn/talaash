@@ -10,29 +10,6 @@ import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/pr
 import { streamingController } from "@/utils/streamingController";
 import { useState } from "react";
 
-interface Attr {
-  className: string;
-}
-function SearchIcon(props: Attr) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
-
 interface ResultProps {
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -58,9 +35,11 @@ export function Results({
     setStreaming,
     allResponses,
     setAllResponses,
+    chatId,
+    setChatId
   } = useStore();
 
-  console.log('result comp:', allResponses)
+  console.log('results:chatId', chatId)
 
   return (
 
@@ -231,6 +210,7 @@ export function Results({
                     setStreaming,
                     allResponses,
                     setAllResponses,
+                    setChatId,
                   })
                 }
               >

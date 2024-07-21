@@ -1,27 +1,18 @@
-import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { relations } from "drizzle-orm";
+import { integer, text, boolean, pgTable, uuid, timestamp } from "drizzle-orm/pg-core";
 
-export const usersTable = pgTable('users_table', {
-  id: serial('id').primaryKey(),
-  name: text('name').notNull(),
-  age: integer('age').notNull(),
-  email: text('email').notNull().unique(),
+export const users = pgTable("users", {
+    id: text('id').primaryKey().notNull()
+})
+
+export const chats = pgTable("chats", {
+    id: text("id").primaryKey().notNull(),
+    user_id: text('user_id').notNull().references(()=>users.id)
+})
+
+export const messages = pgTable("messages", {
+    role: text("role").notNull(),
+    content: text("content").notNull(),
+    chat_id: text("chat_id").notNull().references(() => chats.id),
+    createdAt: timestamp('created_at').defaultNow().notNull()
 });
-
-export const postsTable = pgTable('posts_table', {
-  id: serial('id').primaryKey(),
-  title: text('title').notNull(),
-  content: text('content').notNull(),
-  userId: integer('user_id')
-    .notNull()
-    .references(() => usersTable.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at')
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
-
-export type InsertUser = typeof usersTable.$inferInsert;
-export type SelectUser = typeof usersTable.$inferSelect;
-
-export type InsertPost = typeof postsTable.$inferInsert;
-export type SelectPost = typeof postsTable.$inferSelect;

@@ -26,6 +26,7 @@ function sleep(time: number) {
 }
 
 async function* makeIterator(prompt: any) {
+  console.log('prompt:',prompt)
 
   const answer = await together.chat.completions.create({
     messages: prompt,

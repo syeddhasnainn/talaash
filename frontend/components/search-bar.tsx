@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useStore from "@/utils/store";
 import { handleSearch } from "@/utils/get-search";
-
 interface Attr {
   className: string;
 }
@@ -38,7 +37,7 @@ export default function SearchBar({
   handleSubmit,
   socket
 }: SearchBarProps) {
-  const { question, setAnswer, setResults, extractedCode, setExtractedCode,streaming, setStreaming, allResponses, setAllResponses } =
+  const { question, setAnswer, setResults, extractedCode, setExtractedCode,streaming, setStreaming, allResponses, setAllResponses, setChatId } =
     useStore();
 
   return (
@@ -76,6 +75,7 @@ export default function SearchBar({
                 setStreaming,
                 allResponses,
                 setAllResponses,
+                setChatId
               })
             }
             type="submit"

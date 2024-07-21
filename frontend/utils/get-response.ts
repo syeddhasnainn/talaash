@@ -1,16 +1,16 @@
 import { streamingController } from './streamingController';
+import { v4 as uuidv4 } from 'uuid';
+import { addMessage } from '@/actions/actions';
 
-type Search = {
+type handleSearchProps = {
   question: string;
-  setResults: (results: any) => void;
-  setAnswer: (answer: string) => void;
-  extractedCode:string,
   setExtractedCode: (extractedCode: string) => void;
   socket:any,
-  streaming:boolean, 
   setStreaming:(streaming: boolean) => void;
   allResponses:any,
   setAllResponses:(allResponses:any) => void,
+  setChatId: (chatId:any)=> void,
+  uuid: string
 };
 
 function extractCodeFromChat(chatResponse: string): string | string[] | null {
@@ -36,22 +36,26 @@ function extractCodeFromChat(chatResponse: string): string | string[] | null {
 
 export const handleSearch = async ({
   question,
-  setResults,
-  setAnswer,
-  extractedCode,
   setExtractedCode,
   socket,
-  streaming,
   setStreaming,
   allResponses,
   setAllResponses,
-}: Search) => {
-
+  setChatId,
+  uuid
+}: handleSearchProps) => {
+  console.log('hs:', question)
+  setChatId(uuid)
   setStreaming(true);
   const signal = streamingController.startStreaming()
 
   // console.log('this is from handleSearch', socket)
-  const chatHistory = [...allResponses, {role: 'user', content: question}]
+  
+  const currentChat = {role: 'user', content: question}
+  console.log('cc:', currentChat)
+
+  addMessage(currentChat.role, currentChat.content, uuid)
+  const chatHistory = [...allResponses, currentChat]
   const llmResponse = await fetch("/api/answer", {
     method: "POST",
     headers: {
@@ -73,7 +77,6 @@ export const handleSearch = async ({
   }
   
   setAllResponses([...chatHistory, {role:"assistant",  content: ""}])
-  // console.log('all responses', allResponses)
 
   const decoder = new TextDecoder();
   let done = false;
@@ -94,8 +97,8 @@ export const handleSearch = async ({
       })
     }
   }
-
-
+  
+  addMessage("assistant",fullContent,uuid)
   const onlyCode = extractCodeFromChat(fullContent) as string;
   setExtractedCode(onlyCode);
 

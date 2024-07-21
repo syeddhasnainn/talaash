@@ -33,7 +33,7 @@ interface SearchResults {
 }
 
 const useStore = create<StoreState>()((set) => ({
-  question: "what is life",
+  question: "",
   setQuestion: (x: any) => set(() => ({ question: x })),
 
   answer: "",

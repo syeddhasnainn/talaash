@@ -1,10 +1,12 @@
 "use client";
 import { FormEvent, Suspense, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Results } from "@/components/ui/results";
-import SearchBar from "@/components/ui/search-bar";
+import { Results } from "@/components/results";
+import SearchBar from "@/components/search-bar";
 import useStore from "@/utils/store";
 import { useSocket } from "./socket";
+import { useUser } from "@clerk/nextjs";
+
 
 export default function Home() {
   const socket = useSocket()
@@ -19,8 +21,7 @@ export default function Home() {
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) =>
     setQuestion(e.currentTarget.value);
-
-
+  
 
   return (
     <main>
@@ -35,10 +36,9 @@ export default function Home() {
           <SearchBar handleInput={handleInput} handleSubmit={handleSubmit} socket={socket}/>
         )}
       </div> */}
-      {!isLoading && (
+      {/* {!isLoading && (
         <SearchBar handleInput={handleInput} handleSubmit={handleSubmit} socket={socket} />
       )}
-
       {isLoading && (
         <Results
           handleInput={handleInput}
@@ -47,10 +47,9 @@ export default function Home() {
           answer={answer}
           socket={socket}
         />
-      )}
-
-
-
+      )} */}
+      <div>hi there! noob.</div>
+      
     </main>
   );
 }
