@@ -56,7 +56,7 @@ export const handleSearch = async ({
 
   const chatHistory = [...allResponses, ...[sp, currentChat]]
 
-  addMessage(currentChat.role, currentChat.content, uuid)
+  await addMessage(currentChat.role, currentChat.content, uuid)
 
   // const chatHistory = [...allResponses, ...[systemPrompt, currentChat]]
   console.log('ch2:',chatHistory)
@@ -102,7 +102,7 @@ export const handleSearch = async ({
     }
   }
   
-  addMessage("assistant",fullContent,uuid)
+  await addMessage("assistant",fullContent,uuid)
   const onlyCode = extractCodeFromChat(fullContent) as string;
   setExtractedCode(onlyCode);
 

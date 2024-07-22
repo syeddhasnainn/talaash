@@ -34,10 +34,10 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
     setAllResponses(chatMessages)
   }, [])
 
+
   return (
     <div>
       <div className="flex h-screen w-full pt-4 px-10 gap-2 font-light">
-
         <div className="left flex-1 flex flex-col gap-2 max-w-4xl">
           <div className="flex-1 overflow-auto">
             {allResponses.map((resp: any, index: number) => (

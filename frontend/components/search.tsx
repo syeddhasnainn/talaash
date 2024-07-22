@@ -32,12 +32,11 @@ export function Search({ user_id }: { user_id: string }) {
         setAllResponses([])
     }, [pathname])
 
-
     const handleSubmit = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const uuid = uuidv4()
         router.push(`/chat/${uuid}`)
-        createChat(user_id, uuid)
+        await createChat(user_id, uuid)
         await handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
     }
 
@@ -46,7 +45,6 @@ export function Search({ user_id }: { user_id: string }) {
             <form onSubmit={handleSubmit}>
                 <div >
                     <input className='border w-full rounded-md px-2 font-thin' placeholder='ask me anything' value={question} onChange={handleChange} type="text" />
-
                 </div>
             </form>
 
