@@ -58,9 +58,11 @@ const useStore = create<StoreState>()((set) => ({
   setStreaming: (x: any) => set(() => ({ streaming: x })),
 
   allResponses: [],
-  setAllResponses: (x: string[] | ((prev: string[]) => string[])) => set((state) => ({
-    allResponses: typeof x === 'function' ? x(state.allResponses) : x
-  })),
+  // setAllResponses: (x: string[] | ((prev: string[]) => string[])) => set((state) => ({
+  //   allResponses: typeof x === 'function' ? x(state.allResponses) : x
+  // })),
+  setAllResponses: (x: any) => set(() => ({ allResponses: x })),
+
 
   chatId: "",
   setChatId: (x: any) => set(() => ({ chatId: x })),

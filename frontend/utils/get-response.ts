@@ -14,7 +14,7 @@ type handleSearchProps = {
   uuid: string
 };
 
-function extractCodeFromChat(chatResponse: string): string | string[] | null {
+export function extractCodeFromChat(chatResponse: string): string | string[] | null {
   const codeBlockPattern = /```(?:\w+)?\s*\n([\s\S]*?)\n```/g;
   const codeBlocks: string[] = [];
   let match: RegExpExecArray | null;

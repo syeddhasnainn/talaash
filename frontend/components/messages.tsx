@@ -1,7 +1,10 @@
 'use client'
+import { addMessage } from '@/actions/actions'
+import { continueConversation } from '@/app/action'
 import { useSocket } from '@/app/socket'
-import { handleSearch } from '@/utils/get-response'
+import { extractCodeFromChat, handleSearch } from '@/utils/get-response'
 import useStore from '@/utils/store'
+import { readStreamableValue } from 'ai/rsc'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import Markdown from 'react-markdown'
@@ -76,10 +79,41 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
           </div>
           <div className="bottom-box ">
-            <form onSubmit={handleSubmit} className='mb-4'>
+            <form onSubmit={async e => {
+              e.preventDefault();
+
+              const currentMessage = { role: 'user', content: question }
+              const newMessages: any = [
+                ...allResponses,
+                currentMessage,
+              ];
+
+              await addMessage(currentMessage.role, currentMessage.content, uuid)
+              // setAllResponses(newMessages);
+              setQuestion('');
+
+              const result = await continueConversation(newMessages);
+
+              let fullResponse = ''
+              for await (const content of readStreamableValue(result)) {
+                var newContent = content?.slice(fullResponse.length);
+                fullResponse += newContent
+                setAllResponses([
+                  ...newMessages,
+                  {
+                    role: 'assistant',
+                    content: content as string,
+                  },
+                ]);
+              }
+
+              const onlyCode = extractCodeFromChat(fullResponse) as string;
+              setExtractedCode(onlyCode);
+
+              await addMessage('assistant', fullResponse, uuid)
+
+            }} className='mb-4'>
               <input className='border w-full rounded-md px-2 font-thin shadow-sm' placeholder='ask me anything' value={question} onChange={handleInput} type="text" />
-
-
             </form>
           </div>
           {/* <div className="border sticky bottom-0 ">
