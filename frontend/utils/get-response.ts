@@ -1,6 +1,7 @@
 import { streamingController } from './streamingController';
 import { v4 as uuidv4 } from 'uuid';
 import { addMessage } from '@/actions/actions';
+import { systemPrompt } from './prompts';
 
 type handleSearchProps = {
   question: string;
@@ -44,18 +45,21 @@ export const handleSearch = async ({
   setChatId,
   uuid
 }: handleSearchProps) => {
-  console.log('hs:', question)
   setChatId(uuid)
   setStreaming(true);
   const signal = streamingController.startStreaming()
 
-  // console.log('this is from handleSearch', socket)
+  console.log('this is from handleSearch', socket)
   
   const currentChat = {role: 'user', content: question}
-  console.log('cc:', currentChat)
+  const sp = {role: 'system', content: systemPrompt}
+
+  const chatHistory = [...allResponses, ...[sp, currentChat]]
 
   addMessage(currentChat.role, currentChat.content, uuid)
-  const chatHistory = [...allResponses, currentChat]
+
+  // const chatHistory = [...allResponses, ...[systemPrompt, currentChat]]
+  console.log('ch2:',chatHistory)
   const llmResponse = await fetch("/api/answer", {
     method: "POST",
     headers: {
@@ -77,7 +81,7 @@ export const handleSearch = async ({
   }
   
   setAllResponses([...chatHistory, {role:"assistant",  content: ""}])
-
+  console.log('grar:',allResponses)
   const decoder = new TextDecoder();
   let done = false;
   let fullContent = "";
@@ -103,6 +107,7 @@ export const handleSearch = async ({
   setExtractedCode(onlyCode);
 
   // setAllResponses(fullContent)
+  console.log(onlyCode)
 
   if(socket){
     socket.emit('generation', onlyCode)

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import Together from "together-ai";
+import OpenAI from "openai";
 
 export const dynamic = "force-dynamic";
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
+const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
 const encoder = new TextEncoder();
 
 function iteratorToStream(iterator: any) {
@@ -26,12 +28,19 @@ function sleep(time: number) {
 }
 
 async function* makeIterator(prompt: any) {
-  console.log('prompt:',prompt)
 
-  const answer = await together.chat.completions.create({
+  // const answer = await together.chat.completions.create({
+  //   messages: prompt,
+  //   model: "mistralai/Mistral-7B-Instruct-v0.3",
+  //   max_tokens: 2000,
+  //   stream: true,
+  // });
+
+
+
+  const answer = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
     messages: prompt,
-    model: "mistralai/Mistral-7B-Instruct-v0.3",
-    max_tokens: 100,
     stream: true,
   });
 

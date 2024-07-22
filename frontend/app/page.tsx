@@ -10,7 +10,7 @@ import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
   const socket = useSocket()
-
+  
   var { question, setQuestion, answer, results, isLoading, setIsLoading } =
     useStore();
 

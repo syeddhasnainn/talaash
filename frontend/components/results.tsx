@@ -39,7 +39,6 @@ export function Results({
     setChatId
   } = useStore();
 
-  console.log('results:chatId', chatId)
 
   return (
 

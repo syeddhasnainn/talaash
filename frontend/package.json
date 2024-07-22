@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.37",
     "@langchain/community": "^0.2.12",
     "@langchain/core": "^0.2.9",
     "@langchain/openai": "^0.2.0",
@@ -20,6 +21,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@types/jsdom": "^21.1.7",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "ai": "^3.2.32",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",

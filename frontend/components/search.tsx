@@ -6,6 +6,7 @@ import useStore from '@/utils/store';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { FormEvent, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useChat } from 'ai/react';
 
 export function Search({ user_id }: { user_id: string }) {
 
@@ -24,17 +25,20 @@ export function Search({ user_id }: { user_id: string }) {
     }
 
     useEffect(() => {
+        // if (pathname =='/new') {
+        //     setAllResponses([])
+            
+        // }
         setAllResponses([])
-        console.log(pathname)
-        console.log('search:',allResponses)
     }, [pathname])
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+
+    const handleSubmit = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const uuid = uuidv4()
         router.push(`/chat/${uuid}`)
         createChat(user_id, uuid)
-        handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
+        await handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
     }
 
     return (

@@ -19,7 +19,6 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
   const pathname = usePathname()
 
   const { question, setQuestion, setExtractedCode, setStreaming, setChatId, allResponses, setAllResponses, extractedCode } = useStore()
-  console.log('from messages:', allResponses)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -32,7 +31,6 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
   }
 
   useEffect(() => {
-    console.log(pathname)
     setAllResponses(chatMessages)
   }, [])
 
@@ -123,10 +121,10 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
         <div className="right flex-1 border rounded-md mb-4 shadow-sm">
           {extractedCode && extractedCode.startsWith("<!DOCTYPE html>") ? <iframe srcDoc={extractedCode} style={{ width: '100%', height: '100%', border: 'none' }} ></iframe> : <div>error</div>}
-          {/* <iframe
+          <iframe
             src="http://localhost:3000"
             style={{ width: '100%', height: '100%', border: 'none' }}
-          ></iframe> */}
+          ></iframe>
 
         </div>
       </div>

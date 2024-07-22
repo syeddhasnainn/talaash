@@ -5,7 +5,6 @@ const together = new Together({
     apiKey: process.env["TOGETHER_API_KEY"],
   });
 
-console.log(process.env["TOGETHER_API_KEY"]);
   
 export async function GET(req, res){
     const response = await together.chat.completions.create({
