@@ -70,36 +70,14 @@ export function Search({ user_id }: { user_id: string }) {
                 onSubmit={async e => {
                     e.preventDefault();
                     const uuid = uuidv4()
-                    router.push(`/chat/${uuid}`)
-
-                    await createChat(user_id, uuid)
-                    const currentMessage = { role: 'user', content: question }
-                    const newMessages: any = [
-                        ...allResponses,
-                        currentMessage,
-                    ];
-                    console.log('new message:', newMessages)
-                    await addMessage(currentMessage.role, currentMessage.content, uuid)
-
-                    // setAllResponses(newMessages);
-                    setQuestion('');
-
-                    const result = await continueConversation(newMessages);
-                    let fullResponse = ''
-                    for await (const content of readStreamableValue(result)) {
-                        var newContent = content?.slice(fullResponse.length);
-                        fullResponse += newContent
-                        setAllResponses([
-                            ...newMessages,
-                            {
-                                role: 'assistant',
-                                content: content as string,
-                            },
-                        ]);
-                    }
-                    console.log('fr:',fullResponse)
                     
-                    await addMessage('assistant', fullResponse, uuid)
+                    await createChat(user_id, uuid)
+                    
+                    router.push(`/chat/${uuid}`)
+                    // setAllResponses(newMessages);
+                    // setQuestion('');
+
+                    
 
                 }}
             >

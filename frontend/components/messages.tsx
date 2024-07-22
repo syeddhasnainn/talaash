@@ -6,7 +6,7 @@ import { extractCodeFromChat, handleSearch } from '@/utils/get-response'
 import useStore from '@/utils/store'
 import { readStreamableValue } from 'ai/rsc'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -22,6 +22,7 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
   const pathname = usePathname()
 
   const { question, setQuestion, setExtractedCode, setStreaming, setChatId, allResponses, setAllResponses, extractedCode } = useStore()
+  const [initial, setInitial] = useState(true)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -35,7 +36,41 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
   useEffect(() => {
     setAllResponses(chatMessages)
-  }, [])
+
+    const initialMessage = async () => {
+      const currentMessage = { role: 'user', content: question }
+      const newMessages: any = [
+        ...allResponses,
+        currentMessage,
+      ];
+      console.log('new message:', newMessages)
+      await addMessage(currentMessage.role, currentMessage.content, uuid)
+
+      const result = await continueConversation(newMessages);
+      let fullResponse = ''
+      for await (const content of readStreamableValue(result)) {
+        var newContent = content?.slice(fullResponse.length);
+        fullResponse += newContent
+        setAllResponses([
+          ...newMessages,
+          {
+            role: 'assistant',
+            content: content as string,
+          },
+        ]);
+      }
+      console.log('fr:', fullResponse)
+
+      await addMessage('assistant', fullResponse, uuid)
+      setInitial(false)
+    }
+
+    if (initial && question){
+      initialMessage()
+    }
+
+
+  }, [initial])
 
   return (
     <div>
