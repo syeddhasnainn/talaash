@@ -32,6 +32,9 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
   useEffect(() => {
     setAllResponses(chatMessages)
+
+      handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
+
   }, [])
 
 

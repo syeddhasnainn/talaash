@@ -37,7 +37,7 @@ export function Search({ user_id }: { user_id: string }) {
         const uuid = uuidv4()
         router.push(`/chat/${uuid}`)
         await createChat(user_id, uuid)
-        await handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
+        // await handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
     }
 
     return (
