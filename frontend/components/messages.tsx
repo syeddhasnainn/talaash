@@ -21,21 +21,23 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
   const socket = useSocket()
   const pathname = usePathname()
 
-  const { question, setQuestion, setExtractedCode, setStreaming, setChatId, allResponses, setAllResponses, extractedCode } = useStore()
+  const { question, setQuestion, setExtractedCode, allResponses, setAllResponses, extractedCode } = useStore()
   const [initial, setInitial] = useState(true)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
-    setQuestion('')
-  }
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault()
+  //   handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
+  //   setQuestion('')
+  // }
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value)
   }
 
   useEffect(() => {
-    setAllResponses(chatMessages)
+    if (!question){
+      setAllResponses(chatMessages)
+    }
 
     const initialMessage = async () => {
       const currentMessage = { role: 'user', content: question }
@@ -62,10 +64,9 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
       console.log('fr:', fullResponse)
 
       await addMessage('assistant', fullResponse, uuid)
-      setInitial(false)
     }
 
-    if (initial && question){
+    if (question){
       initialMessage()
     }
 
