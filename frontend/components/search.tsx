@@ -19,23 +19,25 @@ export function Search({ user_id }: { user_id: string }) {
         setQuestion(e.target.value)
     }
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         const uuid = uuidv4()
         await createChat(user_id, uuid)
+        // setQuestion(question)
         router.push(`/chat/${uuid}`)
     }
 
     return (
         <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}>
                 <input
                     className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
                     value={question}
                     placeholder="Say something..."
                     onChange={handleChange}
                 />
-            </form>
+            </form> */}
+            <button onClick={handleSubmit}>create chat</button>
         </div>
     )
 }

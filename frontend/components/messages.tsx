@@ -17,13 +17,12 @@ interface MessagesProps {
   uuid: string
 }
 
-export default function Messages({ chatMessages, uuid }: MessagesProps) {
+export default function Messages({ chatMessages, uuid }: any) {
   const socket = useSocket()
   const pathname = usePathname()
 
   const { question, setQuestion, setExtractedCode, allResponses, setAllResponses, extractedCode } = useStore()
   const [initial, setInitial] = useState(true)
-
   // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
   //   e.preventDefault()
   //   handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
@@ -35,43 +34,8 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
   }
 
   useEffect(() => {
-    if (!question){
-      setAllResponses(chatMessages)
-    }
-
-    const initialMessage = async () => {
-      const currentMessage = { role: 'user', content: question }
-      const newMessages: any = [
-        ...allResponses,
-        currentMessage,
-      ];
-      console.log('new message:', newMessages)
-      await addMessage(currentMessage.role, currentMessage.content, uuid)
-
-      const result = await continueConversation(newMessages);
-      let fullResponse = ''
-      for await (const content of readStreamableValue(result)) {
-        var newContent = content?.slice(fullResponse.length);
-        fullResponse += newContent
-        setAllResponses([
-          ...newMessages,
-          {
-            role: 'assistant',
-            content: content as string,
-          },
-        ]);
-      }
-      console.log('fr:', fullResponse)
-
-      await addMessage('assistant', fullResponse, uuid)
-    }
-
-    if (question){
-      initialMessage()
-    }
-
-
-  }, [initial])
+    setAllResponses(chatMessages)
+  }, [])
 
   return (
     <div>
