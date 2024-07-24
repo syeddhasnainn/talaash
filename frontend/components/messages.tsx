@@ -155,10 +155,10 @@ export default function Messages({ chatMessages, uuid }: any) {
 
         <div className="right flex-1 border rounded-md mb-4 shadow-sm">
           {extractedCode && extractedCode.startsWith("<!DOCTYPE html>") ? <iframe srcDoc={extractedCode} style={{ width: '100%', height: '100%', border: 'none' }} ></iframe> : <div>error</div>}
-          <iframe
+          {/* <iframe
             src="http://localhost:3000"
             style={{ width: '100%', height: '100%', border: 'none' }}
-          ></iframe>
+          ></iframe> */}
 
         </div>
       </div>
