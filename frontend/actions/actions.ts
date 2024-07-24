@@ -19,11 +19,12 @@ export const createUser = async (id: string) => {
     revalidatePath("/")
 }
 
-export const createChat = async (user_id: string, id: string) => {
+export const createChat = async (user_id: string, id: string, chat_name:string) => {
     await db.insert(chats)
         .values({
             user_id: user_id,
-            id: id
+            id: id,
+            chat_name: chat_name
         })
     revalidatePath("/")
 }

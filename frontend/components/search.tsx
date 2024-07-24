@@ -1,29 +1,25 @@
 'use client'
+
 import { createChat } from "@/actions/actions";
-import { useSocket } from '@/app/socket';
-import { handleSearch } from '@/utils/get-response';
 import useStore from '@/utils/store';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useChat } from 'ai/react';
 
 export function Search({ user_id }: { user_id: string }) {
-
-
     const pathname = usePathname()
     const router = useRouter()
+    const { question, setQuestion, setAllResponses } = useStore()
 
-    // const [question, setQuestion] = useState('')
-    // const [chatList, setChatList] = useState([])
-    const socket = useSocket()
-    const {question, setQuestion, setExtractedCode, setStreaming, allResponses, setChatId, setAllResponses } = useStore()
+    useEffect(() => {
+        setAllResponses([])
+    }, [pathname, setAllResponses])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(question)
         setQuestion(e.target.value)
     }
 
+<<<<<<< HEAD
     useEffect(() => {
         // if (pathname =='/new') {
         //     setAllResponses([])
@@ -48,6 +44,27 @@ export function Search({ user_id }: { user_id: string }) {
                 </div>
             </form>
 
+=======
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        const uuid = uuidv4()
+        // await createChat(user_id, uuid)
+        // setQuestion(question)
+        router.push(`/chat/${uuid}`)
+    }
+
+    return (
+        <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+            {/* <form onSubmit={handleSubmit}>
+                <input
+                    className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+                    value={question}
+                    placeholder="Say something..."
+                    onChange={handleChange}
+                />
+            </form> */}
+            <button onClick={handleSubmit}>create chat</button>
+>>>>>>> prompts
         </div>
     )
 }
