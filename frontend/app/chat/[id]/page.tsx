@@ -1,4 +1,3 @@
-import Messages from "@/components/messages"
 import { getChats, getMessages } from "@/actions/actions"
 import { currentUser } from "@clerk/nextjs/server"
 import Sidebar from "@/components/sidebar"
