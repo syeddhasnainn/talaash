@@ -7,12 +7,12 @@ export default async function Chat() {
     const user = await currentUser().then(resp => resp?.id) as string
     const loggedInUser = await getUser(user)
     console.log('user', loggedInUser)
-    
+
     if (loggedInUser.length == 0) {
         await createUser(user)
     }
 
-    let chatList: Array<{id: string, user_id: string}> = []
+    let chatList: Array<{ id: string, user_id: string }> = []
 
     try {
         chatList = await getChats(user);
@@ -20,12 +20,12 @@ export default async function Chat() {
     } catch {
         console.log('Err: No Chat found OR no table in DB!');
     }
-    
+
     return (
         <div className="flex flex-col max-w-md gap-4 mx-auto pt-96">
-            
+
             <Search user_id={user} />
-            <ChatHistory chatList={chatList}/>
+            <ChatHistory chatList={chatList} />
         </div>
     )
 }

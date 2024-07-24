@@ -1,19 +1,17 @@
 'use client'
 import { addMessage, createChat } from '@/actions/actions';
-import { useChat } from 'ai/react';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import { extractCodeFromChat } from '@/utils/get-response';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { StopCircle, User } from 'lucide-react';
-import ReactMarkdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import remarkGfm from 'remark-gfm'
+import { extractCodeFromChat } from '@/utils/get-response';
+import { useChat } from 'ai/react';
+import { StopCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { v4 as uuidv4 } from 'uuid';
-import { UserButton } from '@clerk/nextjs';
 
 interface ChatUIProps {
     chatMessages: any
