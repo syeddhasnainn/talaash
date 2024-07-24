@@ -17,7 +17,7 @@ interface StoreState {
   setIsWebAccess: any;
   extractedCode: string,
   setExtractedCode: any,
-  allResponses: any,
+  allResponses: Array<{role: string, content:string}>,
   setAllResponses: any,
 }
 

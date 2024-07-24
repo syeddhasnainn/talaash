@@ -7,7 +7,8 @@ export const users = pgTable("users", {
 
 export const chats = pgTable("chats", {
     id: text("id").primaryKey().notNull(),
-    user_id: text('user_id').notNull().references(()=>users.id)
+    user_id: text('user_id').notNull().references(()=>users.id),
+    chat_name: text('chat_name').notNull()
 })
 
 export const messages = pgTable("messages", {

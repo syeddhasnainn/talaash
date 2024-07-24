@@ -16,7 +16,7 @@ export default function ChatHistory({ chatList }: ChatHistoryProps) {
     return (
         <div>
             <div className='flex flex-col gap-2'>
-                {chatHistory.map((chat: any) => <button  className='rounded-md border hover:bg-slate-100 font-thin' onClick={() => { router.push(`/chat/${chat.id}`) }}>{chat.id}</button>)}
+                {chatHistory.map((chat: any) => <button  className='rounded-md border hover:bg-slate-100 font-thin' onClick={() => { router.push(`/chat/${chat.id}`) }}>{chat.chat_name}</button>)}
             </div>
         </div>
     )

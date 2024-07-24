@@ -22,7 +22,7 @@ export function Search({ user_id }: { user_id: string }) {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         const uuid = uuidv4()
-        await createChat(user_id, uuid)
+        // await createChat(user_id, uuid)
         // setQuestion(question)
         router.push(`/chat/${uuid}`)
     }
