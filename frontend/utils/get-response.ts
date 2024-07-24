@@ -5,6 +5,7 @@ import { systemPrompt } from './prompts';
 
 type handleSearchProps = {
   question: string;
+  setQuestion: any;
   setExtractedCode: (extractedCode: string) => void;
   socket:any,
   setStreaming:(streaming: boolean) => void;
@@ -37,6 +38,7 @@ function extractCodeFromChat(chatResponse: string): string | string[] | null {
 
 export const handleSearch = async ({
   question,
+  setQuestion,
   setExtractedCode,
   socket,
   setStreaming,
@@ -55,7 +57,7 @@ export const handleSearch = async ({
   const sp = {role: 'system', content: systemPrompt}
 
   const chatHistory = [...allResponses, ...[sp, currentChat]]
-
+  setQuestion('')
   await addMessage(currentChat.role, currentChat.content, uuid)
 
   // const chatHistory = [...allResponses, ...[systemPrompt, currentChat]]

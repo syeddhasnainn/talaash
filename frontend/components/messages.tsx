@@ -10,7 +10,7 @@ import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/pr
 import remarkGfm from 'remark-gfm'
 
 interface MessagesProps {
-  chatMessages: unknown,
+  chatMessages: any,
   uuid: string
 }
 
@@ -22,7 +22,7 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
+    handleSearch({ question, setQuestion, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
     setQuestion('')
   }
 
@@ -32,9 +32,12 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
   useEffect(() => {
     setAllResponses(chatMessages)
+  }, [])
 
-      handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
-
+  useEffect(()=> {
+    if (chatMessages.length == 0){
+      handleSearch({ question, setQuestion, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
+    }
   }, [])
 
 
@@ -124,10 +127,10 @@ export default function Messages({ chatMessages, uuid }: MessagesProps) {
 
         <div className="right flex-1 border rounded-md mb-4 shadow-sm">
           {extractedCode && extractedCode.startsWith("<!DOCTYPE html>") ? <iframe srcDoc={extractedCode} style={{ width: '100%', height: '100%', border: 'none' }} ></iframe> : <div>error</div>}
-          <iframe
+          {/* <iframe
             src="http://localhost:3000"
             style={{ width: '100%', height: '100%', border: 'none' }}
-          ></iframe>
+          ></iframe> */}
 
         </div>
       </div>

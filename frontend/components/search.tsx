@@ -35,8 +35,8 @@ export function Search({ user_id }: { user_id: string }) {
     const handleSubmit = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const uuid = uuidv4()
-        router.push(`/chat/${uuid}`)
         await createChat(user_id, uuid)
+        router.push(`/chat/${uuid}`)
         // await handleSearch({ question, setExtractedCode, socket, setStreaming, allResponses, setAllResponses, setChatId, uuid })
     }
 
