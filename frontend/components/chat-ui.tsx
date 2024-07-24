@@ -3,8 +3,17 @@ import { addMessage, createChat } from '@/actions/actions';
 import { useChat } from 'ai/react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { StopCircle } from '@phosphor-icons/react'
 import { extractCodeFromChat } from '@/utils/get-response';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { StopCircle, User } from 'lucide-react';
+import ReactMarkdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import remarkGfm from 'remark-gfm'
+import { v4 as uuidv4 } from 'uuid';
+import { UserButton } from '@clerk/nextjs';
 
 interface ChatUIProps {
     chatMessages: any
@@ -36,60 +45,107 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         },
         onFinish: async (response) => {
             await addMessage(response.role, response.content, uuid)
-            const html = extractCodeFromChat(response.content)
+            const html = extractCodeFromChat(response.content) as string
             setHtml(html)
             setIsHtml(true)
-            console.log(html)
         },
         initialMessages: chatMessages
     });
 
-    const handleHtml = (code:string)=> {
-        const ec = extractCodeFromChat(code)
-        setHtml(ec)
-        setIsHtml(true)
+    const handleHtml = (code: string) => {
+        const ec = extractCodeFromChat(code) as string
+        if (ec == null) {
+            setIsHtml(false)
+        } else {
+            setHtml(ec)
+            setIsHtml(true)
+        }
     }
 
-
     return (
-        <div className='flex flex-row flex-1 gap-2 h-screen'>
-            <button>test button</button>
-            <nav className='basis-1/6 border pt-2'>
-                <ul className='flex flex-col gap-2'>
-                    {chatList.map((chat: any) => (
-                        <li className='text-center border-y hover:bg-slate-300' onClick={() => router.push(`/chat/${chat.id}`)}>{chat.chat_name}</li>
-                    ))}
-
-                </ul>
+        <div className='flex flex-row flex-1 h-screen bg-gray-50'>
+            <nav className='w-64 bg-white shadow-md z-10'>
+                <ScrollArea className="h-full px-4 py-6">
+                    <Button onClick={() => router.push(`/chat/${uuidv4()}`)} variant="outline" className="w-full mb-4">New Chat</Button>
+                    <ul className='space-y-2'>
+                        {chatList.map((chat: any) => (
+                            <li
+                                key={chat.id}
+                                className='px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors duration-200 cursor-pointer text-sm'
+                                onClick={() => router.push(`/chat/${chat.id}`)}
+                            >
+                                {chat.chat_name}
+                            </li>
+                        ))}
+                    </ul>
+                </ScrollArea>
             </nav>
 
-            <div className='right flex basis-5/6 flex-1 gap-6'>
-                <div className='flex flex-col gap-4 flex-1 basis-1/2'>
-                    <div className='flex-1 overflow-y-auto border'>
-                        <div className='flex flex-col gap-2'>
-                            {messages.map((c) => (
-                                <div onClick={()=> handleHtml(c.content)} className={`hover:bg-slate-100 ${c.role === 'user' ? 'bg-gray-200' : null}`}>{c.content}</div>
+            <div className='flex flex-1 gap-6 p-6'>
+                <div className='flex flex-col flex-1'>
+                    <ScrollArea className='flex-1 mb-4 bg-white rounded-lg shadow-md'>
+                        <div className='flex flex-col gap-4 p-4'>
+                            {messages.map((c, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => handleHtml(c.content)}
+                                    className={`p-3 rounded-lg transition-colors duration-200 ${c.role === 'user' ? 'bg-blue-50 hover:bg-blue-100' : 'bg-white hover:bg-gray-50'
+                                        }`}
+                                >
+                                    <ReactMarkdown
+                                        components={{
+                                            code(props) {
+                                                const { children, className, node, ...rest } = props
+                                                const match = /language-(\w+)/.exec(className || '')
+                                                return match ? (
+                                                    <SyntaxHighlighter
+                                                        PreTag="div"
+                                                        language={match[1]}
+                                                        style={dark}
+                                                        wrapLines={true}
+                                                        wrapLongLines={true}
+                                                    >
+                                                        {String(children).replace(/\n$/, '')}
+                                                    </SyntaxHighlighter>
+                                                ) : (
+                                                    <code {...rest} className={className}>
+                                                        {children}
+                                                    </code>
+                                                )
+                                            }
+                                        }}
+                                    >
+                                        {c.content}
+                                    </ReactMarkdown>
+                                </div>
                             ))}
                         </div>
-                    </div>
-                    <div>
-                        <form onSubmit={handleSubmit} action="" className='flex py-4 gap-1'>
-                            <input value={input} onChange={handleInputChange} type="text" className='border w-full' placeholder='ask me anything...' />
-                            <button type='submit' onClick={() => stop()} className='border'>
-                                stop
-                            </button>
-                        </form>
+                    </ScrollArea>
+                    <form onSubmit={handleSubmit} className='flex gap-2'>
+                        <Input
+                            value={input}
+                            onChange={handleInputChange}
+                            className='flex-1'
+                            placeholder='Ask me anything...'
+                        />
 
-                    </div>
+                        <Button onClick={stop} variant="outline" className="hover:bg-red-50 transition-colors duration-200">
+                            <StopCircle className="h-4 w-4 mr-2" />
+                            Stop
+                        </Button>
+                    </form>
                 </div>
-
-                <div className='flex-1 border basis-1/2 '>
-                    {isHtml ? <iframe srcDoc={html} style={{ width: '100%', height: '100%', border: 'none' }}></iframe> : <p>nothing to preview</p>}
-                </div>
-
-
+                {isHtml ? <div className='flex-1 bg-white rounded-lg shadow-md overflow-hidden'>
+                    {isHtml ? (
+                        <iframe srcDoc={html} style={{ width: '100%', height: '100%', border: 'none' }}></iframe>
+                    ) : (
+                        <div className="flex items-center justify-center h-full text-gray-500">
+                            Nothing to preview
+                        </div>
+                    )}
+                </div>:null}
+                
             </div>
-
         </div>
     );
 };
