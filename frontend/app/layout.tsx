@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Talaash",
-  description: "Privacy-focused search app",
+  description: "AI Chat App with Artifacts",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
             <SignInButton/>
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            {/* <UserButton /> */}
             {children}
           </SignedIn>
         </body>

@@ -33,7 +33,7 @@ export const getChats = async (id: string) => {
     const data = await db
         .select()
         .from(chats)
-        .where(eq(chats.user_id, id));
+        .where(eq(chats.user_id, id))
     return data;
 };
 

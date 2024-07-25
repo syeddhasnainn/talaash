@@ -6,7 +6,6 @@ import { currentUser } from "@clerk/nextjs/server"
 export default async function Chat() {
     const user = await currentUser().then(resp => resp?.id) as string
     const loggedInUser = await getUser(user)
-    console.log('user', loggedInUser)
 
     if (loggedInUser.length == 0) {
         await createUser(user)

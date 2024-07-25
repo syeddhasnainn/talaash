@@ -16,7 +16,6 @@ export default async function Chat({ params }: PageProps) {
 
     return (
         <div className="flex min-h-screen w-full">
-
             <ChatUI chats={chats} chatMessages={chatMessages} uuid={params.id} user_id={user} />
         </div>
     )

@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { v4 as uuidv4 } from 'uuid';
+import Spinner from './spinner';
 
 interface ChatUIProps {
     chatMessages: any
@@ -33,7 +34,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
     const [html, setHtml] = useState<string | undefined>("")
     const [isHtml, setIsHtml] = useState(false)
 
-    const { messages, input, handleInputChange, handleSubmit, stop, } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, stop, error, setMessages, isLoading } = useChat({
         onResponse: async () => {
             const existingChat = chats.find((c: any) => c.id === uuid);
             if (chats.length == 0 || !existingChat) {
@@ -44,11 +45,22 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         onFinish: async (response) => {
             await addMessage(response.role, response.content, uuid)
             const html = extractCodeFromChat(response.content) as string
-            setHtml(html)
-            setIsHtml(true)
+
+            if (html != null) {
+                setHtml(html)
+                setIsHtml(true)
+            }
         },
-        initialMessages: chatMessages
+        initialMessages: chatMessages,
+        keepLastMessageOnError: true
     });
+
+    const customSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        if (error != null) {
+            setMessages(messages.slice(0, -1))
+        }
+        handleSubmit(event)
+    }
 
     const handleHtml = (code: string) => {
         const ec = extractCodeFromChat(code) as string
@@ -82,6 +94,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
             <div className='flex flex-1 gap-6 p-6'>
                 <div className='flex flex-col flex-1'>
                     <ScrollArea className='flex-1 mb-4 bg-white rounded-lg shadow-md'>
+
                         <div className='flex flex-col gap-4 p-4'>
                             {messages.map((c, index) => (
                                 <div
@@ -90,7 +103,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                     className={`p-3 rounded-lg transition-colors duration-200 ${c.role === 'user' ? 'bg-blue-50 hover:bg-blue-100' : 'bg-white hover:bg-gray-50'
                                         }`}
                                 >
-                                    <ReactMarkdown
+                                    {/* <ReactMarkdown
                                         components={{
                                             code(props) {
                                                 const { children, className, node, ...rest } = props
@@ -114,12 +127,17 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                         }}
                                     >
                                         {c.content}
-                                    </ReactMarkdown>
+                                    </ReactMarkdown> */}
+                                    {c.content}
+
                                 </div>
+
                             ))}
                         </div>
+
+
                     </ScrollArea>
-                    <form onSubmit={handleSubmit} className='flex gap-2'>
+                    <form onSubmit={customSubmit} className='flex gap-2'>
                         <Input
                             value={input}
                             onChange={handleInputChange}
@@ -141,8 +159,8 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             Nothing to preview
                         </div>
                     )}
-                </div>:null}
-                
+                </div> : null}
+
             </div>
         </div>
     );

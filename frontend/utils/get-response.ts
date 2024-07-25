@@ -51,7 +51,7 @@ export const handleSearch = async ({
   setStreaming(true);
   const signal = streamingController.startStreaming()
 
-  console.log('this is from handleSearch', socket)
+
   
   const currentChat = {role: 'user', content: question}
   const sp = {role: 'system', content: systemPrompt}
@@ -61,7 +61,7 @@ export const handleSearch = async ({
   await addMessage(currentChat.role, currentChat.content, uuid)
 
   // const chatHistory = [...allResponses, ...[systemPrompt, currentChat]]
-  console.log('ch2:',chatHistory)
+
   const llmResponse = await fetch("/api/answer", {
     method: "POST",
     headers: {
@@ -83,7 +83,7 @@ export const handleSearch = async ({
   }
   
   setAllResponses([...chatHistory, {role:"assistant",  content: ""}])
-  console.log('grar:',allResponses)
+
   const decoder = new TextDecoder();
   let done = false;
   let fullContent = "";
@@ -109,7 +109,6 @@ export const handleSearch = async ({
   setExtractedCode(onlyCode);
 
   // setAllResponses(fullContent)
-  console.log(onlyCode)
 
   if(socket){
     socket.emit('generation', onlyCode)

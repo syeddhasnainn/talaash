@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 
 export default function Sidebar({chats}:any) {
     const router = useRouter()
-    console.log(chats)
     return (
         <div>
             <h2>history</h2>
