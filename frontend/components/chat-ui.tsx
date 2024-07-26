@@ -1,4 +1,6 @@
 'use client'
+
+
 import { addMessage, createChat } from '@/actions/actions';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,13 +9,16 @@ import { extractCodeFromChat } from '@/utils/get-response';
 import { useChat } from 'ai/react';
 import { StopCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { v4 as uuidv4 } from 'uuid';
 import Spinner from './spinner';
 import { useSocket } from '@/app/socket';
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import Sidebar from './sidebar';
 
 interface ChatUIProps {
     chatMessages: any
@@ -36,7 +41,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
     const [code, setCode] = useState<string | undefined>("")
     const [preview, setPreview] = useState(false)
 
-    const { messages, input, handleInputChange, handleSubmit, stop, error, setMessages, isLoading } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, stop, error, setMessages, isLoading, } = useChat({
         onResponse: async () => {
             const existingChat = chats.find((c: any) => c.id === uuid);
             if (chats.length == 0 || !existingChat) {
@@ -46,14 +51,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         },
         onFinish: async (response) => {
             await addMessage(response.role, response.content, uuid)
-            const code = extractCodeFromChat(response.content) as string
-            console.log(code)
-            socket?.emit('generation', code)
-
-            if (code != null) {
-                setCode(code)
-                setPreview(true)
-            }
+            handlePreview(response.content)
         },
         initialMessages: chatMessages,
         keepLastMessageOnError: true
@@ -95,67 +93,55 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                 setPreview(false)
         }
     }
-
+      
     return (
         <div className='flex flex-row flex-1 h-screen bg-gray-50'>
-            <nav className='w-64 bg-white shadow-md z-10'>
-                <ScrollArea className="h-full px-4 py-6">
-                    <Button onClick={() => router.push(`/chat/${uuidv4()}`)} variant="outline" className="w-full mb-4">New Chat</Button>
-                    <ul className='space-y-2'>
-                        {chatList.map((chat: any) => (
-                            <li
-                                key={chat.id}
-                                className='px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors duration-200 cursor-pointer text-sm'
-                                onClick={() => router.push(`/chat/${chat.id}`)}
-                            >
-                                {chat.chat_name}
-                            </li>
-                        ))}
-                    </ul>
-                </ScrollArea>
-            </nav>
+            <Sidebar chats={chatList}/>
 
             <div className='flex flex-1 gap-6 p-6'>
-                <div className='flex flex-col flex-1 basis-2/5'>
+                <div className='flex flex-col flex-1 basis-2/5 max-w-4xl mx-auto'>
                     <ScrollArea className='flex-1 mb-4 bg-white rounded-lg shadow-md'>
-
                         <div className='flex flex-col gap-4 p-4'>
                             {messages.map((c, index) => (
                                 <div
                                     key={index}
-                                    onClick={() => handlePreview(c.content)}
+                                    
                                     className={`p-3 rounded-lg transition-colors duration-200 ${c.role === 'user' ? 'bg-blue-50 hover:bg-blue-100' : 'bg-white hover:bg-gray-50'
                                         }`}
                                 >
-                                    {/* <ReactMarkdown
-                                        components={{
-                                            code(props) {
-                                                const { children, className, node, ...rest } = props
-                                                const match = /language-(\w+)/.exec(className || '')
-                                                return match ? (
-                                                    <SyntaxHighlighter
-                                                        PreTag="div"
-                                                        language={match[1]}
-                                                        style={dark}
-                                                        wrapLines={true}
-                                                        wrapLongLines={true}
-                                                    >
-                                                        {String(children).replace(/\n$/, '')}
-                                                    </SyntaxHighlighter>
-                                                ) : (
-                                                    <code {...rest} className={className}>
-                                                        {children}
-                                                    </code>
-                                                )
-                                            }
-                                        }}
-                                    >
-                                        {c.content}
-                                    </ReactMarkdown> */}
+                                    {/* <Markdown remarkPlugins={[remarkGfm]}
+                    components={{
+                      code(props) {
+                        const { children, className, node, ...rest } = props
+                        const match = /language-(\w+)/.exec(className || '')
+                        return match ? (
+                          <SyntaxHighlighter
+                            PreTag="div"
+                            language={match[1]}
+                            style={dark}
+                            wrapLines={true}
+                            wrapLongLines={true}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code {...rest} className={className}>
+                            {children}
+                          </code>
+                        )
+                      }
+                    }}
+                  >{c.content}</Markdown> */}
 
+                  {c.content}
+
+
+                                    {c.role == "assistant" ? <button className='border' onClick={() =>  navigator.clipboard.writeText(c.content)}> copy </button> : null}
+                                    {c.role == 'assistant' ? <button className='border' onClick={() => handlePreview(c.content)}>preview</button> : null}
                                 </div>
 
                             ))}
+
                         </div>
 
 
@@ -168,7 +154,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             placeholder='Ask me anything...'
                         />
 
-                        <Button onClick={stop} variant="outline" className="hover:bg-red-50 transition-colors duration-200">
+                        <Button type='button' onClick={()=> stop()} variant="outline" className="hover:bg-red-50 transition-colors duration-200">
                             <StopCircle className="h-4 w-4 mr-2" />
                             Stop
                         </Button>
@@ -179,9 +165,6 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                         <iframe srcDoc={code} style={{ width: '100%', height: '100%', border: 'none' }}></iframe>
                     ) : (
                         <iframe src="http://localhost:3000" style={{ width: '100%', height: '100%', border: 'none' }}></iframe>
-                        // <div className="flex items-center justify-center h-full text-gray-500">
-                        //     Nothing to preview
-                        // </div>
                     )}
                 </div> : null}
 

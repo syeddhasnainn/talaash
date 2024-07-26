@@ -1,6 +1,7 @@
 import { getChats, getMessages } from "@/actions/actions"
 import { useSocket } from "@/app/socket";
 import ChatUI from "@/components/chat-ui"
+import Sidebar from "@/components/sidebar";
 import { currentUser } from "@clerk/nextjs/server"
 
 type PageProps = {
