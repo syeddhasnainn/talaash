@@ -3,17 +3,21 @@ import CreateChat from "@/components/create-chat"
 import { currentUser } from "@clerk/nextjs/server"
 
 export default async function Chat() {
-    const user = await currentUser().then(resp => resp?.id) as string
-    const loggedInUser = await getUser(user)
+
+    const user = await currentUser().then(resp => resp)
+    console.log(user)
+    const user_id = user?.id as string
+    const loggedInUser = await getUser(user_id)
+    const firstName = user?.firstName
 
     if (loggedInUser.length == 0) {
-        await createUser(user)
+        await createUser(user_id)
     }
 
     let chatList: Array<{ id: string, user_id: string }> = []
 
     try {
-        chatList = await getChats(user);
+        chatList = await getChats(user_id);
         chatList = chatList.slice(0, 6)
 
     } catch {
@@ -21,6 +25,6 @@ export default async function Chat() {
     }
 
     return (
-        <CreateChat chats={chatList} />
+        <CreateChat chats={chatList} firstName={firstName}/>
     )
 }
