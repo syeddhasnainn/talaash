@@ -1,6 +1,5 @@
 import { createUser, getChats, getUser } from "@/actions/actions"
-import ChatHistory from "@/components/chat-history"
-import { Search } from "@/components/search"
+import CreateChat from "@/components/create-chat"
 import { currentUser } from "@clerk/nextjs/server"
 
 export default async function Chat() {
@@ -15,16 +14,13 @@ export default async function Chat() {
 
     try {
         chatList = await getChats(user);
+        chatList = chatList.slice(0, 6)
 
     } catch {
         console.log('Err: No Chat found OR no table in DB!');
     }
 
     return (
-        <div className="flex flex-col max-w-md gap-4 mx-auto pt-96">
-
-            <Search user_id={user} />
-            <ChatHistory chatList={chatList} />
-        </div>
+        <CreateChat chats={chatList} />
     )
 }

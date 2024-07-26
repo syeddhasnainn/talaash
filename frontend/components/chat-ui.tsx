@@ -18,7 +18,7 @@ import Spinner from './spinner';
 import { useSocket } from '@/app/socket';
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import Sidebar from './sidebar';
+import Sidebar from './sidebar'
 
 interface ChatUIProps {
     chatMessages: any
@@ -36,6 +36,7 @@ type ChatProps = {
 const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
     const router = useRouter()
     const socket = useSocket()
+
 
     const [chatList, setChatList] = useState(chats)
     const [code, setCode] = useState<string | undefined>("")
@@ -93,10 +94,10 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                 setPreview(false)
         }
     }
-      
+
     return (
         <div className='flex flex-row flex-1 h-screen bg-gray-50'>
-            <Sidebar chats={chatList}/>
+            <Sidebar chats={chatList} />
 
             <div className='flex flex-1 gap-6 p-6'>
                 <div className='flex flex-col flex-1 basis-2/5 max-w-4xl mx-auto'>
@@ -105,38 +106,38 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             {messages.map((c, index) => (
                                 <div
                                     key={index}
-                                    
-                                    className={`p-3 rounded-lg transition-colors duration-200 ${c.role === 'user' ? 'bg-blue-50 hover:bg-blue-100' : 'bg-white hover:bg-gray-50'
+
+                                    className={`p-3 rounded-lg transition-colors duration-200 ${c.role === 'user' ? 'bg-blue-100 hover:bg-blue-100' : 'bg-gray-100 '
                                         }`}
                                 >
-                                    {/* <Markdown remarkPlugins={[remarkGfm]}
-                    components={{
-                      code(props) {
-                        const { children, className, node, ...rest } = props
-                        const match = /language-(\w+)/.exec(className || '')
-                        return match ? (
-                          <SyntaxHighlighter
-                            PreTag="div"
-                            language={match[1]}
-                            style={dark}
-                            wrapLines={true}
-                            wrapLongLines={true}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code {...rest} className={className}>
-                            {children}
-                          </code>
-                        )
-                      }
-                    }}
-                  >{c.content}</Markdown> */}
+                                    <Markdown remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            code(props) {
+                                                const { children, className, node, ...rest } = props
+                                                const match = /language-(\w+)/.exec(className || '')
+                                                return match ? (
+                                                    <SyntaxHighlighter
+                                                        PreTag="div"
+                                                        language={match[1]}
+                                                        style={dark}
+                                                        wrapLines={true}
+                                                        wrapLongLines={true}
+                                                    >
+                                                        {String(children).replace(/\n$/, '')}
+                                                    </SyntaxHighlighter>
+                                                ) : (
+                                                    <code {...rest} className={className}>
+                                                        {children}
+                                                    </code>
+                                                )
+                                            }
+                                        }}
+                                    >{c.content}</Markdown>
 
-                  {c.content}
+                                    {/* {c.content} */}
 
 
-                                    {c.role == "assistant" ? <button className='border' onClick={() =>  navigator.clipboard.writeText(c.content)}> copy </button> : null}
+                                    {c.role == "assistant" ? <button className='border' onClick={() => navigator.clipboard.writeText(c.content)}> copy </button> : null}
                                     {c.role == 'assistant' ? <button className='border' onClick={() => handlePreview(c.content)}>preview</button> : null}
                                 </div>
 
@@ -154,7 +155,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             placeholder='Ask me anything...'
                         />
 
-                        <Button type='button' onClick={()=> stop()} variant="outline" className="hover:bg-red-50 transition-colors duration-200">
+                        <Button type='button' onClick={() => stop()} variant="outline" className="hover:bg-red-50 transition-colors duration-200">
                             <StopCircle className="h-4 w-4 mr-2" />
                             Stop
                         </Button>
