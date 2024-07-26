@@ -12,23 +12,27 @@ export default function Sidebar({chats}:any) {
 
     return (
        <>
-       <nav className='w-64 bg-white shadow-md z-10'>
-                <ScrollArea className="h-full px-4 py-6">
-                    <Button onClick={() => router.push(`/chat/${uuidv4()}`)} variant="outline" className="w-full mb-4">New Chat</Button>
-                    <ul className='space-y-2'>
-                        {chats.map((chat: any) => (
-                            <li
-                                key={chat.id}
-                                className='px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors duration-200 cursor-pointer text-sm'
-                                onClick={() => router.push(`/chat/${chat.id}`)}
-                            >
-                                {chat.chat_name}
-                            </li>
-                        ))}
-
-                    </ul>
-                </ScrollArea>
-            </nav>
+       <nav className='w-64 bg-white border-r border-gray-200'>
+      <ScrollArea className="h-full px-4 py-6">
+        <Button 
+          onClick={() => router.push(`/chat/${uuidv4()}`)} 
+          className="w-full mb-4 bg-black text-white hover:bg-gray-800"
+        >
+          New Chat
+        </Button>
+        <ul className='space-y-2'>
+          {chats.map((chat) => (
+            <li
+              key={chat.id}
+              className='px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer text-sm text-gray-700'
+              onClick={() => router.push(`/chat/${chat.id}`)}
+            >
+              {chat.chat_name}
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
+    </nav>
        </>
     )
 }

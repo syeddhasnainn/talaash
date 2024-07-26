@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import {
   ClerkProvider,
   SignInButton,
   SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+  SignedOut
+} from '@clerk/nextjs';
+import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const monst =  Montserrat({ subsets: ["latin"], weight: "400" },);
+
 
 export const metadata: Metadata = {
   title: "Talaash",
@@ -22,9 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-    >
-      <html lang='en'>
+    <ClerkProvider signInForceRedirectUrl={`/new`}>
+      <html lang='en' className={monst.className}>
         <body>
           <SignedOut>
             <SignInButton/>
