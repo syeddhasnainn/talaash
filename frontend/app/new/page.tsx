@@ -5,7 +5,6 @@ import { currentUser } from "@clerk/nextjs/server"
 export default async function Chat() {
 
     const user = await currentUser().then(resp => resp)
-    console.log(user)
     const user_id = user?.id as string
     const loggedInUser = await getUser(user_id)
     const firstName = user?.firstName

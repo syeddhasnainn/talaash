@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import Together from "together-ai";
 import OpenAI from "openai";
+import { systemPrompt } from "@/utils/prompts";
 
 export const dynamic = "force-dynamic";
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const encoder = new TextEncoder();
 
 function iteratorToStream(iterator: any) {
@@ -27,7 +28,7 @@ function sleep(time: number) {
   });
 }
 
-async function* makeIterator(prompt: any) {
+async function* makeIterator(messages: any) {
 
   // const answer = await together.chat.completions.create({
   //   messages: prompt,
@@ -37,16 +38,20 @@ async function* makeIterator(prompt: any) {
   // });
 
 
+  const sp = [{ role: 'system', content: systemPrompt }]
+  const newArray = sp.concat(messages)
 
   const answer = await openai.chat.completions.create({
     model: "gpt-4o-mini",
-    messages: prompt,
+    messages: newArray as any,
     stream: true,
   });
 
   for await (const chunk of answer) {
-    yield encoder.encode(`${chunk.choices[0].delta?.content}`);
-    await sleep(10);
+    const content = chunk.choices[0].delta?.content;
+    if (content) {
+      yield encoder.encode(content);
+    }
   }
 }
 
@@ -54,11 +59,9 @@ export async function POST(request: Request) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
-  var { chatHistory } = await request.json();
+  var { messages } = await request.json();
 
-  // const prompt = `be concise, only write short answer not more than 100 tokens, here is the question:\n${chatHistory[0].content}\n`;
-
-  const iterator = makeIterator(chatHistory);
+  const iterator = makeIterator(messages);
   const streamer = iteratorToStream(iterator);
 
   return new NextResponse(streamer, {

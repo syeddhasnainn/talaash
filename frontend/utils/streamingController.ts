@@ -1,5 +1,3 @@
-// streamingController.ts
-
 class StreamingController {
     private abortController: AbortController | null = null;
   
