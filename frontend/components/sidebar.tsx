@@ -2,11 +2,10 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
-
-import React from "react";
+import React, { memo } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Sidebar({ chats }: any) {
+export default memo(function Sidebar({ chats }: any) {
   const router = useRouter();
 
   return (
@@ -34,4 +33,4 @@ export default function Sidebar({ chats }: any) {
       </nav>
     </>
   );
-}
+})
