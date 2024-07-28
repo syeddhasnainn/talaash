@@ -1,21 +1,23 @@
-import { streamingController } from './streamingController';
-import { v4 as uuidv4 } from 'uuid';
-import { addMessage } from '@/actions/actions';
-import { systemPrompt } from './prompts';
+import { streamingController } from "./streamingController";
+import { v4 as uuidv4 } from "uuid";
+import { addMessage } from "@/actions/actions";
+import { systemPrompt } from "./prompts";
 
 type handleSearchProps = {
   question: string;
   setQuestion: any;
   setExtractedCode: (extractedCode: string) => void;
-  socket:any,
-  setStreaming:(streaming: boolean) => void;
-  allResponses:any,
-  setAllResponses:(allResponses:any) => void,
-  setChatId: (chatId:any)=> void,
-  uuid: string
+  socket: any;
+  setStreaming: (streaming: boolean) => void;
+  allResponses: any;
+  setAllResponses: (allResponses: any) => void;
+  setChatId: (chatId: any) => void;
+  uuid: string;
 };
 
-export function extractCodeFromChat(chatResponse: string): string | string[] | null {
+export function extractCodeFromChat(
+  chatResponse: string,
+): string | string[] | null {
   const codeBlockPattern = /```(?:\w+)?\s*\n([\s\S]*?)\n```/g;
   const codeBlocks: string[] = [];
   let match: RegExpExecArray | null;
@@ -45,20 +47,18 @@ export const handleSearch = async ({
   allResponses,
   setAllResponses,
   setChatId,
-  uuid
+  uuid,
 }: handleSearchProps) => {
-  setChatId(uuid)
+  setChatId(uuid);
   setStreaming(true);
-  const signal = streamingController.startStreaming()
+  const signal = streamingController.startStreaming();
 
+  const currentChat = { role: "user", content: question };
+  const sp = { role: "system", content: systemPrompt };
 
-  
-  const currentChat = {role: 'user', content: question}
-  const sp = {role: 'system', content: systemPrompt}
-
-  const chatHistory = [...allResponses, ...[sp, currentChat]]
-  setQuestion('')
-  await addMessage(currentChat.role, currentChat.content, uuid)
+  const chatHistory = [...allResponses, ...[sp, currentChat]];
+  setQuestion("");
+  await addMessage(currentChat.role, currentChat.content, uuid);
 
   // const chatHistory = [...allResponses, ...[systemPrompt, currentChat]]
 
@@ -68,7 +68,7 @@ export const handleSearch = async ({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ chatHistory }),
-    signal
+    signal,
   });
 
   const reader = llmResponse.body?.getReader();
@@ -77,12 +77,11 @@ export const handleSearch = async ({
     throw new Error("Failed to fetch answer");
   }
 
-
   if (!reader) {
     throw new Error("Response body is null");
   }
-  
-  setAllResponses([...chatHistory, {role:"assistant",  content: ""}])
+
+  setAllResponses([...chatHistory, { role: "assistant", content: "" }]);
 
   const decoder = new TextDecoder();
   let done = false;
@@ -91,26 +90,26 @@ export const handleSearch = async ({
   while (!done) {
     const { value, done: streamDone } = await reader.read();
     done = streamDone;
-    if(done){
-      setStreaming(false)
+    if (done) {
+      setStreaming(false);
     }
     if (value) {
       fullContent += decoder.decode(value);
-      setAllResponses((prev:any) => {
-        const updated = [...prev]
+      setAllResponses((prev: any) => {
+        const updated = [...prev];
         updated[updated.length - 1].content += decoder.decode(value);
         return updated;
-      })
+      });
     }
   }
-  
-  await addMessage("assistant",fullContent,uuid)
+
+  await addMessage("assistant", fullContent, uuid);
   const onlyCode = extractCodeFromChat(fullContent) as string;
   setExtractedCode(onlyCode);
 
   // setAllResponses(fullContent)
 
-  if(socket){
-    socket.emit('generation', onlyCode)
+  if (socket) {
+    socket.emit("generation", onlyCode);
   }
 };

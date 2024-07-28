@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { create } from "zustand";
 
@@ -15,10 +15,10 @@ interface StoreState {
   setIsLoading: any;
   isWebAccess: boolean;
   setIsWebAccess: any;
-  extractedCode: string,
-  setExtractedCode: any,
-  allResponses: Array<{role: string, content:string}>,
-  setAllResponses: any,
+  extractedCode: string;
+  setExtractedCode: any;
+  allResponses: Array<{ role: string; content: string }>;
+  setAllResponses: any;
 }
 
 interface SearchResults {
@@ -54,7 +54,6 @@ const useStore = create<StoreState>()((set) => ({
   //   allResponses: typeof x === 'function' ? x(state.allResponses) : x
   // })),
   setAllResponses: (x: any) => set(() => ({ allResponses: x })),
-
 }));
 
 export default useStore;

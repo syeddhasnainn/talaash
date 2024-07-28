@@ -1,25 +1,26 @@
-import { getChats, getMessages } from "@/actions/actions"
+import { getChats, getMessages } from "@/actions/actions";
 import { useSocket } from "@/app/socket";
-import ChatUI from "@/components/chat-ui"
+import ChatUI from "@/components/chat-ui";
 import Sidebar from "@/components/sidebar";
-import { currentUser } from "@clerk/nextjs/server"
+import { currentUser } from "@clerk/nextjs/server";
 
 type PageProps = {
-    params: { id: string };
-}
-
+  params: { id: string };
+};
 
 export default async function Chat({ params }: PageProps) {
+  const user = (await currentUser().then((resp) => resp?.id)) as string;
+  const chatMessages = await getMessages(params.id);
+  const chats = await getChats(user);
 
-    
-    const user = await currentUser().then(resp => resp?.id) as string
-    const chatMessages = await getMessages(params.id)
-    const chats = await getChats(user)
-
-
-    return (
-        <div className="flex min-h-screen w-full">
-            <ChatUI chats={chats} chatMessages={chatMessages} uuid={params.id} user_id={user} />
-        </div>
-    )
+  return (
+    <div className="flex min-h-screen w-full">
+      <ChatUI
+        chats={chats}
+        chatMessages={chatMessages}
+        uuid={params.id}
+        user_id={user}
+      />
+    </div>
+  );
 }

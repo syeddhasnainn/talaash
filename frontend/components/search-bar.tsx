@@ -29,16 +29,26 @@ function SearchIcon(props: Attr) {
 interface SearchBarProps {
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  socket:any,
+  socket: any;
 }
 
 export default function SearchBar({
   handleInput,
   handleSubmit,
-  socket
+  socket,
 }: SearchBarProps) {
-  const { question, setAnswer, setResults, extractedCode, setExtractedCode,streaming, setStreaming, allResponses, setAllResponses, setChatId } =
-    useStore();
+  const {
+    question,
+    setAnswer,
+    setResults,
+    extractedCode,
+    setExtractedCode,
+    streaming,
+    setStreaming,
+    allResponses,
+    setAllResponses,
+    setChatId,
+  } = useStore();
 
   return (
     <div className="flex flex-col">
@@ -75,7 +85,7 @@ export default function SearchBar({
                 setStreaming,
                 allResponses,
                 setAllResponses,
-                setChatId
+                setChatId,
               })
             }
             type="submit"

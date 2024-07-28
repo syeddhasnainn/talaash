@@ -2,14 +2,13 @@ import {
   ClerkProvider,
   SignInButton,
   SignedIn,
-  SignedOut
-} from '@clerk/nextjs';
+  SignedOut,
+} from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const monst =  Montserrat({ subsets: ["latin"], weight: "400" },);
-
+const monst = Montserrat({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "Talaash",
@@ -23,10 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider signInForceRedirectUrl={`/new`}>
-      <html lang='en' className={monst.className}>
+      <html lang="en" className={monst.className}>
         <body>
           <SignedOut>
-            <SignInButton/>
+            <SignInButton />
           </SignedOut>
           <SignedIn>
             {/* <UserButton /> */}

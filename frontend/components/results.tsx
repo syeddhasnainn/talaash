@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useStore from "@/utils/store";
 import { handleSearch } from "@/utils/get-search";
-import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { streamingController } from "@/utils/streamingController";
 import { useState } from "react";
 
@@ -15,7 +15,7 @@ interface ResultProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   question: string;
   answer: string;
-  socket: any,
+  socket: any;
 }
 
 export function Results({
@@ -23,7 +23,7 @@ export function Results({
   handleSubmit,
   question,
   answer,
-  socket
+  socket,
 }: ResultProps) {
   const {
     setResults,
@@ -36,12 +36,10 @@ export function Results({
     allResponses,
     setAllResponses,
     chatId,
-    setChatId
+    setChatId,
   } = useStore();
 
-
   return (
-
     // <form
     //   onSubmit={handleSubmit}
     //   className="flex flex-col"
@@ -90,7 +88,6 @@ export function Results({
     //       })
     //     }>regenerate</button>
 
-
     //     <button className="border border-black my-2 w-24 rounded-xl p-1" onClick={() => streamingController.stopStreaming()} disabled={!streaming}
     //     >stop</button>
 
@@ -134,7 +131,6 @@ export function Results({
 
     //     </div>
 
-
     //   )}
     //   {/* <button className="border border-black my-4 w-24 rounded-xl p-1" onClick={() =>
     //     handleSearch({
@@ -155,35 +151,38 @@ export function Results({
           <div className="flex-1 overflow-auto">
             {allResponses.map((resp: any) => (
               <>
-                {resp.role == "user" && (<div className="bg-slate-300">{resp.content}</div>)}
-                
-                  <Markdown remarkPlugins={[remarkGfm]}
-                    components={{
-                      code(props) {
-                        const { children, className, node, ...rest } = props
-                        const match = /language-(\w+)/.exec(className || '')
-                        return match ? (
-                          <SyntaxHighlighter
-                            PreTag="div"
-                            language={match[1]}
-                            style={dark}
-                            wrapLines={true}
-                            wrapLongLines={true}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code {...rest} className={className}>
-                            {children}
-                          </code>
-                        )
-                      }
-                    }}
-                  >{resp.role == "assistant" ? resp.content : null}</Markdown>
+                {resp.role == "user" && (
+                  <div className="bg-slate-300">{resp.content}</div>
+                )}
+
+                <Markdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code(props) {
+                      const { children, className, node, ...rest } = props;
+                      const match = /language-(\w+)/.exec(className || "");
+                      return match ? (
+                        <SyntaxHighlighter
+                          PreTag="div"
+                          language={match[1]}
+                          style={dark}
+                          wrapLines={true}
+                          wrapLongLines={true}
+                        >
+                          {String(children).replace(/\n$/, "")}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code {...rest} className={className}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {resp.role == "assistant" ? resp.content : null}
+                </Markdown>
               </>
-
             ))}
-
           </div>
           <div className="bottom-box">
             <form onSubmit={handleSubmit}>
@@ -215,7 +214,6 @@ export function Results({
               >
                 search
               </button>
-
             </form>
           </div>
           {/* <div className="border sticky bottom-0 ">
@@ -250,15 +248,12 @@ export function Results({
 
             </div>
           </div> */}
-
         </div>
-
-
 
         <div className="right flex-1">
           <iframe
             src="http://localhost:3000"
-            style={{ width: '100%', height: '100%', border: 'none' }}
+            style={{ width: "100%", height: "100%", border: "none" }}
           ></iframe>
         </div>
       </div>

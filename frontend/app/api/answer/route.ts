@@ -29,7 +29,6 @@ function sleep(time: number) {
 }
 
 async function* makeIterator(messages: any) {
-
   // const answer = await together.chat.completions.create({
   //   messages: prompt,
   //   model: "mistralai/Mistral-7B-Instruct-v0.3",
@@ -37,9 +36,8 @@ async function* makeIterator(messages: any) {
   //   stream: true,
   // });
 
-
-  const sp = [{ role: 'system', content: systemPrompt }]
-  const newArray = sp.concat(messages)
+  const sp = [{ role: "system", content: systemPrompt }];
+  const newArray = sp.concat(messages);
 
   const answer = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -71,5 +69,5 @@ export async function POST(request: Request) {
       "Content-Type": "text/event-stream; charset=utf-8",
       Connection: "keep-alive",
     },
-  })
+  });
 }
