@@ -99,16 +99,20 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             ))}
                         </div>
                     </ScrollArea>
-                    <form onSubmit={handleSubmit} className="flex gap-2 relative">
-                        <Input
-                            value={input}
-                            onChange={handleInputChange}
-                            className="flex-1 border-gray-300 "
-                            placeholder="Ask me anything..."
-                        />
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                            <Paperclip className="h-5 w-5 text-gray-500" />
+                    <form onSubmit={handleSubmit} className="flex gap-2 ">
+                        <div className="relative flex-1 border-gray-300">
+                            <Input
+                                value={input}
+                                onChange={handleInputChange}
+                                className=""
+                                placeholder="Ask me anything..."
+                            />
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <Paperclip className="h-5 w-5 text-gray-500" />
+                            </div>
                         </div>
+
+
 
                         {isLoading && <Button
                             type="button"
