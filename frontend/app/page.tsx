@@ -1,4 +1,5 @@
 "use client";
+import { RedirectToSignIn } from "@clerk/nextjs";
 import { useSocket } from "./socket";
 
 export default function Home() {
@@ -6,7 +7,7 @@ export default function Home() {
 
   return (
     <main>
-      <div>hi there! noob.</div>
+      <RedirectToSignIn />
     </main>
   );
 }

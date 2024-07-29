@@ -54,3 +54,7 @@ export const getMessages = async (chat_id: string) => {
     .where(eq(messages.chat_id, chat_id));
   return data;
 };
+
+export const deleteChats = async (chat_id: string) => {
+  await db.delete(chats).where(eq(chats.id, chat_id));
+};

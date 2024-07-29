@@ -78,18 +78,14 @@ export const useChat = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
-    const existingChat = chats.find((c: any) => c.id === uuid);
-    const signal = streamingController.startStreaming();
+    setMessages([...messages, {role: "user", content: input}])
 
-    if (!existingChat) {
-      await createChat(user_id, uuid, input);
-      setChatList([
-        ...chatList,
-        { chat_name: input, user_id: user_id, id: uuid },
-      ]);
-    }
+    const signal = streamingController.startStreaming();
+    
+   
 
     const userMessage = [...messages, { role: "user", content: input }];
+
     try {
       const resp = await fetch("/api/answer", {
         method: "POST",
@@ -100,9 +96,7 @@ export const useChat = ({
         signal,
       });
 
-      if (resp.ok) {
-        await addMessage("user", input, uuid);
-      }
+     
 
       setInput("");
       const reader = resp.body?.getReader();
@@ -120,7 +114,7 @@ export const useChat = ({
       const decoder = new TextDecoder();
       let done = false;
       let assistantResponse = "";
-
+      
       while (!done) {
         const { value, done: streamDone } = await reader.read();
         done = streamDone;
@@ -139,7 +133,22 @@ export const useChat = ({
           });
         }
       }
+      
       handlePreview(assistantResponse);
+
+      const existingChat = chats.find((c: any) => c.id === uuid);
+      if (!existingChat) {
+        await createChat(user_id, uuid, input);
+        setChatList([
+          ...chatList,
+          { chat_name: input, user_id: user_id, id: uuid },
+        ]);
+      }
+      
+      if (resp.ok) {
+        await addMessage("user", input, uuid);
+      }
+
       await addMessage("assistant", assistantResponse, uuid);
     } catch (error) {
       if (error instanceof DOMException) {
@@ -164,5 +173,8 @@ export const useChat = ({
     setPreview,
     handlePreview,
     stop,
+    chatList,
+    setChatList,
+    setMessages
   };
 };

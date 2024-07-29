@@ -43,7 +43,9 @@ export default function CreateChat({ chats, firstName }: any) {
                   key={index}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
                 >
-                  <span className="text-sm text-gray-700">{chat.id}</span>
+                  <span className="text-sm text-gray-700">
+                    {chat.chat_name}
+                  </span>
                   <ArrowRight className="h-4 w-4 text-gray-400" />
                 </li>
               ))}

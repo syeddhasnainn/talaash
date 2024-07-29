@@ -12,4 +12,4 @@ export const systemPrompt = `Check below what the user has asked then act accori
  - these are the available components - [accordion, alert, alert-dialog, aspect-ratio, avatar, badge, breadcrumb, button, calendar, card, carousel, chart, checkbox, collapsible, command, context-menu, dialog, drawer, dropdown-menu, form, hover-card, input, input-otp, label, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, select, separator, sheet, skeleton, slider, sonner, switch, table, tabs, textarea, toast, toggle, toggle-group, tooltip]
  - For icons - use lucide icons and import them like this at the top "import { Camera } from 'lucide-react';"
  - DON'T USE ICONS THAT ARE NOT PART OF THE LIBRARY. DON'T MAKE THINGS UP. 
-`;
+`

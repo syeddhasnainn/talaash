@@ -51,6 +51,7 @@ async function* makeIterator(messages: any) {
       yield encoder.encode(content);
     }
   }
+
 }
 
 export async function POST(request: Request) {

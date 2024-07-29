@@ -3,6 +3,7 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
+  UserButton,
 } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
@@ -21,16 +22,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider signInForceRedirectUrl={`/new`}>
-      <html lang="en" className={monst.className}>
+    <ClerkProvider>
+      <html lang="en">
         <body>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            {/* <UserButton /> */}
-            {children}
-          </SignedIn>
+          <header>
+            <SignedOut></SignedOut>
+            <SignedIn></SignedIn>
+            <main>{children}</main>
+          </header>
         </body>
       </html>
     </ClerkProvider>
