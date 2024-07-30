@@ -1,4 +1,4 @@
-import { addMessage, createChat } from "@/actions/actions";
+import { addMessage, createChat,getMessageCount,incrementMessages } from "@/actions/actions";
 import { useSocket } from "@/app/socket";
 import { extractCodeFromChat } from "@/utils/get-response";
 import { streamingController } from "@/utils/streamingController";
@@ -41,6 +41,7 @@ export const useChat = ({
   const [messages, setMessages] =
     useState<{ role: string; content: string }[]>(chatMessages);
   const [chatList, setChatList] = useState(chats);
+  const [limit, setLimit] = useState(false)
 
   const getCodeType = (resp: string) => {
     if (resp.includes("```html")) return "html";
@@ -78,15 +79,23 @@ export const useChat = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessages([...messages, {role: "user", content: input}])
-
+    
     const signal = streamingController.startStreaming();
     
-   
-
-    const userMessage = [...messages, { role: "user", content: input }];
-
+    
+    
+    
     try {
+      const count = await getMessageCount(user_id)
+      if (count > 100) {
+        setLimit(true)
+        setInput("")
+        throw new Error('limit reached')
+        
+      }
+      
+      setMessages([...messages, {role: "user", content: input}])
+      const userMessage = [...messages, { role: "user", content: input }];
       const resp = await fetch("/api/answer", {
         method: "POST",
         headers: {
@@ -95,8 +104,6 @@ export const useChat = ({
         body: JSON.stringify({ messages: userMessage }),
         signal,
       });
-
-     
 
       setInput("");
       const reader = resp.body?.getReader();
@@ -114,6 +121,7 @@ export const useChat = ({
       const decoder = new TextDecoder();
       let done = false;
       let assistantResponse = "";
+      setIsLoading(false);
       
       while (!done) {
         const { value, done: streamDone } = await reader.read();
@@ -144,12 +152,13 @@ export const useChat = ({
           { chat_name: input, user_id: user_id, id: uuid },
         ]);
       }
-      
+
       if (resp.ok) {
         await addMessage("user", input, uuid);
       }
 
       await addMessage("assistant", assistantResponse, uuid);
+      await incrementMessages(user_id)
     } catch (error) {
       if (error instanceof DOMException) {
       } else new Error(`${error}`);
@@ -175,6 +184,7 @@ export const useChat = ({
     stop,
     chatList,
     setChatList,
-    setMessages
+    setMessages,
+    limit
   };
 };

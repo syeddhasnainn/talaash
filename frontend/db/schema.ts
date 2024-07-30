@@ -11,6 +11,7 @@ import {
 
 export const users = pgTable("users", {
   id: text("id").primaryKey().notNull(),
+  message_count: integer('message_count').notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

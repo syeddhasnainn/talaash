@@ -29,15 +29,19 @@ function sleep(time: number) {
 }
 
 async function* makeIterator(messages: any) {
-  // const answer = await together.chat.completions.create({
-  //   messages: prompt,
-  //   model: "mistralai/Mistral-7B-Instruct-v0.3",
-  //   max_tokens: 2000,
-  //   stream: true,
-  // });
-
+  
   const sp = [{ role: "system", content: systemPrompt }];
   const newArray = sp.concat(messages);
+  
+  // const answer = await together.chat.completions.create({
+  //   messages: newArray as any,
+  //   model: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+  //   // model: "codellama/CodeLlama-70b-Instruct-hf",
+  //   // model: "mistralai/Mixtral-8x22B-Instruct-v0.1",
+
+
+  //   stream: true,
+  // });
 
   const answer = await openai.chat.completions.create({
     model: "gpt-4o-mini",

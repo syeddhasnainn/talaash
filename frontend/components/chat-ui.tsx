@@ -1,28 +1,16 @@
 "use client";
-import { useVirtualizer, Virtualizer } from "@tanstack/react-virtual";
-import { addMessage, createChat } from "@/actions/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { extractCodeFromChat } from "@/utils/get-response";
 import { useChat } from "@/hooks/useChat";
-import { CircleX, Copy, Paperclip, StopCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { memo, useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { v4 as uuidv4 } from "uuid";
-import Spinner from "./spinner";
-import { useSocket } from "@/app/socket";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import Sidebar from "./sidebar";
 import { UserButton } from "@clerk/nextjs";
-import MemoizedMarkdown from "./markdown";
-import { read } from "fs";
-import { streamingController } from "@/utils/streamingController";
+import { CircleX, Paperclip, StopCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { IFrame } from "./iframe";
+import MemoizedMarkdown from "./markdown";
+import Sidebar from "./sidebar";
+import Spinner from "./spinner";
 
 interface ChatUIProps {
     chatMessages: any;
@@ -53,11 +41,15 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         stop,
         isLoading,
         chatList,
-        setChatList
+        setChatList,
+        limit
     } = useChat({ chats, chatMessages, uuid, user_id });
-
+    const [iframeLoaded, setIframeLoaded] = useState(false);
+    const handleIframeLoad = () => {
+        setIframeLoaded(true);
+    };
     return (
-        <div className="flex flex-row flex-1 h-screen">
+        <div className="flex flex-row flex-1 h-screen relative ">
             <Sidebar chats={chatList} setChatList={setChatList} messages={messages} setMessages={setMessages} />
             <div className="flex flex-1 gap-6 p-6">
                 <div className="flex flex-col flex-1 basis-2/5 max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
@@ -97,8 +89,14 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                     )}
                                 </div>
                             ))}
+
+                            {isLoading && <Spinner />}
                         </div>
+
+
                     </ScrollArea>
+                    {limit && <div className="text-red-700 text-xs mb-1 text-end">Limit Reached!</div>}
+
                     <form onSubmit={handleSubmit} className="flex gap-2 ">
                         <div className="relative flex-1 border-gray-300">
                             <Input
@@ -127,21 +125,26 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                     </form>
                 </div>
                 {preview && (
-                    <div className="flex-1 basis-3/5 rounded-lg shadow-lg overflow-hidden">
+                    <div className={`flex-1 basis-3/5 rounded-lg shadow-lg overflow-hidden transition-opacity duration-500 ${iframeLoaded ? 'opacity-100' : 'opacity-0'}`}>
+
                         <div className="h-full rounded-lg overflow-hidden flex flex-col">
                             <div className="bg-black text-white p-3 flex items-center justify-between">
                                 <h3 className="text-lg font-semibold">Preview</h3>
                                 <div className="flex space-x-2">
-                                    <button onClick={() => setPreview(false)}>
+                                    <button onClick={() => {
+                                        setPreview(false);
+                                        setIframeLoaded(false);
+                                    }}>
                                         <CircleX />
                                     </button>
                                 </div>
                             </div>
                             <div className="flex-1 overflow-hidden">
                                 {code?.startsWith("<!DOCTYPE html>") ? (
-                                    <IFrame srcDoc={code}></IFrame>
-                                ) : (
-                                    <IFrame src="http://localhost:3000"></IFrame>
+                                    <IFrame srcDoc={code} onLoad={handleIframeLoad}></IFrame>) : (
+                                    <IFrame src="http://localhost:3000" onLoad={handleIframeLoad}></IFrame>
+
+
                                 )}
                             </div>
                         </div>

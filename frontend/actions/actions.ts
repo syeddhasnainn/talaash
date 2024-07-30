@@ -1,7 +1,7 @@
 "use server";
 import db from "@/db/drizzle";
 import { chats, messages, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const getUser = async (id: string) => {
@@ -58,3 +58,20 @@ export const getMessages = async (chat_id: string) => {
 export const deleteChats = async (chat_id: string) => {
   await db.delete(chats).where(eq(chats.id, chat_id));
 };
+
+
+export const incrementMessages = async (user_id:string)=> {
+  await db
+  .update(users)
+  .set({message_count: sql`${users.message_count} + 1`})
+  .where(eq(users.id, user_id))
+}
+
+export const getMessageCount = async (user_id:string) => {
+  const result = await db
+    .select({ count: users.message_count })
+    .from(users)
+    .where(eq(users.id, user_id))
+  
+  return result[0].count;
+}
