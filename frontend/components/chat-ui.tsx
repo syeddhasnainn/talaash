@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChat } from "@/hooks/useChat";
 import { UserButton } from "@clerk/nextjs";
-import { CircleX, Paperclip, StopCircle } from "lucide-react";
+import { CircleX, Paperclip, StopCircle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { IFrame } from "./iframe";
 import MemoizedMarkdown from "./markdown";
 import Sidebar from "./sidebar";
 import Spinner from "./spinner";
+import { getMessageCount } from "@/actions/actions";
 
 interface ChatUIProps {
     chatMessages: any;
@@ -42,12 +43,36 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         isLoading,
         chatList,
         setChatList,
-        limit
+        limit,
+        setLimit,
+        previewError,
+        setPreviewError,
+        file,
+        setFile,
+        handleFileChange
     } = useChat({ chats, chatMessages, uuid, user_id });
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const handleIframeLoad = () => {
         setIframeLoaded(true);
     };
+
+    // useEffect(() => {
+    //     console.log('effect')
+    //     const countchecker = async () => {
+    //         const count = await getMessageCount(user_id)
+    //         if (count > 5) {
+    //             setLimit(true)
+    //         }
+    //     }
+
+    //     countchecker()
+    // }, [])
+    
+    const handlePaperclipClick = () => {
+        fileInputRef.current?.click();
+    };
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     return (
         <div className="flex flex-row flex-1 h-screen relative ">
             <Sidebar chats={chatList} setChatList={setChatList} messages={messages} setMessages={setMessages} />
@@ -96,7 +121,11 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
 
                     </ScrollArea>
                     {limit && <div className="text-red-700 text-xs mb-1 text-end">Limit Reached!</div>}
-
+                     {file && (
+                <div className="text-red-700 text-xs mb-1 text-end">
+                Selected file: {file.name}
+                </div>
+            )}
                     <form onSubmit={handleSubmit} className="flex gap-2 ">
                         <div className="relative flex-1 border-gray-300">
                             <Input
@@ -105,12 +134,14 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                 className=""
                                 placeholder="Ask me anything..."
                             />
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                                <Paperclip className="h-5 w-5 text-gray-500" />
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 hover:scale-100">
+                                <Paperclip onClick={handlePaperclipClick}
+                                    className="h-5 w-5 text-gray-500" />
+                                <input ref={fileInputRef}
+                                    type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                           
                             </div>
                         </div>
-
-
 
                         {isLoading && <Button
                             type="button"
@@ -148,7 +179,10 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                 )}
                             </div>
                         </div>
+
                     </div>
+
+
                 )}
             </div>
         </div>

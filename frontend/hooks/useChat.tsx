@@ -42,6 +42,29 @@ export const useChat = ({
     useState<{ role: string; content: string }[]>(chatMessages);
   const [chatList, setChatList] = useState(chats);
   const [limit, setLimit] = useState(false)
+  const [previewError, setPreviewError] = useState('')
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      convertToBase64(selectedFile);
+    }
+  };
+
+  const convertToBase64 = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      setBase64Image(base64String);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  
+
 
   const getCodeType = (resp: string) => {
     if (resp.includes("```html")) return "html";
@@ -70,6 +93,7 @@ export const useChat = ({
         break;
       default:
         setPreview(false);
+        setPreviewError('nothing to preview')
     }
   };
   const stop = () => {
@@ -82,9 +106,11 @@ export const useChat = ({
     
     const signal = streamingController.startStreaming();
     
+   
+
+
     
-    
-    
+
     try {
       const count = await getMessageCount(user_id)
       if (count > 100) {
@@ -171,6 +197,9 @@ export const useChat = ({
     setInput(e.target.value);
   };
 
+
+  console.log(base64Image)
+
   return {
     input,
     messages,
@@ -185,6 +214,12 @@ export const useChat = ({
     chatList,
     setChatList,
     setMessages,
-    limit
+    limit,
+    setLimit,
+    previewError,
+    setPreviewError,
+    file,
+    setFile,
+    handleFileChange
   };
 };
