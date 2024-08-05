@@ -2,6 +2,7 @@ import { addMessage, createChat,getMessageCount,incrementMessages } from "@/acti
 import { useSocket } from "@/app/socket";
 import { extractCodeFromChat } from "@/utils/get-response";
 import { streamingController } from "@/utils/streamingController";
+import { FileType } from "lucide-react";
 import { useState } from "react";
 
 interface ChatMessageProps {
@@ -43,25 +44,49 @@ export const useChat = ({
   const [chatList, setChatList] = useState(chats);
   const [limit, setLimit] = useState(false)
   const [previewError, setPreviewError] = useState('')
-  const [base64Image, setBase64Image] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      convertToBase64(selectedFile);
+    }
+
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+
+    try {
+      // Step 1: Get the pre-signed URL
+      const response = await fetch('/api/image-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+      });
+      const { signedUrl } = await response.json();
+
+      // Step 2: Use the signed URL to upload the file
+      const uploadResponse = await fetch(signedUrl, {
+        method: 'PUT',
+        body: file, // This is where we send the actual file
+        headers: { 'Content-Type': file.type },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
+      }
+
+      alert('File uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+    } finally {
+      console.log('done')
     }
   };
 
-  const convertToBase64 = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64String = reader.result as string;
-      setBase64Image(base64String);
-    };
-    reader.readAsDataURL(file);
-  };
+
 
   
 
@@ -198,7 +223,6 @@ export const useChat = ({
   };
 
 
-  console.log(base64Image)
 
   return {
     input,
@@ -220,6 +244,7 @@ export const useChat = ({
     setPreviewError,
     file,
     setFile,
-    handleFileChange
+    handleFileChange,
+    handleUpload
   };
 };

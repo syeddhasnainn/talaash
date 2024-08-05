@@ -49,7 +49,8 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         setPreviewError,
         file,
         setFile,
-        handleFileChange
+        handleFileChange,
+        handleUpload
     } = useChat({ chats, chatMessages, uuid, user_id });
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const handleIframeLoad = () => {
@@ -77,6 +78,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         <div className="flex flex-row flex-1 h-screen relative ">
             <Sidebar chats={chatList} setChatList={setChatList} messages={messages} setMessages={setMessages} />
             <div className="flex flex-1 gap-6 p-6">
+                <button onClick={handleUpload}>upload image</button>
                 <div className="flex flex-col flex-1 basis-2/5 max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-semibold text-gray-800">Chat</h2>
@@ -136,7 +138,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             />
                             <div className="absolute inset-y-0 right-0 flex items-center pr-3 hover:scale-100">
                                 <Paperclip onClick={handlePaperclipClick}
-                                    className="h-5 w-5 text-gray-500" />
+                                    className="h-5 w-5 text-gray-500 hover:text-black hover:scale-110" />
                                 <input ref={fileInputRef}
                                     type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                                            
@@ -174,15 +176,10 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                 {code?.startsWith("<!DOCTYPE html>") ? (
                                     <IFrame srcDoc={code} onLoad={handleIframeLoad}></IFrame>) : (
                                     <IFrame src="http://localhost:3000" onLoad={handleIframeLoad}></IFrame>
-
-
                                 )}
                             </div>
                         </div>
-
                     </div>
-
-
                 )}
             </div>
         </div>
