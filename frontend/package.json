@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.37",
+    "@aws-sdk/client-s3": "^3.623.0",
+    "@aws-sdk/s3-request-presigner": "^3.623.0",
     "@clerk/elements": "^0.10.7",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -56,6 +58,7 @@
     "eslint-config-next": "14.2.4",
     "prettier": "3.3.2",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^3.69.0"
   }
 }

@@ -33,7 +33,7 @@ export const useChat = ({
   user_id,
   chats,
 }: useChatProps) => {
-  const socket = useSocket();
+  // const socket = useSocket();
 
   const [input, setInput] = useState("");
   const [code, setCode] = useState<string | undefined>("");
@@ -45,6 +45,7 @@ export const useChat = ({
   const [limit, setLimit] = useState(false)
   const [previewError, setPreviewError] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [imgUrl, setImgUrl] = useState('')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -64,32 +65,27 @@ export const useChat = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fileName: file.name, fileType: file.type }),
       });
-      const { signedUrl } = await response.json();
+
+      const { signedUrl, publicUrl } = await response.json();
 
       // Step 2: Use the signed URL to upload the file
       const uploadResponse = await fetch(signedUrl, {
         method: 'PUT',
         body: file, // This is where we send the actual file
-        headers: { 'Content-Type': file.type },
+        headers: { 'Content-Type': file.type},
       });
 
       if (!uploadResponse.ok) {
         throw new Error('Upload failed');
-      }
+      } 
 
-      alert('File uploaded successfully!');
+      setImgUrl(`https://podpreview.uk/${file.name}`)
     } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Error uploading file');
+      throw new Error('Error uploading file');
     } finally {
-      console.log('done')
+      console.log('finally')
     }
   };
-
-
-
-  
-
 
   const getCodeType = (resp: string) => {
     if (resp.includes("```html")) return "html";
