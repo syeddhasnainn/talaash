@@ -1,9 +1,13 @@
-import { addMessage, createChat,getMessageCount,incrementMessages } from "@/actions/actions";
+import { addMessage, createChat, getMessageCount, incrementMessages } from "@/actions/actions";
 import { useSocket } from "@/app/socket";
 import { extractCodeFromChat } from "@/utils/get-response";
 import { streamingController } from "@/utils/streamingController";
 import { FileType } from "lucide-react";
 import { useState } from "react";
+
+type ContentItem =
+  | { type: 'text', text: string }
+  | { type: 'image_url', image_url: { url: string } };
 
 interface ChatMessageProps {
   role: Role;
@@ -40,51 +44,47 @@ export const useChat = ({
   const [preview, setPreview] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [messages, setMessages] =
-    useState<{ role: string; content: string }[]>(chatMessages);
+    useState<any[]>(chatMessages);
   const [chatList, setChatList] = useState(chats);
   const [limit, setLimit] = useState(false)
   const [previewError, setPreviewError] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [imgUrl, setImgUrl] = useState('')
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
     }
 
-  };
-
-  const handleUpload = async () => {
-    if (!file) return;
+    console.log('sf',selectedFile)
 
     try {
       // Step 1: Get the pre-signed URL
       const response = await fetch('/api/image-upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+        body: JSON.stringify({ fileName: selectedFile.name, fileType: selectedFile.type }),
       });
 
-      const { signedUrl, publicUrl } = await response.json();
+      const { signedUrl } = await response.json();
 
       // Step 2: Use the signed URL to upload the file
       const uploadResponse = await fetch(signedUrl, {
         method: 'PUT',
-        body: file, // This is where we send the actual file
-        headers: { 'Content-Type': file.type},
+        body: selectedFile, // This is where we send the actual file
+        headers: { 'Content-Type': selectedFile.type },
       });
 
       if (!uploadResponse.ok) {
         throw new Error('Upload failed');
-      } 
+      }
 
-      setImgUrl(`https://podpreview.uk/${file.name}`)
+      console.log('uploaded')
+
     } catch (error) {
       throw new Error('Error uploading file');
-    } finally {
-      console.log('finally')
-    }
+    } 
   };
 
   const getCodeType = (resp: string) => {
@@ -106,7 +106,7 @@ export const useChat = ({
       case "tsx":
       case "javascript":
       case "typescript":
-        socket?.emit("generation", ec);
+        // socket?.emit("generation", ec);
         setCode(ec);
         break;
       case "html":
@@ -124,35 +124,68 @@ export const useChat = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     const signal = streamingController.startStreaming();
-    
-   
-
-
-    
 
     try {
-      const count = await getMessageCount(user_id)
+      const count = await getMessageCount(user_id);
       if (count > 100) {
-        setLimit(true)
-        setInput("")
-        throw new Error('limit reached')
-        
+        setLimit(true);
+        setInput("");
+        throw new Error('Message limit reached');
       }
-      
-      setMessages([...messages, {role: "user", content: input}])
-      const userMessage = [...messages, { role: "user", content: input }];
+      var newUserMessage = {}
+    
+      if (file) {
+        console.log('img url cond')
+        newUserMessage = {
+          role: "user",
+          content: [
+            { type: "text", text: input },
+            {
+              type: "image_url",
+              image_url: {
+                "url": `https://podpreview.uk/${file.name}`
+              },
+            },
+          ],
+        };
+      } 
+      else {
+        newUserMessage = {
+          role: "user",
+          content: input,
+        };
+      }
+
+      // const newUserMessage = {
+      //       role: "user",
+      //       content: [
+      //         { type: "text", text: input },
+      //         {
+      //           type: "image_url",
+      //           image_url: {
+      //             "url": `https://podpreview.uk/de2bb07f099f8ff8e3ae09cfde0b4374.png`
+      //           },
+      //         },
+      //       ],
+      //     };
+    
+      const updatedMessages = [...messages, newUserMessage];
+      console.log('updated mesages', updatedMessages)
+      setMessages(updatedMessages);
+
       const resp = await fetch("/api/answer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ messages: userMessage }),
+        body: JSON.stringify({ messages:updatedMessages }),
         signal,
       });
 
       setInput("");
+      setFile(null)
       const reader = resp.body?.getReader();
 
       if (!resp.ok) {
@@ -163,13 +196,13 @@ export const useChat = ({
         throw new Error("Response body is null");
       }
 
-      setMessages([...userMessage, { role: "assistant", content: "" }]);
+      setMessages([...updatedMessages, { role: "assistant", content: "" }]);
 
       const decoder = new TextDecoder();
       let done = false;
       let assistantResponse = "";
       setIsLoading(false);
-      
+
       while (!done) {
         const { value, done: streamDone } = await reader.read();
         done = streamDone;
@@ -188,7 +221,7 @@ export const useChat = ({
           });
         }
       }
-      
+
       handlePreview(assistantResponse);
 
       const existingChat = chats.find((c: any) => c.id === uuid);
@@ -219,7 +252,6 @@ export const useChat = ({
   };
 
 
-
   return {
     input,
     messages,
@@ -241,6 +273,5 @@ export const useChat = ({
     file,
     setFile,
     handleFileChange,
-    handleUpload
   };
 };

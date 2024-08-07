@@ -12,6 +12,8 @@ import MemoizedMarkdown from "./markdown";
 import Sidebar from "./sidebar";
 import Spinner from "./spinner";
 import { getMessageCount } from "@/actions/actions";
+import { Alert } from "./ui/alert";
+import ErrorAlert from "./error-alert";
 
 interface ChatUIProps {
     chatMessages: any;
@@ -50,7 +52,6 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
         file,
         setFile,
         handleFileChange,
-        handleUpload
     } = useChat({ chats, chatMessages, uuid, user_id });
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const handleIframeLoad = () => {
@@ -68,17 +69,20 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
 
     //     countchecker()
     // }, [])
-    
+
     const handlePaperclipClick = () => {
         fileInputRef.current?.click();
     };
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     return (
-        <div className="flex flex-row flex-1 h-screen relative ">
+        <div className="flex flex-row flex-1 h-screen relative">
             <Sidebar chats={chatList} setChatList={setChatList} messages={messages} setMessages={setMessages} />
             <div className="flex flex-1 gap-6 p-6">
-                <button onClick={handleUpload}>upload image</button>
+                {/* <div className="absolute bottom-1 right-2 max-w-xs">
+                    <ErrorAlert />
+
+                </div> */}
                 <div className="flex flex-col flex-1 basis-2/5 max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-semibold text-gray-800">Chat</h2>
@@ -90,7 +94,7 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                 <div key={index}>
                                     {c.role == "user" ? (
                                         <div className="p-3 rounded-lg bg-gray-100">
-                                            {c.content}
+                                            {typeof (c.content) == 'object' ? c.content[0].text : c.content}
                                         </div>
                                     ) : (
                                         <div className="p-3 rounded-lg bg-white border border-gray-200 text-md ">
@@ -120,14 +124,13 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                             {isLoading && <Spinner />}
                         </div>
 
-
                     </ScrollArea>
                     {limit && <div className="text-red-700 text-xs mb-1 text-end">Limit Reached!</div>}
-                     {file && (
-                <div className="text-red-700 text-xs mb-1 text-end">
-                Selected file: {file.name}
-                </div>
-            )}
+                    {file && (
+                        <div className="text-red-700 text-xs mb-1 text-end">
+                            Selected file: {file.name}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="flex gap-2 ">
                         <div className="relative flex-1 border-gray-300">
                             <Input
@@ -141,7 +144,6 @@ const ChatUI = ({ chatMessages, uuid, user_id, chats }: ChatUIProps) => {
                                     className="h-5 w-5 text-gray-500 hover:text-black hover:scale-110" />
                                 <input ref={fileInputRef}
                                     type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                                           
                             </div>
                         </div>
 
