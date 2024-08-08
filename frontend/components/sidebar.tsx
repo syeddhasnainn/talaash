@@ -6,19 +6,22 @@ import React, { memo } from "react";
 import { useRouter } from "next/navigation";
 import { deleteChats } from "@/actions/actions";
 import { Trash2 } from "lucide-react";
+import { useChatContext } from "./chat-provider";
 
-export default memo(function Sidebar({ chats, setChatList, messages, setMessages }: any) {
+export default memo(function Sidebar() {
   const router = useRouter();
 
-  const handleDelete = async (chat_id:string) => {
-    await deleteChats(chat_id);
-    const updatedChats = await chats.filter((chat: { id: string; }) => chat.id !== chat_id);
-    const uuid = uuidv4()
-    setChatList(updatedChats);
-    setMessages([])
-    router.push(`/chat/${uuid}`)
-};
+  const { chatList, setChatList, setMessages  } = useChatContext();
 
+
+//   const handleDelete = async (chat_id:string) => {
+//     await deleteChats(chat_id);
+//     const updatedChats = await chatList.filter((chat: { id: string; }) => chat.id !== chat_id);
+//     const uuid = uuidv4()
+//     setChatList(updatedChats);
+//     setMessages([])
+//     router.push(`/chat/${uuid}`)
+// };
   return (
     <>
       <nav className="w-64 bg-white border-r border-gray-200">
@@ -30,7 +33,7 @@ export default memo(function Sidebar({ chats, setChatList, messages, setMessages
             New Chat
           </Button>
           <ul className="space-y-2">
-            {chats.map((chat) => (
+            {chatList.map((chat) => (
               <div key={chat.id} className="flex justify-between">
                 <li
                   
@@ -40,7 +43,7 @@ export default memo(function Sidebar({ chats, setChatList, messages, setMessages
                   {chat.chat_name}
                 </li>
                 <button
-                  onClick={() => handleDelete(chat.id)}
+                  // onClick={() => handleDelete(chat.id)}
                   className="px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer text-sm text-gray-700"
                 >
                   <Trash2 className="w-4" />

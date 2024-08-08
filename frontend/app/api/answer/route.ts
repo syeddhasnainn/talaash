@@ -55,7 +55,6 @@ async function* makeIterator(messages: any) {
       yield encoder.encode(content);
     }
   }
-
 }
 
 export async function POST(request: Request) {
@@ -63,6 +62,7 @@ export async function POST(request: Request) {
   const writer = stream.writable.getWriter();
 
   var { messages } = await request.json();
+  console.log('message2',messages)
 
   const iterator = makeIterator(messages);
   const streamer = iteratorToStream(iterator);

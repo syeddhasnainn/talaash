@@ -18,12 +18,9 @@ const S3 = new S3Client({
 });
 
 
-export async function POST(request: Request, res) {
+export async function POST(request: Request,res) {
 
-  const { file, fileName, fileType } = await request.json()
-  console.log('name', fileName)
-  console.log('type', fileType)
-
+  const { fileName, fileType } = await request.json()
 
   const command = new PutObjectCommand({
     Bucket: process.env.R2_BUCKET_NAME,
@@ -38,17 +35,4 @@ export async function POST(request: Request, res) {
     console.error('Error generating signed URL:', error);
     res.status(500).json({ error: 'Error generating signed URL' });
   }
-}
-
-export async function GET(request: Request, res) {
-
-  const input = {
-    "Bucket": "talaash",
-    "Key": "logo_hq.png"
-  };
-  const command = new GetObjectCommand(input);
-  const response = await S3.send(command);
-  console.log('response:', response)
-
-  return NextResponse.json({ response })
 }
