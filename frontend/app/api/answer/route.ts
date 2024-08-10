@@ -6,7 +6,8 @@ import { systemPrompt } from "@/utils/prompts";
 export const dynamic = "force-dynamic";
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// const openai = new OpenAI({ apiKey: process.env.DEEPSEEK_API_KEY, baseURL:"https://api.deepseek.com" });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY})
 const encoder = new TextEncoder();
 
 function iteratorToStream(iterator: any) {
@@ -44,13 +45,15 @@ async function* makeIterator(messages: any) {
   // });
 
   const answer = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4-turbo",
+    // model:"deepseek-coder",
     messages: newArray as any,
     stream: true,
+  
   });
 
   for await (const chunk of answer) {
-    const content = chunk.choices[0].delta?.content;
+    const content = chunk.choices[0].delta.content;
     if (content) {
       yield encoder.encode(content);
     }
@@ -62,7 +65,6 @@ export async function POST(request: Request) {
   const writer = stream.writable.getWriter();
 
   var { messages } = await request.json();
-  console.log('message2',messages)
 
   const iterator = makeIterator(messages);
   const streamer = iteratorToStream(iterator);
@@ -72,7 +74,7 @@ export async function POST(request: Request) {
       "Content-Encoding": "none",
       "Cache-Control": "no-cache, no-transform",
       "Content-Type": "text/event-stream; charset=utf-8",
-      Connection: "keep-alive",
+      "Connection": "keep-alive",
     },
   });
 }

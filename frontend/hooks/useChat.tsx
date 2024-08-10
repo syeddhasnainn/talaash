@@ -145,7 +145,8 @@ export const useChat = ({
             {
               type: "image_url",
               image_url: {
-                "url": `https://podpreview.uk/${file.name}`
+                "url": `https://podpreview.uk/${file.name}`,
+                "detail": "low"
               },
             },
           ],
@@ -184,10 +185,12 @@ export const useChat = ({
         signal,
       });
 
+      console.log('response:',resp)
+
       setInput("");
       setFile(null)
       const reader = resp.body?.getReader();
-
+    
       if (!resp.ok) {
         throw new Error("Failed to fetch response!");
       }
