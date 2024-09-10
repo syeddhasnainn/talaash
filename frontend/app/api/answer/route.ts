@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import Together from "together-ai";
 import OpenAI from "openai";
 import { systemPrompt } from "@/utils/prompts";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const dynamic = "force-dynamic";
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY as string);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-// const openai = new OpenAI({ apiKey: process.env.DEEPSEEK_API_KEY, baseURL:"https://api.deepseek.com" });
+// const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY})
 const encoder = new TextEncoder();
 

@@ -6,10 +6,11 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const monst = Montserrat({ subsets: ["latin"], weight: "400" });
+const jet = JetBrains_Mono({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "Talaash",
@@ -23,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className={jet.className}>
         <body>
           <header>
             <SignedOut></SignedOut>
