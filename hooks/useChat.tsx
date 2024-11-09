@@ -1,8 +1,6 @@
 import { addMessage, createChat, getMessageCount, incrementMessages } from "@/actions/actions";
-import { useSocket } from "@/app/socket";
 import { extractCodeFromChat } from "@/utils/get-response";
 import { streamingController } from "@/utils/streamingController";
-import { FileType } from "lucide-react";
 import { useState } from "react";
 
 type ContentItem =
@@ -22,9 +20,6 @@ interface ChatProps {
   chat_name: string;
 }
 
-
-
-
 type Role = "user" | "assistant" | "system";
 
 interface useChatProps {
@@ -40,7 +35,6 @@ export const useChat = ({
   user_id,
   chats,
 }: useChatProps) => {
-  // const socket = useSocket();
 
   const [input, setInput] = useState("");
   const [code, setCode] = useState<string | undefined>("");

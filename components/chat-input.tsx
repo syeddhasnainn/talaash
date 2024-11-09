@@ -26,12 +26,12 @@ export const ChatInput: React.FC = () => {
                     <Input
                         value={input}
                         onChange={handleInputChange}
-                        className=""
+                        className="text-white"
                         placeholder="Ask me anything..."
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 hover:scale-100">
                         <Paperclip onClick={handlePaperclipClick}
-                            className="h-5 w-5 text-gray-500 hover:text-black hover:scale-110" />
+                            className="h-5 w-5 text-white hover:text-black hover:scale-110" />
                         <input ref={fileInputRef}
                             type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                     </div>

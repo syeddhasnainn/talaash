@@ -1,15 +1,10 @@
 import { NextResponse } from "next/server";
 import Together from "together-ai";
-import OpenAI from "openai";
 import { systemPrompt } from "@/utils/prompts";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const dynamic = "force-dynamic";
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY as string);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY})
+const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 const encoder = new TextEncoder();
 
 function iteratorToStream(iterator: any) {
@@ -36,22 +31,14 @@ async function* makeIterator(messages: any) {
   const sp = [{ role: "system", content: systemPrompt }];
   const newArray = sp.concat(messages);
   
-  // const answer = await together.chat.completions.create({
-  //   messages: newArray as any,
-  //   model: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-  //   // model: "codellama/CodeLlama-70b-Instruct-hf",
-  //   // model: "mistralai/Mixtral-8x22B-Instruct-v0.1",
-
-
-  //   stream: true,
-  // });
-
-  const answer = await openai.chat.completions.create({
-    model: "gpt-4-turbo",
-    // model:"deepseek-coder",
+  const answer = await together.chat.completions.create({
     messages: newArray as any,
+    model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
+    // model: "codellama/CodeLlama-70b-Instruct-hf",
+    // model: "mistralai/Mixtral-8x22B-Instruct-v0.1",
+
+
     stream: true,
-  
   });
 
   for await (const chunk of answer) {

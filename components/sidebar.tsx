@@ -24,7 +24,7 @@ export default memo(function Sidebar() {
 };
   return (
     <>
-      <nav className="w-64 bg-white border-r border-gray-200">
+      <nav className="w-64  border-r border-gray-200">
         <ScrollArea className="h-full px-4 py-6">
           <Button
             onClick={() => router.push(`/chat/${uuidv4()}`)}

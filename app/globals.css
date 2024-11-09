@@ -9,8 +9,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: #2D2C29;
+    --foreground: #393937;
 
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -76,6 +76,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    color: var(--foreground);
+    background-color: var(--background);
   }
 }

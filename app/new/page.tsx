@@ -1,12 +1,11 @@
 import { createUser, getChats, getUser } from "@/actions/actions";
 import CreateChat from "@/components/create-chat";
-import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Chat() {
-  const user = await currentUser().then((resp) => resp);
-  const user_id = user?.id as string;
+  const user = "123456789";
+  const user_id = user;
   const loggedInUser = await getUser(user_id);
-  const firstName = user?.firstName;
+  const firstName = "John";
 
   if (loggedInUser.length == 0) {
     await createUser(user_id);

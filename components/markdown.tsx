@@ -2,7 +2,7 @@ import { Copy } from "lucide-react";
 import React, { memo } from "react";
 import Markdown from "react-markdown";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 
 export default memo(function MemoizedMarkdown({ c }: any) {
@@ -15,7 +15,7 @@ export default memo(function MemoizedMarkdown({ c }: any) {
           const { children, className, node, ...rest } = props;
           const match = /language-(\w+)/.exec(className || "");
           return match ? (
-            <div className="bg-[#1E1E1E] text-white relative ">
+            <div className="bg-[#393937] text-white relative text-sm ">
               <button className="absolute right-2 top-2">
                 <Copy
                   onClick={() =>

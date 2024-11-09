@@ -5,7 +5,6 @@ import { Plus, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
-import { UserButton } from "@clerk/nextjs";
 
 export default function CreateChat({ chats, firstName }: any) {
   const router = useRouter();
@@ -14,7 +13,6 @@ export default function CreateChat({ chats, firstName }: any) {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4 relative">
       <div className="absolute right-4 top-4 ">
-        <UserButton afterSignOutUrl="/" />
       </div>
       <Card className="w-full max-w-md">
         <CardContent className="pt-6">

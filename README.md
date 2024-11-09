@@ -1,6 +1,6 @@
 # Talaash
 
-Opensource Claude Artifacts
+Another AI Chat App
 
 ## 🧱 Stack
 

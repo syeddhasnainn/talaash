@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={jet.className}>
+    <html lang="en" className={monst.className}>
       <body>
         <header>
           <main>{children}</main>
