@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { Paperclip, StopCircle } from "lucide-react";
 import { useChatContext } from './chat-provider';
 
-export const ChatInput: React.FC = () => {
+export const ChatInput = () => {
     const { input, handleInputChange, handleSubmit, isLoading, stop, limit, file, handleFileChange } = useChatContext();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -15,18 +15,17 @@ export const ChatInput: React.FC = () => {
 
     return (
         <>
-            {limit && <div className="text-red-700 text-xs mb-1 text-end">Limit Reached!</div>}
             {file && (
                 <div className="text-red-700 text-xs mb-1 text-end">
                     Selected file: {file.name}
                 </div>
             )}
-            <form onSubmit={handleSubmit} className="flex gap-2">
-                <div className="relative flex-1 border-gray-300">
+            <form onSubmit={handleSubmit} className="flex gap-2 sticky bottom-0 w-full">
+                <div className="relative flex-1 ">
                     <Input
                         value={input}
                         onChange={handleInputChange}
-                        className="text-white"
+                        className="text-white bg-[#393937] p-6 font-bold"
                         placeholder="Ask me anything..."
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 hover:scale-100">
@@ -41,7 +40,7 @@ export const ChatInput: React.FC = () => {
                     type="button"
                     onClick={() => stop()}
                     variant="outline"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="text-white hover:bg-gray-100"
                 >
                     <StopCircle className="h-4 w-4 mr-2" />
                     Stop

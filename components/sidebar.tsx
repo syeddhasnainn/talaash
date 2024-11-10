@@ -22,16 +22,19 @@ export default memo(function Sidebar() {
     setMessages([])
     router.push(`/chat/${uuid}`)
 };
+
+  const [hovered, setHovered] = React.useState(false);
+  
   return (
     <>
-      <nav className="w-64  border-r border-gray-200">
+      <nav  className="w-64 bg-black bg-opacity-10 ">
         <ScrollArea className="h-full px-4 py-6">
-          <Button
+          <button
             onClick={() => router.push(`/chat/${uuidv4()}`)}
-            className="w-full mb-4 bg-black text-white hover:bg-gray-800"
+            className="border  rounded-xl w-full mb-4 text-[#8E5034] hover:bg-gray-800"
           >
             New Chat
-          </Button>
+          </button>
           <ul className="space-y-2">
             {chatList.map((chat) => (
               <div key={chat.id} className="flex justify-between">

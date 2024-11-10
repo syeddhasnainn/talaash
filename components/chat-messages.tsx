@@ -13,7 +13,7 @@ export const ChatMessages: React.FC = () => {
         {messages.map((c, index) => (
           <div key={index}>
             {c.role == "user" ? (
-              <div className="p-3 rounded-xl  bg-[#21201C]  text-white">
+              <div className="p-3 rounded-xl  bg-[#21201C]  text-white w-fit">
                 {typeof c.content == "object" ? c.content[0].text : c.content}
               </div>
             ) : (

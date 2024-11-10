@@ -27,17 +27,12 @@ function sleep(time: number) {
 }
 
 async function* makeIterator(messages: any) {
-  
   const sp = [{ role: "system", content: systemPrompt }];
   const newArray = sp.concat(messages);
-  
+
   const answer = await together.chat.completions.create({
     messages: newArray as any,
     model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-    // model: "codellama/CodeLlama-70b-Instruct-hf",
-    // model: "mistralai/Mixtral-8x22B-Instruct-v0.1",
-
-
     stream: true,
   });
 
