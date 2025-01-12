@@ -1,21 +1,40 @@
-import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
-import { abort } from "process";
-import { systemPrompt } from "@/utils/prompts";
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+import { NextResponse, NextRequest } from "next/server";
+import Together from "together-ai";
 
-export const runtime = "edge";
+const together = new Together({
+  apiKey: process.env.TOGETHER_AI_API_KEY,
+});
 
-export async function POST(req: Request) {
-  const { messages } = await req.json();
+export async function POST(req: NextRequest) {
+  try {
+    const { conversation } = await req.json();
+    console.log("conversation:", conversation);
+    const stream = await together.chat.completions.create({
+      model: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
+      messages: conversation,
+      stream: true,
+    });
 
-  const result = await streamText({
-    model: openai("gpt-4o-mini"),
-    messages,
-    abortSignal: req.signal,
-    system: systemPrompt,
-  });
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || "";
+          controller.enqueue(content);
+        }
+        controller.close();
+      },
+    });
 
-  return result.toAIStreamResponse();
+    return new Response(readableStream, {
+      headers: {
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "Content-Encoding": "none",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
+  }
 }
