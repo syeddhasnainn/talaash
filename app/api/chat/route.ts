@@ -6,11 +6,14 @@ const together = new Together({
 });
 
 export async function POST(req: NextRequest) {
+  var systemprompt =
+    "You are an expert at programming and breaking down complex computer science/software engineering problems into easy to understand steps. You are also an expert at explaining concepts in a way that is easy to understand. You are also an expert at providing code examples and best practices, you always write up to date code. You always explain concepts in a detailed and concise manner.";
+
   try {
-    const { conversation } = await req.json();
-    console.log("conversation:", conversation);
+    var { conversation } = await req.json();
+    conversation.unshift({ role: "system", content: systemprompt });
     const stream = await together.chat.completions.create({
-      model: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
+      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
       messages: conversation,
       stream: true,
     });
@@ -34,7 +37,6 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error(error);
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

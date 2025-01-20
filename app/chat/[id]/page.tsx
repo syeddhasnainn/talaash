@@ -1,10 +1,12 @@
 "use client";
 import { useConversationStore } from "@/app/store/conversation";
-import { Markdown } from "@/components/markdown";
+import Markdown from "@/components/markdown";
 import type { Message } from "@/app/store/conversation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Chat() {
+  const router = useRouter();
   const {
     conversation,
     question,
@@ -31,6 +33,11 @@ export default function Chat() {
         });
 
         if (!response.ok) throw new Error("API error");
+
+        if (conversation.length === 0) {
+          const chatId = Math.random().toString(36).substring(2, 15);
+          router.push(`/chat/${chatId}`);
+        }
 
         const reader = response.body?.getReader();
         if (!reader) throw new Error("No reader available");
@@ -61,39 +68,38 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col min-h-screen w-full">
-      <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto w-full max-w-2xl mx-auto mt-4 pb-24">
         {conversation.map((message, index) => (
           <div
             key={index}
             className={`p-4 rounded-2xl mb-4 ${
               message.role === "user"
-                ? "bg-gray-100 max-w-max self-end"
-                : "bg-blue-50 w-full"
+                ? "bg-gray-100 max-w-max self-end text-gray-900 border border-gray-200"
+                : "bg-white w-full text-gray-900 border border-gray-200"
             }`}
           >
             {message.role === "user" ? (
               <div>
-                <div className="flex items-start gap-2 flex-initial">{message.content}</div>
+                <div className="flex items-start gap-2 flex-initial">
+                  {message.content}
+                </div>
               </div>
             ) : (
-              <div>
                 <Markdown>{message.content}</Markdown>
-
-              </div>
             )}
           </div>
         ))}
       </div>
 
-      <div className="fixed bottom-0 w-full bg-white/50 backdrop-blur-sm">
-        <div className="mx-auto max-w-2xl p-4">
+      <div className="fixed bottom-0 w-full">
+        <div className="mx-auto max-w-2xl p-8">
           <div className="relative flex items-center">
             <textarea
               autoFocus
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask a follow-up"
+              placeholder="Ask me anything"
               className="w-full bg-white border border-gray-300 rounded-2xl py-4 pl-4 pr-10 font-medium text-xs placeholder-gray-400 resize-none outline-none"
               rows={1}
               disabled={isStreaming}
