@@ -4,21 +4,26 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-const Markdown = ({ children }: { children: string }) => {
+const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+  console.log("children", children);
   const components = {
     code: ({ node, inline, className, children, ...props }: any) => {
       const match = /language-(\w+)/.exec(className || "");
+      const language = match ? match[1] : 'text';
       return !inline && match ? (
-        <SyntaxHighlighter
-          {...props}
-          wrapLines
-          wrapLongLines
-          children={children}
-          PreTag="div"
-          language={match[1]}
-          style={dark}
-          className="text-sm rounded-2xl leading-7 my-6"
-        />
+        <div className="mb-4 border-t-2 border-b-2 border-gray-200 bg-gray-100">
+          <div className="text-sm font-bold text-gray-500 bg-gray-200 p-2 rounded-t-2xl">{language}</div>
+          <SyntaxHighlighter
+            {...props}
+            wrapLines
+            wrapLongLines
+            children={children}
+            PreTag="div"
+            language={language}
+            style={dark}
+            className="text-sm rounded-2xl leading-7"
+          />
+        </div>
       ) : (
         <code
           className={`${className} text-gray-500 rounded-2xl px-1.5 py-0.5 bg-gray-100`}
@@ -47,7 +52,7 @@ const Markdown = ({ children }: { children: string }) => {
     },
     ul: ({ node, children, ...props }: any) => {
       return (
-        <ul className="list-disc list-outside ml-6 my-4 space-y-2" {...props}>
+        <ul className="list-disc list-outside ml-6  space-y-2" {...props}>
           {children}
         </ul>
       );
@@ -73,7 +78,7 @@ const Markdown = ({ children }: { children: string }) => {
     },
     p: ({ node, children, ...props }: any) => {
       return (
-        <p className="leading-7 mb-6" {...props}>
+        <p className="leading-1 mb-2" {...props}>
           {children}
         </p>
       );
@@ -108,4 +113,7 @@ const Markdown = ({ children }: { children: string }) => {
   );
 };
 
-export default Markdown;
+export const Markdown = memo(
+  NonMemoizedMarkdown,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
+);

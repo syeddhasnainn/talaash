@@ -1,5 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import Together from "together-ai";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  baseURL: "https://api.sambanova.ai/v1",
+  apiKey: process.env.SAMBANOVA_API_KEY,
+});
 
 const together = new Together({
   apiKey: process.env.TOGETHER_AI_API_KEY,
@@ -12,8 +18,8 @@ export async function POST(req: NextRequest) {
   try {
     var { conversation } = await req.json();
     conversation.unshift({ role: "system", content: systemprompt });
-    const stream = await together.chat.completions.create({
-      model: "Qwen/Qwen2.5-Coder-32B-Instruct",
+    const stream = await openai.chat.completions.create({
+      model: "Qwen2.5-Coder-32B-Instruct",
       messages: conversation,
       stream: true,
     });
