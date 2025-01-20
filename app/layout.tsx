@@ -1,9 +1,34 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Albert_Sans, Noto_Sans } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Albert_Sans,
+  Noto_Sans,
+  Syne,
+  Montserrat,
+  Poppins,
+} from "next/font/google";
 import "./globals.css";
+import { ChatProvider } from "@/context/ChatContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
+
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
 });
 
@@ -34,7 +59,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.className} antialiased`}>{children}</body>
+      <body className={`${geistSans.className} antialiased`}>
+        <ChatProvider>{children}</ChatProvider>
+      </body>
     </html>
   );
 }

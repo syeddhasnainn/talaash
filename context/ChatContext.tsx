@@ -1,15 +1,28 @@
-import { useRef, useState, useTransition } from "react";
+"use client";
+
+import React, { createContext, useContext, useRef, useState } from "react";
 import { ChatMessageType } from "@/types/types";
 import { useParams, useRouter } from "next/navigation";
 
-export const useChat = () => {
-  const router = useRouter();
-  const { id } = useParams();
+interface ChatContextType {
+  conversation: ChatMessageType[];
+  setConversation: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
+  inputRef: any;
+  id: string;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  isPending: boolean;
+  error: string | null;
+}
+
+const ChatContext = createContext<ChatContextType | undefined>(undefined);
+
+export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [conversation, setConversation] = useState<ChatMessageType[]>([]);
-  const [question, setQuestion] = useState("");
+  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { id } = useParams();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,7 +30,11 @@ export const useChat = () => {
     inputRef.current!.value = "";
 
     if (!question || question.trim() === "") return;
-    const chatId = crypto.randomUUID();
+    if (!id) {
+      const chatId = crypto.randomUUID();
+      setConversation([]);
+      router.push(`/chat/${chatId}`);
+    }
 
     setIsPending(true);
 
@@ -59,16 +76,29 @@ export const useChat = () => {
         ];
       });
     }
-    if (!id) router.push(`/chat/${chatId}`);
   };
 
-  return {
-    conversation,
-    question,
-    setQuestion,
-    handleSubmit,
-    isPending,
-    error,
-    inputRef,
-  };
+  return (
+    <ChatContext.Provider
+      value={{
+        inputRef,
+        conversation,
+        setConversation,
+        id: id as string,
+        handleSubmit,
+        isPending,
+        error,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};
+
+export const useChatContext = () => {
+  const context = useContext(ChatContext);
+  if (!context) {
+    throw new Error("useChatContext must be used within a ChatProvider");
+  }
+  return context;
 };

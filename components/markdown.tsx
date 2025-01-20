@@ -5,14 +5,15 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
-  console.log("children", children);
   const components = {
     code: ({ node, inline, className, children, ...props }: any) => {
       const match = /language-(\w+)/.exec(className || "");
-      const language = match ? match[1] : 'text';
+      const language = match ? match[1] : "text";
       return !inline && match ? (
-        <div className="mb-4 border-t-2 border-b-2 border-gray-200 bg-gray-100">
-          <div className="text-sm font-bold text-gray-500 bg-gray-200 p-2 rounded-t-2xl">{language}</div>
+        <div className="mb-4  border-gray-200 bg-gray-100">
+          <div className="text-sm font-bold text-gray-500 bg-gray-200 p-2 rounded-t-2xl">
+            {language}
+          </div>
           <SyntaxHighlighter
             {...props}
             wrapLines
