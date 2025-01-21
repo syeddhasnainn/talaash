@@ -1,8 +1,16 @@
 "use client";
 
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import { ChatMessageType } from "@/types/types";
 import { useParams, useRouter } from "next/navigation";
+import { addItem, getAllItems } from "@/utils/indexed-db";
+import { setInterval } from "timers/promises";
 
 interface ChatContextType {
   conversation: ChatMessageType[];
@@ -22,7 +30,16 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { id } = useParams();
+  var { id } = useParams();
+
+  //   useEffect(() => {
+  //     const fetchConversation = async () => {
+  //       const items = await getAllItems();
+  //       console.log(items);
+  //       //   setConversation(items);
+  //     };
+  //     fetchConversation();
+  //   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,14 +47,14 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     inputRef.current!.value = "";
 
     if (!question || question.trim() === "") return;
-    if (!id) {
-      const chatId = crypto.randomUUID();
+    var chatId = id;
+    if (!chatId) {
       setConversation([]);
+      chatId = crypto.randomUUID();
       router.push(`/chat/${chatId}`);
     }
 
     setIsPending(true);
-
     const conversationMessage: ChatMessageType = {
       role: "user",
       content: question,
@@ -76,15 +93,24 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         ];
       });
     }
+
+    await addItem(
+      [
+        ...conversation,
+        { role: "user", content: question },
+        { role: "assistant", content },
+      ],
+      chatId as string
+    );
   };
 
   return (
     <ChatContext.Provider
       value={{
         inputRef,
+        id: id as string,
         conversation,
         setConversation,
-        id: id as string,
         handleSubmit,
         isPending,
         error,

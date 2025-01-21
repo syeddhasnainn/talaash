@@ -1,7 +1,10 @@
+"use client";
 import { SquarePen, Plus, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { getAllItems } from "@/utils/indexed-db";
+import { useEffect } from "react";
 
 export const SidebarComponent = () => {
   const chats = [
@@ -19,8 +22,16 @@ export const SidebarComponent = () => {
     },
   ];
 
+  //   useEffect(() => {
+  //     const fetchChats = async () => {
+  //       const chats = await getAllItems();
+  //       console.log(chats);
+  //     };
+  //     fetchChats();
+  //   }, []);
+
   return (
-    <nav className="flex flex-col">
+    <nav className="hidden md:flex flex-col">
       {/* Top Section */}
       <div className="flex items-center justify-between px-4 py-2">
         <h2 className="text-lg font-semibold tracking-tight">TALAASH</h2>

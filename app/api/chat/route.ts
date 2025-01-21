@@ -2,24 +2,24 @@ import { NextResponse, NextRequest } from "next/server";
 import Together from "together-ai";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  baseURL: "https://api.sambanova.ai/v1",
-  apiKey: process.env.SAMBANOVA_API_KEY,
+const client = new OpenAI({
+  apiKey: process.env.CEREBRAS_API_KEY,
+  baseURL: "https://api.cerebras.ai/v1"
 });
 
-const together = new Together({
-  apiKey: process.env.TOGETHER_AI_API_KEY,
-});
+// const together = new Together({
+//   apiKey: process.env.TOGETHER_AI_API_KEY,
+// });
 
 export async function POST(req: NextRequest) {
-  var systemprompt =
-    "You are an expert at programming and breaking down complex computer science/software engineering problems into easy to understand steps. You are also an expert at explaining concepts in a way that is easy to understand. You are also an expert at providing code examples and best practices, you always write up to date code. You always explain concepts in a detailed and concise manner.";
+  // var systemprompt =
+  //   "You are an expert at programming and breaking down complex computer science/software engineering problems into easy to understand steps. You are also an expert at explaining concepts in a way that is easy to understand. You are also an expert at providing code examples and best practices, you always write up to date code. You always explain concepts in a detailed and concise manner.";
 
   try {
     var { conversation } = await req.json();
-    conversation.unshift({ role: "system", content: systemprompt });
-    const stream = await openai.chat.completions.create({
-      model: "Qwen2.5-Coder-32B-Instruct",
+    // conversation.unshift({ role: "system", content: systemprompt });
+    const stream = await client.chat.completions.create({
+      model: "llama-3.3-70b",
       messages: conversation,
       stream: true,
     });
