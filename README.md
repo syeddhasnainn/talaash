@@ -1,6 +1,8 @@
 - [] add model name below the chat input
 - [] add a model selection dropdown
-- [] fix scrollbar in message
+- [x] fix scrollbar in message
 - [] make it responsive
 - [] add a prompt option
 - [] add image upload option
+- [] fix fetching
+- [] fix sidebar

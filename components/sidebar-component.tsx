@@ -14,22 +14,6 @@ export const SidebarComponent = () => {
 
   const router = useRouter();
 
-//   useEffect(() => {
-//     const fetchChats = async () => {
-//       const chats = await getAllItems();
-//       console.log("all chats", chats);
-//       const filteredChats = chats.map((c) => ({
-//         id: c.id,
-//         title: c.messages[0].content.slice(0, 30) + "...",
-//       }));
-
-//       console.log("filtered chats", filteredChats);
-
-//       setSidebarChats(filteredChats);
-//     };
-//     fetchChats();
-//   }, []);
-
   const handleClearAllChats = async () => {
     await deleteAllItems();
     setSidebarChats([]);
