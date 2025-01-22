@@ -10,7 +10,6 @@ import React, {
 import { ChatMessageType } from "@/types/types";
 import { useParams, useRouter } from "next/navigation";
 import { addItem, getAllItems } from "@/utils/indexed-db";
-import { setInterval } from "timers/promises";
 
 interface ChatContextType {
   conversation: ChatMessageType[];
@@ -95,11 +94,20 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     await addItem(
-      [
-        ...conversation,
-        { role: "user", content: question },
-        { role: "assistant", content },
-      ],
+      {
+        id: chatId as string,
+        messages: [
+          ...conversation,
+          {
+            role: "user",
+            content: question,
+          },
+          {
+            role: "assistant",
+            content,
+          },
+        ],
+      },
       chatId as string
     );
   };

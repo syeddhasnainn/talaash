@@ -1,4 +1,9 @@
 export interface ChatMessageType {
   role: "user" | "assistant" | "system";
-  content: string,
+  content: string;
+}
+
+export interface ChatType {
+  id: string;
+  messages: ChatMessageType[];
 }
