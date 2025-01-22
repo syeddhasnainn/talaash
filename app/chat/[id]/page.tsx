@@ -5,21 +5,22 @@ import { Markdown } from "@/components/markdown";
 import { SidebarComponent } from "@/components/sidebar-component";
 import { Spinner } from "@/components/spinner";
 import { useChatContext } from "@/context/ChatContext";
+import { useEffect } from "react";
+import { getChat } from "@/utils/indexed-db";
 
 export default function Chat() {
-  const { conversation, isPending, id, setConversation } = useChatContext();
+  const { conversation, isPending, id, setConversation, isNewChat } =
+    useChatContext();
 
-  // useEffect(() => {
-  //   console.log(id);
-  //   const fetchChat = async () => {
-  //     const chat = await getChat(id);
-  //     console.log(chat);
-  //     setConversation(chat.messages);
-  //   };
-  //   if (conversation.length != 0) {
-  //     fetchChat();
-  //   }
-  // }, []);
+  useEffect(() => {
+    const fetchChat = async () => {
+      const { messages } = await getChat(id);
+      setConversation(messages);
+    };
+    if (!isNewChat) {
+      fetchChat();
+    }
+  }, []);
 
   return (
     <div className="flex h-[100dvh]">
@@ -27,7 +28,7 @@ export default function Chat() {
       <div className="flex-1 relative">
         <div className="h-full overflow-y-auto">
           <div className="max-w-2xl mx-auto">
-            <div className="space-y-4 p-6 pb-48">
+            <div className="space-y-4 p-6 pb-32">
               {conversation &&
                 conversation.map((message, index) =>
                   message.role === "user" ? (

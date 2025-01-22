@@ -17,7 +17,6 @@ export const initDB = async () => {
 export const addItem = async (item: ChatType, key: string) => {
   const db = await initDB();
   const existingItem = await db.get(STORE_NAME, key);
-  console.log("existing item", existingItem);
   if (existingItem) {
     await db.put(STORE_NAME, item, key);
   } else {

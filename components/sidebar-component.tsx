@@ -9,52 +9,66 @@ import { useChatContext } from "@/context/ChatContext";
 import { useRouter } from "next/navigation";
 
 export const SidebarComponent = () => {
-  const { id } = useChatContext();
+  const { id, sidebarChats, setSidebarChats, setConversation, setIsNewChat } =
+    useChatContext();
+
   const router = useRouter();
-  const [chats, setChats] = useState<any[]>([]);
+
+//   useEffect(() => {
+//     const fetchChats = async () => {
+//       const chats = await getAllItems();
+//       console.log("all chats", chats);
+//       const filteredChats = chats.map((c) => ({
+//         id: c.id,
+//         title: c.messages[0].content.slice(0, 30) + "...",
+//       }));
+
+//       console.log("filtered chats", filteredChats);
+
+//       setSidebarChats(filteredChats);
+//     };
+//     fetchChats();
+//   }, []);
 
   const handleClearAllChats = async () => {
     await deleteAllItems();
-    setChats([]);
+    setSidebarChats([]);
     router.push("/chat");
   };
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      const chats = await getAllItems();
-      const filteredChats = chats.map((c) => ({
-        id: c.id,
-        title: c.messages[0].content.slice(0, 30) + "...",
-      }));
-      setChats(filteredChats);
-    };
-    fetchChats();
-  }, [id]);
+  const handleNewChat = () => {
+    setConversation([]);
+    router.push("/chat");
+  };
 
   return (
     <nav className="hidden md:flex h-full w-[280px] flex-col bg-sidebar border-r">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
         <h2 className="text-lg font-semibold tracking-tight">TALAASH</h2>
-        <Link href="/chat">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 hover:bg-sidebar-accent/50 transition-colors"
-          >
-            <SquarePen className="h-4 w-4" />
-          </Button>
-        </Link>
+
+        <Button
+          onClick={handleNewChat}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-sidebar-accent/50 transition-colors"
+        >
+          <SquarePen className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Chat List */}
       <ScrollArea className="flex-1 px-3 py-2">
         <div className="space-y-1.5">
-          {chats.length > 0 ? (
-            chats.map((chat) => (
-              <Link
+          {sidebarChats.length > 0 ? (
+            sidebarChats.map((chat) => (
+              <button
                 key={chat.id}
-                href={`/chat/${chat.id}`}
+                onClick={() => {
+                  setIsNewChat(false);
+
+                  router.push(`/chat/${chat.id}`);
+                }}
                 className={`group flex items-center w-full px-3 py-2.5 rounded-lg hover:bg-gray-200/30 transition-all hover:shadow-sm ${
                   id === chat.id
                     ? "bg-sidebar-accent shadow-sm"
@@ -64,7 +78,7 @@ export const SidebarComponent = () => {
                 <span className="text-sm line-clamp-1 flex-1 font-medium">
                   {chat.title}
                 </span>
-              </Link>
+              </button>
             ))
           ) : (
             <div className="flex items-center justify-center text-sm text-muted-foreground h-12 bg-sidebar-accent/20 rounded-lg">

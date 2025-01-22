@@ -19,6 +19,10 @@ interface ChatContextType {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   isPending: boolean;
   error: string | null;
+  sidebarChats: any[];
+  setSidebarChats: React.Dispatch<React.SetStateAction<any[]>>;
+  isNewChat: boolean;
+  setIsNewChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -29,16 +33,22 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [sidebarChats, setSidebarChats] = useState<any[]>([]);
+  const [isNewChat, setIsNewChat] = useState<boolean>(false);
   var { id } = useParams();
 
-  //   useEffect(() => {
-  //     const fetchConversation = async () => {
-  //       const items = await getAllItems();
-  //       console.log(items);
-  //       //   setConversation(items);
-  //     };
-  //     fetchConversation();
-  //   }, []);
+  const fetchChats = async () => {
+    const chats = await getAllItems();
+    const filteredChats = chats.map((c) => ({
+      id: c.id,
+      title: c.messages[0].content.slice(0, 30) + "...",
+    }));
+    setSidebarChats(filteredChats);
+  };
+
+  useEffect(() => {
+    fetchChats();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,9 +57,19 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!question || question.trim() === "") return;
     var chatId = id;
+
     if (!chatId) {
       setConversation([]);
+      setIsNewChat(true);
       chatId = crypto.randomUUID();
+
+      setSidebarChats((prev) => [
+        ...prev,
+        {
+          id: chatId,
+          title: question.slice(0, 30) + "...",
+        },
+      ]);
       router.push(`/chat/${chatId}`);
     }
 
@@ -110,6 +130,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       },
       chatId as string
     );
+
+    await fetchChats();
   };
 
   return (
@@ -122,6 +144,10 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         handleSubmit,
         isPending,
         error,
+        sidebarChats,
+        setSidebarChats,
+        isNewChat,
+        setIsNewChat,
       }}
     >
       {children}
