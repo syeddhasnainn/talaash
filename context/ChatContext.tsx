@@ -9,7 +9,8 @@ import React, {
 } from "react";
 import { ChatMessageType } from "@/types/types";
 import { useParams, useRouter } from "next/navigation";
-import { addItem, getAllItems } from "@/utils/indexed-db";
+import { addItem, getAllItems, getChat } from "@/utils/indexed-db";
+import { useSWRConfig } from "swr";
 
 interface ChatContextType {
   conversation: ChatMessageType[];
@@ -19,36 +20,35 @@ interface ChatContextType {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   isPending: boolean;
   error: string | null;
-  sidebarChats: any[];
-  setSidebarChats: React.Dispatch<React.SetStateAction<any[]>>;
   isNewChat: boolean;
   setIsNewChat: React.Dispatch<React.SetStateAction<boolean>>;
+  generateTitleFromUserMessage: (message: string) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
+  const { mutate } = useSWRConfig();
+
   const [conversation, setConversation] = useState<ChatMessageType[]>([]);
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [sidebarChats, setSidebarChats] = useState<any[]>([]);
   const [isNewChat, setIsNewChat] = useState<boolean>(false);
   var { id } = useParams();
 
-  const fetchChats = async () => {
-    const chats = await getAllItems();
-    const filteredChats = chats.map((c) => ({
-      id: c.id,
-      title: c.messages[0].content.slice(0, 30) + "...",
-    }));
-    setSidebarChats(filteredChats);
-  };
+  const generateTitleFromUserMessage = async (message: string) => {
+    const chatTitle = await fetch("/api/title", {
+      method: "POST",
+      body: JSON.stringify({
+        question: [...conversation, { role: "user", content: message }],
+      }),
+    });
 
-  useEffect(() => {
-    fetchChats();
-  }, []);
+    const { title } = await chatTitle.json();
+    return title;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,15 +61,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     if (!chatId) {
       setConversation([]);
       setIsNewChat(true);
-      chatId = crypto.randomUUID();
+      chatId = crypto.randomUUID() as string;
 
-      setSidebarChats((prev) => [
-        ...prev,
-        {
-          id: chatId,
-          title: question.slice(0, 30) + "...",
-        },
-      ]);
       router.push(`/chat/${chatId}`);
     }
 
@@ -112,9 +105,14 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         ];
       });
     }
+    const currentChat = await getChat(chatId as string);
+
+    const title =
+      currentChat?.title || (await generateTitleFromUserMessage(question));
 
     await addItem(
       {
+        title,
         id: chatId as string,
         messages: [
           ...conversation,
@@ -131,7 +129,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       chatId as string
     );
 
-    await fetchChats();
+    mutate("sidebarChats");
   };
 
   return (
@@ -144,10 +142,11 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         handleSubmit,
         isPending,
         error,
-        sidebarChats,
-        setSidebarChats,
+        // sidebarChats,
+        // setSidebarChats,
         isNewChat,
         setIsNewChat,
+        generateTitleFromUserMessage,
       }}
     >
       {children}

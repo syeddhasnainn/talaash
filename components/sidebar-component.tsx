@@ -1,22 +1,32 @@
 "use client";
-import { SquarePen, Plus, Settings, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Link from "next/link";
-import { deleteAllItems, getAllItems } from "@/utils/indexed-db";
-import { useEffect, useState } from "react";
 import { useChatContext } from "@/context/ChatContext";
+import { deleteAllItems, getAllItems } from "@/utils/indexed-db";
+import { Settings, SquarePen, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import useSWR, { mutate } from "swr";
 
 export const SidebarComponent = () => {
-  const { id, sidebarChats, setSidebarChats, setConversation, setIsNewChat } =
-    useChatContext();
-
+  const { id, setConversation, setIsNewChat } = useChatContext();
   const router = useRouter();
+
+  const getAllChats = async () => {
+    const chats = await getAllItems();
+    const filteredChats = chats.map((chat) => ({
+      id: chat.id,
+      title: chat.title,
+    }));
+    return filteredChats;
+  };
+
+  const { data: sidebarChats } = useSWR("sidebarChats", getAllChats, {
+    fallbackData: [],
+  });
 
   const handleClearAllChats = async () => {
     await deleteAllItems();
-    setSidebarChats([]);
+    mutate("sidebarChats");
     router.push("/chat");
   };
 
@@ -44,13 +54,12 @@ export const SidebarComponent = () => {
       {/* Chat List */}
       <ScrollArea className="flex-1 px-3 py-2">
         <div className="space-y-1.5">
-          {sidebarChats.length > 0 ? (
-            sidebarChats.map((chat) => (
+          {sidebarChats?.length > 0 ? (
+            sidebarChats?.map((chat) => (
               <button
                 key={chat.id}
                 onClick={() => {
                   setIsNewChat(false);
-
                   router.push(`/chat/${chat.id}`);
                 }}
                 className={`group flex items-center w-full px-3 py-2.5 rounded-lg hover:bg-gray-200/30 transition-all hover:shadow-sm ${

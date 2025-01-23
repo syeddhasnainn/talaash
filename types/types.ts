@@ -6,4 +6,5 @@ export interface ChatMessageType {
 export interface ChatType {
   id: string;
   messages: ChatMessageType[];
+  title: string;
 }

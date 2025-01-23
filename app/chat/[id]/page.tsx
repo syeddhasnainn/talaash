@@ -5,22 +5,23 @@ import { Markdown } from "@/components/markdown";
 import { SidebarComponent } from "@/components/sidebar-component";
 import { Spinner } from "@/components/spinner";
 import { useChatContext } from "@/context/ChatContext";
-import { useEffect } from "react";
 import { getChat } from "@/utils/indexed-db";
+import useSWR from "swr";
 
 export default function Chat() {
-  const { conversation, isPending, id, setConversation, isNewChat } =
-    useChatContext();
+  const { isPending, id, conversation, setConversation } = useChatContext();
 
-  useEffect(() => {
-    const fetchChat = async () => {
-      const { messages } = await getChat(id);
-      setConversation(messages);
-    };
-    if (!isNewChat) {
-      fetchChat();
-    }
-  }, []);
+  const fetchChat = async () => {
+    const { messages } = await getChat(id);
+    return messages;
+  };
+
+  const { data } = useSWR(id ? `chat-${id}` : null, fetchChat, {
+    fallbackData: [],
+    onSuccess: (data) => {
+      setConversation(data);
+    },
+  });
 
   return (
     <div className="flex h-[100dvh]">
