@@ -9,17 +9,20 @@ import { getChat } from "@/utils/indexed-db";
 import useSWR from "swr";
 
 export default function Chat() {
-  const { isPending, id, conversation, setConversation } = useChatContext();
+  const { isPending, id, conversation, setConversation, isNewChat } =
+    useChatContext();
 
   const fetchChat = async () => {
     const { messages } = await getChat(id);
     return messages;
   };
 
-  const { data } = useSWR(id ? `chat-${id}` : null, fetchChat, {
+  const { data } = useSWR(id && !isNewChat ? `chat-${id}` : null, fetchChat, {
     fallbackData: [],
     onSuccess: (data) => {
-      setConversation(data);
+      if (!isNewChat) {
+        setConversation(data);
+      }
     },
   });
 

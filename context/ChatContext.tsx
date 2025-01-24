@@ -59,11 +59,10 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     var chatId = id;
 
     if (!chatId) {
-      setConversation([]);
-      setIsNewChat(true);
       chatId = crypto.randomUUID() as string;
-
-      router.push(`/chat/${chatId}`);
+      window.history.replaceState({}, '', `/chat/${chatId}`);
+      // router.replace(`/chat/${chatId}`, { scroll: false });
+      setIsNewChat(true);
     }
 
     setIsPending(true);

@@ -3,6 +3,9 @@ import { ChatType } from "@/types/types";
 const DB_NAME = "talaash";
 const STORE_NAME = "chats";
 
+
+
+
 export const initDB = async () => {
   const db = await openDB(DB_NAME, 1, {
     upgrade(db) {
