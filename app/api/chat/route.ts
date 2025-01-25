@@ -1,5 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
-import Together from "together-ai";
+import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const client = new OpenAI({
@@ -7,18 +6,9 @@ const client = new OpenAI({
   baseURL: "https://api.cerebras.ai/v1",
 });
 
-// const together = new Together({
-//   apiKey: process.env.TOGETHER_AI_API_KEY,
-// });
-
 export async function POST(req: NextRequest) {
-  // var systemprompt =
-  // //   "You are an expert at programming and breaking down complex computer science/software engineering problems into easy to understand steps. You are also an expert at explaining concepts in a way that is easy to understand. You are also an expert at providing code examples and best practices, you always write up to date code. You always explain concepts in a detailed and concise manner.";
-  // var sp =
-  //   "If the query is the first message in the conversation, then add an xml tag with what the chat name should be maximum 3-5 related words under <chat_name> and start the response under <response>, make sure to close each tag. Do not output chat name if the query is not the first message in the conversation";
   try {
     var { conversation } = await req.json();
-    // conversation.unshift({ role: "system", content: sp });
     const stream = await client.chat.completions.create({
       model: "llama-3.3-70b",
       messages: conversation,

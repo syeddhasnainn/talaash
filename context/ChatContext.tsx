@@ -1,15 +1,8 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
 import { ChatMessageType } from "@/types/types";
-import { useParams, useRouter } from "next/navigation";
-import { addItem, getAllItems, getChat } from "@/utils/indexed-db";
+import { addItem, getChat } from "@/utils/indexed-db";
+import React, { createContext, useContext, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
 
 interface ChatContextType {
@@ -31,12 +24,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { mutate } = useSWRConfig();
 
   const [conversation, setConversation] = useState<ChatMessageType[]>([]);
-  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isNewChat, setIsNewChat] = useState<boolean>(false);
-  var { id } = useParams();
+  const id =
+    typeof window !== "undefined" ? window.location.pathname.split("/")[2] : "";
 
   const generateTitleFromUserMessage = async (message: string) => {
     const chatTitle = await fetch("/api/title", {
@@ -60,7 +53,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!chatId) {
       chatId = crypto.randomUUID() as string;
-      window.history.replaceState({}, '', `/chat/${chatId}`);
+      window.history.replaceState({}, "", `/chat/${chatId}`);
       // router.replace(`/chat/${chatId}`, { scroll: false });
       setIsNewChat(true);
     }
