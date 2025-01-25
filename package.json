@@ -39,6 +39,7 @@
     "@radix-ui/react-tooltip": "^1.1.6",
     "@types/react-mathjax": "^1.0.4",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@vercel/analytics": "^1.4.1",
     "@xyflow/react": "^12.3.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
