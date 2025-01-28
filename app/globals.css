@@ -10,6 +10,8 @@ body {
   @apply rounded-2xl;
 }
 
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;

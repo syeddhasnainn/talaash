@@ -21,15 +21,10 @@ export default function Chat() {
   });
 
   return (
-    <div className="flex h-[100dvh]">
-      <div className="flex-1 relative">
+    <div className="flex h-[100dvh] relative">
+      <div className="mx-auto flex max-w-2xl flex-col justify-between w-full">
         <ChatMessages />
-
-        <div className="absolute bottom-0 left-0 right-0 bg-white">
-          <div className="max-w-2xl mx-auto">
-            <ChatInput />
-          </div>
-        </div>
+        <ChatInput />
       </div>
     </div>
   );
