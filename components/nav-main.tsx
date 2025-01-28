@@ -23,12 +23,11 @@ const items = [
 ];
 
 export function SidebarNewChat() {
-  const { setConversation, setIsNewChat } = useChatContext();
+  const { setConversation } = useChatContext();
   const router = useRouter();
 
   const handleNewChat = () => {
     setConversation([]);
-    setIsNewChat(true);
     router.push("/chat");
   };
 

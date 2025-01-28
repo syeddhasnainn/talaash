@@ -4,17 +4,16 @@ import { ChatMessageType } from "@/types/types";
 import { addItem, getChat } from "@/utils/indexed-db";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { useSWRConfig } from "swr";
+import { usePathname } from "next/navigation";
 
 interface ChatContextType {
   conversation: ChatMessageType[];
-  setConversation: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
   inputRef: any;
   id: string;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   isPending: boolean;
   error: string | null;
-  isNewChat: boolean;
-  setIsNewChat: React.Dispatch<React.SetStateAction<boolean>>;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  setConversation: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
   generateTitleFromUserMessage: (message: string) => Promise<void>;
 }
 
@@ -27,9 +26,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isNewChat, setIsNewChat] = useState<boolean>(false);
-  const id =
-    typeof window !== "undefined" ? window.location.pathname.split("/")[2] : "";
+  const id = usePathname().split("/")[2];
 
   const generateTitleFromUserMessage = async (message: string) => {
     const chatTitle = await fetch("/api/title", {
@@ -54,10 +51,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     if (!chatId) {
       chatId = crypto.randomUUID() as string;
       window.history.replaceState({}, "", `/chat/${chatId}`);
-      // router.replace(`/chat/${chatId}`, { scroll: false });
-      setIsNewChat(true);
     }
-
     setIsPending(true);
     const conversationMessage: ChatMessageType = {
       role: "user",
@@ -134,10 +128,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         handleSubmit,
         isPending,
         error,
-        // sidebarChats,
-        // setSidebarChats,
-        isNewChat,
-        setIsNewChat,
         generateTitleFromUserMessage,
       }}
     >

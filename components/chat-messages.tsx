@@ -1,11 +1,21 @@
 import { Markdown } from "@/components/markdown";
 import { Spinner } from "@/components/spinner";
 import { useChatContext } from "@/context/ChatContext";
+import { useEffect } from "react";
+import { useRef } from "react";
 
 export function ChatMessages() {
   const { isPending, conversation } = useChatContext();
+  const messagesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [conversation]);
+
   return (
-    <div className="h-full overflow-y-auto">
+    <div ref={messagesRef} className="h-full overflow-y-auto">
       <div className="max-w-2xl mx-auto">
         <div className="space-y-4 p-6 pb-32">
           {conversation &&
