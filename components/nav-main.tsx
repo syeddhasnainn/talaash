@@ -51,6 +51,8 @@ export function SidebarNewChat() {
           </Collapsible>
         ))}
       </SidebarMenu>
+
+      
     </SidebarGroup>
   );
 }

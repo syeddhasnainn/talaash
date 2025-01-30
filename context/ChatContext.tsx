@@ -15,6 +15,8 @@ interface ChatContextType {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   setConversation: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
   generateTitleFromUserMessage: (message: string) => Promise<void>;
+  model: string;
+  handleModelChange: (value: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -27,6 +29,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const id = usePathname().split("/")[2];
+
+  const [model, setModel] = useState("llama3");
+
+  const handleModelChange = (value: string) => {
+    setModel(value);
+  };
 
   const generateTitleFromUserMessage = async (message: string) => {
     const chatTitle = await fetch("/api/title", {
@@ -122,6 +130,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     <ChatContext.Provider
       value={{
         inputRef,
+        model,
+        handleModelChange,
         id: id as string,
         conversation,
         setConversation,
