@@ -16,10 +16,11 @@ export default function Chat() {
     }
   }, [conversation]);
   return (
-    <div ref={messagesRef} className="flex h-[100dvh] relative overflow-y-auto">
-      <div
-        className="mx-auto flex max-w-2xl flex-col justify-between w-full"
-      >
+    <div
+      ref={messagesRef}
+      className="flex h-[100dvh] relative overflow-auto custom-scrollbar"
+    >
+      <div className="mx-auto flex max-w-2xl flex-col justify-between w-full">
         <ChatMessages />
         <ChatInput />
       </div>

@@ -8,17 +8,17 @@ import { usePathname } from "next/navigation";
 
 interface ChatContextType {
   conversation: ChatMessageType[];
-  inputRef: any;
+  inputRef: React.RefObject<HTMLTextAreaElement | null>;
   id: string;
   isPending: boolean;
   error: string | null;
-  handleSubmit: (e: React.KeyboardEvent<HTMLInputElement>) => Promise<void>;
+  handleSubmit: (e: React.KeyboardEvent<HTMLFormElement>) => Promise<void>;
   setConversation: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
-  generateTitleFromUserMessage: (message: string) => Promise<void>;
+  generateTitleFromUserMessage: (message: string) => Promise<string>;
   model: string;
   handleModelChange: (value: string) => void;
   inputValue: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -27,47 +27,47 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { mutate } = useSWRConfig();
 
   const [conversation, setConversation] = useState<ChatMessageType[]>([]);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const id = usePathname().split("/")[2];
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
   };
 
-  const [model, setModel] = useState("llama3");
+  const [model, setModel] = useState<string>("llama3");
 
   const handleModelChange = (value: string) => {
     setModel(value);
   };
 
   const generateTitleFromUserMessage = async (message: string) => {
-    const chatTitle = await fetch("/api/title", {
+    const chatTitleResp = await fetch("/api/title", {
       method: "POST",
       body: JSON.stringify({
         question: [...conversation, { role: "user", content: message }],
       }),
     });
 
-    const { title } = await chatTitle.json();
+    const { title } = await chatTitleResp.json();
     return title;
   };
 
-  const handleSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSubmit = async (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const question = inputRef.current?.value;
-      inputRef.current!.value = "";
+      if (inputRef.current) inputRef.current.value = "";
       setInputValue("");
 
       if (!question || question.trim() === "") return;
-      var chatId = id;
+      let chatId = id;
 
       if (!chatId) {
-        chatId = crypto.randomUUID() as string;
+        chatId = crypto.randomUUID();
         window.history.replaceState({}, "", `/chat/${chatId}`);
       }
       setIsPending(true);
@@ -86,10 +86,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        setError(error.message);
+        const errorRes = await response.json();
+        setError(errorRes.message);
+        setIsPending(false);
         return;
       }
+
       setIsPending(false);
 
       const reader = response.body?.getReader();
@@ -98,19 +100,22 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
       setConversation((prev) => [...prev, { role: "assistant", content: "" }]);
 
-      while (true) {
-        const result = await reader?.read();
-        if (result?.done) break;
-        content += decoder.decode(result?.value, { stream: true });
-        setConversation((prev) => {
-          const lastMessageIndex = prev.length - 1;
-          return [
-            ...prev.slice(0, lastMessageIndex),
-            { role: "assistant", content },
-          ];
-        });
+      if (reader) {
+        while (true) {
+          const result = await reader.read();
+          if (result.done) break;
+          content += decoder.decode(result.value, { stream: true });
+          setConversation((prev) => {
+            const lastMessageIndex = prev.length - 1;
+            return [
+              ...prev.slice(0, lastMessageIndex),
+              { role: "assistant", content },
+            ];
+          });
+        }
       }
-      const currentChat = await getChat(chatId as string);
+
+      const currentChat = await getChat(chatId);
 
       const title =
         currentChat?.title || (await generateTitleFromUserMessage(question));
@@ -118,22 +123,15 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       await addItem(
         {
           title,
-          id: chatId as string,
+          id: chatId,
           messages: [
             ...conversation,
-            {
-              role: "user",
-              content: question,
-            },
-            {
-              role: "assistant",
-              content,
-            },
+            { role: "user", content: question },
+            { role: "assistant", content },
           ],
         },
-        chatId as string
+        chatId
       );
-
       mutate("sidebarChats");
     }
   };

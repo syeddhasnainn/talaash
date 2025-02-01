@@ -7,12 +7,6 @@ export function ChatMessages() {
   const { isPending, conversation } = useChatContext();
   const messagesRef = useRef<HTMLDivElement>(null);
 
-  // useEffect(() => {
-  //   if (messagesRef.current) {
-  //     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-  //   }
-  // }, [conversation]);
-
   return (
     <div ref={messagesRef} className=" space-y-4 py-6 pb-8">
       {conversation &&

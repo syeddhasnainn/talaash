@@ -49,7 +49,7 @@ export function SidebarChats() {
   );
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden scrollbar-hide">
       <SidebarGroupLabel>Recent</SidebarGroupLabel>
       <SidebarMenu>
         {isLoading ? (

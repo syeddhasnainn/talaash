@@ -3,6 +3,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkMath from "remark-math";
+import rehypeMathjax from "rehype-mathjax";
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   const components = {
@@ -108,7 +110,11 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   };
 
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+    <ReactMarkdown
+      rehypePlugins={[rehypeMathjax]}
+      remarkPlugins={[remarkGfm, remarkMath]}
+      components={components}
+    >
       {children}
     </ReactMarkdown>
   );

@@ -19,7 +19,7 @@ export const ChatInput = () => {
     inputValue,
     handleInputChange,
   } = useChatContext();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
     <div className="sticky inset-x-0 bottom-0 bg-white pb-2">
@@ -29,8 +29,8 @@ export const ChatInput = () => {
             <textarea
               rows={3}
               ref={inputRef}
-              value={inputValue} 
-              onChange={handleInputChange} 
+              value={inputValue}
+              onChange={handleInputChange}
               className="w-full outline-none resize-none custom-scrollbar"
               placeholder="Ask me a question"
             />
