@@ -11,18 +11,28 @@ import {
 import { useState } from "react";
 
 export const ChatInput = () => {
-  const { handleSubmit, inputRef, model, handleModelChange } = useChatContext();
+  const {
+    handleSubmit,
+    inputRef,
+    model,
+    handleModelChange,
+    inputValue,
+    handleInputChange,
+  } = useChatContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="sticky inset-x-0 bottom-0 bg-white pb-2">
-      <form onSubmit={handleSubmit}>
+      <form onKeyDown={handleSubmit}>
         <fieldset className="space-y-2 p-4 border text-sm border-gray-300 rounded-custom outline-none shadow-sm">
-          <div className="flex gap-2">
-            <input
+          <div className="flex flex-col gap-2">
+            <textarea
+              rows={3}
               ref={inputRef}
-              className="w-full outline-none h-10"
+              value={inputValue} 
+              onChange={handleInputChange} 
+              className="w-full outline-none resize-none custom-scrollbar"
               placeholder="Ask me a question"
-              type="text"
             />
             <Select value={model} onValueChange={handleModelChange}>
               <SelectTrigger className="w-[180px]">
@@ -30,7 +40,13 @@ export const ChatInput = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="llama3">Llama 3.3 70B</SelectItem>
-                <SelectItem value="deepseek">Deepseek V3</SelectItem>
+                <SelectItem value="deepseek3">Deepseek V3</SelectItem>
+                <SelectItem value="qwen32">
+                  Qwen 2.5 Coder 32B Instruct
+                </SelectItem>
+                <SelectItem value="qwen72">
+                  Qwen2.5 72B Instruct Turbo
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

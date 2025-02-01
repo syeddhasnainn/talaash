@@ -10,6 +10,15 @@ body {
   @apply rounded-2xl;
 }
 
+@layer components {
+  .custom-scrollbar {
+    @apply [&::-webkit-scrollbar]:w-2;
+    @apply [&::-webkit-scrollbar-track]:bg-gray-100;
+    @apply [&::-webkit-scrollbar-thumb]:bg-gray-300;
+    @apply dark:[&::-webkit-scrollbar-track]:bg-neutral-700;
+    @apply dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500;
+  }
+}
 
 
 @layer base {

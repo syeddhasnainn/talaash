@@ -12,11 +12,13 @@ interface ChatContextType {
   id: string;
   isPending: boolean;
   error: string | null;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  handleSubmit: (e: React.KeyboardEvent<HTMLInputElement>) => Promise<void>;
   setConversation: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
   generateTitleFromUserMessage: (message: string) => Promise<void>;
   model: string;
   handleModelChange: (value: string) => void;
+  inputValue: string;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -29,6 +31,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const id = usePathname().split("/")[2];
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (event: any) => {
+    setInputValue(event.target.value);
+  };
 
   const [model, setModel] = useState("llama3");
 
@@ -48,82 +56,86 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     return title;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const question = inputRef.current?.value;
-    inputRef.current!.value = "";
+  const handleSubmit = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const question = inputRef.current?.value;
+      inputRef.current!.value = "";
+      setInputValue("");
 
-    if (!question || question.trim() === "") return;
-    var chatId = id;
+      if (!question || question.trim() === "") return;
+      var chatId = id;
 
-    if (!chatId) {
-      chatId = crypto.randomUUID() as string;
-      window.history.replaceState({}, "", `/chat/${chatId}`);
-    }
-    setIsPending(true);
-    const conversationMessage: ChatMessageType = {
-      role: "user",
-      content: question,
-    };
+      if (!chatId) {
+        chatId = crypto.randomUUID() as string;
+        window.history.replaceState({}, "", `/chat/${chatId}`);
+      }
+      setIsPending(true);
+      const conversationMessage: ChatMessageType = {
+        role: "user",
+        content: question,
+      };
 
-    setConversation((prev) => [...prev, conversationMessage]);
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({
-        conversation: [...conversation, conversationMessage],
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      setError(error.message);
-      return;
-    }
-    setIsPending(false);
-
-    const reader = response.body?.getReader();
-    const decoder = new TextDecoder();
-    let content = "";
-
-    setConversation((prev) => [...prev, { role: "assistant", content: "" }]);
-
-    while (true) {
-      const result = await reader?.read();
-      if (result?.done) break;
-      content += decoder.decode(result?.value, { stream: true });
-      setConversation((prev) => {
-        const lastMessageIndex = prev.length - 1;
-        return [
-          ...prev.slice(0, lastMessageIndex),
-          { role: "assistant", content },
-        ];
+      setConversation((prev) => [...prev, conversationMessage]);
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          model,
+          conversation: [...conversation, conversationMessage],
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setError(error.message);
+        return;
+      }
+      setIsPending(false);
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let content = "";
+
+      setConversation((prev) => [...prev, { role: "assistant", content: "" }]);
+
+      while (true) {
+        const result = await reader?.read();
+        if (result?.done) break;
+        content += decoder.decode(result?.value, { stream: true });
+        setConversation((prev) => {
+          const lastMessageIndex = prev.length - 1;
+          return [
+            ...prev.slice(0, lastMessageIndex),
+            { role: "assistant", content },
+          ];
+        });
+      }
+      const currentChat = await getChat(chatId as string);
+
+      const title =
+        currentChat?.title || (await generateTitleFromUserMessage(question));
+
+      await addItem(
+        {
+          title,
+          id: chatId as string,
+          messages: [
+            ...conversation,
+            {
+              role: "user",
+              content: question,
+            },
+            {
+              role: "assistant",
+              content,
+            },
+          ],
+        },
+        chatId as string
+      );
+
+      mutate("sidebarChats");
     }
-    const currentChat = await getChat(chatId as string);
-
-    const title =
-      currentChat?.title || (await generateTitleFromUserMessage(question));
-
-    await addItem(
-      {
-        title,
-        id: chatId as string,
-        messages: [
-          ...conversation,
-          {
-            role: "user",
-            content: question,
-          },
-          {
-            role: "assistant",
-            content,
-          },
-        ],
-      },
-      chatId as string
-    );
-
-    mutate("sidebarChats");
   };
 
   return (
@@ -139,6 +151,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         isPending,
         error,
         generateTitleFromUserMessage,
+        inputValue,
+        handleInputChange,
       }}
     >
       {children}
