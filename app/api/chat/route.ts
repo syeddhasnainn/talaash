@@ -33,10 +33,10 @@ export async function POST(req: NextRequest) {
   type ModelKeys = keyof typeof models;
 
   try {
-    var { model, conversation } = await req.json();
+    var { model, conversation, systemPrompt } = await req.json();
     const modelKey: ModelKeys = model as ModelKeys;
     const { model_name, apikey, baseURL } = models[modelKey];
-
+    conversation.unshift({ role: "system", content: systemPrompt });
     const client = new OpenAI({
       apiKey: apikey,
       baseURL: baseURL,

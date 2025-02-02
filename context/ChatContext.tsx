@@ -19,6 +19,8 @@ interface ChatContextType {
   handleModelChange: (value: string) => void;
   inputValue: string;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  systemPrompt: string;
+  setSystemPrompt: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -33,6 +35,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const id = usePathname().split("/")[2];
   const [inputValue, setInputValue] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [systemPrompt, setSystemPrompt] = useState<string>("You are a helpful assistant.");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
@@ -81,6 +84,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         method: "POST",
         body: JSON.stringify({
           model,
+          systemPrompt,
           conversation: [...conversation, conversationMessage],
         }),
       });
@@ -151,6 +155,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         generateTitleFromUserMessage,
         inputValue,
         handleInputChange,
+        systemPrompt,
+        setSystemPrompt
       }}
     >
       {children}
