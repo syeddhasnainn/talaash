@@ -41,6 +41,7 @@ export const ChatInput = () => {
               <SelectContent>
                 <SelectItem value="llama3">Llama 3.3 70B</SelectItem>
                 <SelectItem value="deepseek3">Deepseek V3</SelectItem>
+                <SelectItem value="deepseekr1">Deepseek R1</SelectItem>
                 <SelectItem value="qwen32">
                   Qwen 2.5 Coder 32B Instruct
                 </SelectItem>

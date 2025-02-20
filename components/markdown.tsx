@@ -12,19 +12,20 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       const match = /language-(\w+)/.exec(className || "");
       const language = match ? match[1] : "text";
       return !inline && match ? (
-        <div className="mb-4  border-gray-200 bg-gray-100">
-          <div className="text-sm font-bold text-gray-500 bg-gray-200 p-2 rounded-t-2xl">
+        <div className="mb-4 border-gray-200 bg-gray-100 ">
+          <div className="text-sm font-bold text-gray-500 bg-gray-300 p-2 rounded-t-xl ">
             {language}
           </div>
           <SyntaxHighlighter
             {...props}
+            
             wrapLines
             wrapLongLines
             children={children}
             PreTag="div"
             language={language}
             style={dark}
-            className="text-sm rounded-2xl leading-7"
+            className="text-sm  leading-7 !m-0 !rounded-none"
           />
         </div>
       ) : (

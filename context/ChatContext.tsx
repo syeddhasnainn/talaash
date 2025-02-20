@@ -2,7 +2,7 @@
 
 import { ChatMessageType } from "@/types/types";
 import { addItem, getChat } from "@/utils/indexed-db";
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, { createContext, useContext, useRef, useState, useEffect } from "react";
 import { useSWRConfig } from "swr";
 import { usePathname } from "next/navigation";
 
@@ -25,6 +25,9 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
+const SYSTEM_PROMPT_KEY = 'talaash-system-prompt';
+const DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant.";
+
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { mutate } = useSWRConfig();
 
@@ -35,7 +38,15 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const id = usePathname().split("/")[2];
   const [inputValue, setInputValue] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [systemPrompt, setSystemPrompt] = useState<string>("You are a helpful assistant.");
+  const [systemPrompt, setSystemPrompt] = useState<string>(
+    typeof window !== 'undefined' 
+      ? localStorage.getItem(SYSTEM_PROMPT_KEY) ?? DEFAULT_SYSTEM_PROMPT
+      : DEFAULT_SYSTEM_PROMPT
+  );
+
+  useEffect(() => {
+    localStorage.setItem(SYSTEM_PROMPT_KEY, systemPrompt);
+  }, [systemPrompt]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);

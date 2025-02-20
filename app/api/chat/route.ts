@@ -18,6 +18,11 @@ export async function POST(req: NextRequest) {
       apikey: process.env.TOGETHER_AI_API_KEY,
       baseURL: "https://api.together.xyz/v1",
     },
+    deepseekr1: {
+      model_name: "deepseek-ai/DeepSeek-R1",
+      apikey: process.env.TOGETHER_AI_API_KEY,
+      baseURL: "https://api.together.xyz/v1",
+    },
     qwen72: {
       model_name: "Qwen/Qwen2.5-72B-Instruct-Turbo",
       apikey: process.env.TOGETHER_AI_API_KEY,

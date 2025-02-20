@@ -23,14 +23,29 @@ export function NavUser() {
     }
   return (
     <SidebarMenu>
-      <SidebarMenuItem className="pb-1 px-1">
-        <textarea value={systemPrompt} onChange={handleSystemPromptChange} rows={6} className="resize-none w-full rounded-md bg-gray-200/60 outline-none text-sm p-1" name="system-prompt" placeholder="Enter your system prompt here..." ></textarea>
+      <SidebarMenuItem className="pb-1 px-1 space-y-3">
+        <div className="space-y-2">
+          <textarea 
+            id="system-prompt"
+            value={systemPrompt} 
+            onChange={handleSystemPromptChange} 
+            rows={6} 
+            className="w-full rounded-lg bg-gray-100/80 text-sm p-3 
+                     border border-gray-200 hover:border-gray-300
+                     transition-all resize-none outline-none
+                     placeholder:text-gray-400"
+            name="system-prompt" 
+            placeholder="Customize AI behavior with your system prompt..." 
+          />
+        </div>
         <Button
           onClick={handleClearAllChats}
-          className="w-full justify-start items-start"
+          className="w-full justify-start gap-2 text-gray-600 hover:text-red-600 
+                     transition-colors group"
           variant="ghost"
         >
-          <Trash />
+          <Trash className="h-4 w-4 text-gray-500 group-hover:text-red-500 
+                           transition-colors" />
           Delete all chats
         </Button>
       </SidebarMenuItem>
