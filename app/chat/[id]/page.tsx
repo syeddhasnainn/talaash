@@ -22,7 +22,7 @@ export default function Chat() {
 
   return (
     <div className="flex h-[100dvh] relative overflow-auto custom-scrollbar">
-      <div className="mx-auto flex max-w-2xl flex-col justify-between w-full">
+      <div className="mx-auto flex max-w-3xl  p-4 flex-col justify-between w-full">
         <ChatMessages />
         <ChatInput />
       </div>

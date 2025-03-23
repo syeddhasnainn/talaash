@@ -33,6 +33,11 @@ export async function POST(req: NextRequest) {
       apikey: process.env.TOGETHER_AI_API_KEY,
       baseURL: "https://api.together.xyz/v1",
     },
+    qwen25groq: {
+      model_name: "qwen-qwq-32b",
+      apikey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1",
+    },
   };
 
   type ModelKeys = keyof typeof models;
@@ -51,7 +56,7 @@ export async function POST(req: NextRequest) {
       model: model_name,
       messages: conversation,
       stream: true,
-      max_completion_tokens: 32768,
+      max_tokens: 32768,
     });
 
     const readableStream = new ReadableStream({

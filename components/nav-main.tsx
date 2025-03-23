@@ -42,7 +42,7 @@ export function SidebarNewChat() {
                 tooltip={item.title}
                 className="outline outline-1 rounded-lg"
               >
-                <Button variant="ghost" onClick={handleNewChat}>
+                <Button className="bg-[#ea5a2e] border-none outline-none hover:bg-[#ea5a2e]" variant="ghost" onClick={handleNewChat}>
                   <item.icon />
                   <span>{item.title}</span>
                 </Button>

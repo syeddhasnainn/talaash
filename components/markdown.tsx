@@ -12,25 +12,24 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       const match = /language-(\w+)/.exec(className || "");
       const language = match ? match[1] : "text";
       return !inline && match ? (
-        <div className="mb-4 border-gray-200 bg-gray-100 ">
-          <div className="text-sm font-bold text-gray-500 bg-gray-300 p-2 rounded-t-xl ">
+        <div className="mb-4  ">
+          <div className=" text-gray-500 bg-lgray p-1.5 rounded-t-xl">
             {language}
           </div>
           <SyntaxHighlighter
             {...props}
-            
             wrapLines
             wrapLongLines
             children={children}
             PreTag="div"
             language={language}
             style={dark}
-            className="text-sm  leading-7 !m-0 !rounded-none"
+            className=" leading-6 !m-0 !rounded-none !p-3"
           />
         </div>
       ) : (
         <code
-          className={`${className} text-gray-500 rounded-2xl px-1.5 py-0.5 bg-gray-100`}
+          className={`${className} rounded-md px-1.5 py-0.5 `}
           {...props}
         >
           {children}
@@ -40,7 +39,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     ol: ({ node, children, ...props }: any) => {
       return (
         <ol
-          className="list-decimal list-outside ml-6 my-2 space-y-2"
+          className="list-decimal list-outside ml-6 my-3 space-y-1.5"
           {...props}
         >
           {children}
@@ -49,21 +48,21 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     },
     li: ({ node, children, ...props }: any) => {
       return (
-        <li className="leading-7" {...props}>
+        <li className="leading-7 " {...props}>
           {children}
         </li>
       );
     },
     ul: ({ node, children, ...props }: any) => {
       return (
-        <ul className="list-disc list-outside ml-6  space-y-2" {...props}>
+        <ul className="list-disc list-outside ml-6 my-3 space-y-1.5" {...props}>
           {children}
         </ul>
       );
     },
     strong: ({ node, children, ...props }: any) => {
       return (
-        <span className="" {...props}>
+        <span className="font-semibold" {...props}>
           {children}
         </span>
       );
@@ -82,28 +81,31 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     },
     p: ({ node, children, ...props }: any) => {
       return (
-        <p className="leading-1 mb-2" {...props}>
+        <p className=" leading-7 mb-4" {...props}>
           {children}
         </p>
       );
     },
     h1: ({ node, children, ...props }: any) => {
       return (
-        <h1 className="text-3xl font-bold mt-8 mb-4" {...props}>
+        <h1 className=" font-bold mt-8 mb-4 leading-tight" {...props}>
           {children}
         </h1>
       );
     },
     h2: ({ node, children, ...props }: any) => {
       return (
-        <h2 className="text-2xl font-bold mt-6 mb-3" {...props}>
+        <h2 className=" font-bold mt-6 mb-3 leading-tight" {...props}>
           {children}
         </h2>
       );
     },
     h3: ({ node, children, ...props }: any) => {
       return (
-        <h3 className="text-xl font-medium my-4" {...props}>
+        <h3
+          className="font-semibold mt-5 mb-3 leading-tight"
+          {...props}
+        >
           {children}
         </h3>
       );
