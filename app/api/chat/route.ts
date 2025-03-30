@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
       baseURL: "https://api.cerebras.ai/v1",
     },
     deepseek3: {
-      model_name: "deepseek-ai/DeepSeek-V3",
-      apikey: process.env.TOGETHER_AI_API_KEY,
-      baseURL: "https://api.together.xyz/v1",
+      model_name: "DeepSeek-V3-0324",
+      apikey: process.env.SAMBANOVA_API_KEY,
+      baseURL: "https://api.sambanova.ai/v1",
     },
     deepseekr1: {
       model_name: "deepseek-ai/DeepSeek-R1",
@@ -56,7 +56,6 @@ export async function POST(req: NextRequest) {
       model: model_name,
       messages: conversation,
       stream: true,
-      max_tokens: 32768,
     });
 
     const readableStream = new ReadableStream({

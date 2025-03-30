@@ -24,7 +24,7 @@ export const ChatInput = () => {
   return (
     <div className="sticky inset-x-0 bottom-0 bg-[#121212] ">
       <form onKeyDown={handleSubmit}>
-        <fieldset className="space-y-2 p-4 border-t  text-sm border-white/40 rounded-custom outline-none shadow-sm">
+        <fieldset className="space-y-2 p-4 border  text-sm border-white/10 rounded-custom outline-none shadow-sm">
           <div className="flex flex-col gap-2">
             <textarea
               rows={3}
