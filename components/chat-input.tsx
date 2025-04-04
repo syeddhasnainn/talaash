@@ -40,10 +40,11 @@ export const ChatInput = () => {
                   <SelectValue placeholder="Select model" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="deepseek3">Deepseek V3</SelectItem>
+
                   <SelectItem value="qwen25groq">Qwen 2.5 32B Groq</SelectItem>
 
                   <SelectItem value="llama3">Llama 3.3 70B</SelectItem>
-                  <SelectItem value="deepseek3">Deepseek V3</SelectItem>
                   <SelectItem value="deepseekr1">Deepseek R1</SelectItem>
                   <SelectItem value="qwen32">
                     Qwen 2.5 Coder 32B Instruct

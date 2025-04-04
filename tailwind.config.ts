@@ -12,8 +12,8 @@ export default {
       colors: {
         lgray: "#1A1A1A",
         dgray: "#212121",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#121212",
+        foreground: "#ffffff",
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

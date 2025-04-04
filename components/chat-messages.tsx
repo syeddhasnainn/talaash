@@ -14,14 +14,14 @@ export function ChatMessages() {
           message.role === "user" ? (
             <div
               key={index}
-              className=" p-4 shadow-sm rounded-custom ml-auto max-w-fit bg-[#1A1A1A] px-4 py-3"
+              className="p-4 shadow-sm rounded-custom ml-auto max-w-fit bg-[#1A1A1A] px-4 py-3"
             >
               {message.content}
             </div>
           ) : (
             <div
               key={index}
-              className="shadow-sm max-w-fit bg-[#212121] px-4 py-3 rounded-custom"
+              className="shadow-sm max-w-fit  px-4 py-3 rounded-custom"
             >
               <Markdown>{message.content}</Markdown>
             </div>

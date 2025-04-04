@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
       model: model_name,
       messages: conversation,
       stream: true,
+      // max_tokens: 8192,
     });
 
     const readableStream = new ReadableStream({

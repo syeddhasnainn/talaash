@@ -52,7 +52,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     setInputValue(event.target.value);
   };
 
-  const [model, setModel] = useState<string>("qwen25groq");
+  const [model, setModel] = useState<string>("deepseek3");
 
   const handleModelChange = (value: string) => {
     setModel(value);

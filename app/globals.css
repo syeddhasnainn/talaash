@@ -24,8 +24,6 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7%; /* Changed to #121212 */
-    --foreground: 0 0% 100%; /* Change foreground to white */
     --card: 0 0% 7%; /* Changed to match background */
     --card-foreground: 0 0% 100%; /* Change card foreground to white */
     --popover: 0 0% 7%; /* Changed to match background */
@@ -59,8 +57,6 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 0 0% 7%; /* Changed to #121212 */
-    --foreground: 0 0% 100%; /* Change dark foreground to white */
     --card: 0 0% 7%; /* Changed to match background */
     --card-foreground: 0 0% 100%; /* Change dark card foreground to white */
     --popover: 0 0% 7%; /* Changed to match background */
