@@ -2,19 +2,11 @@
 
 import { ChatInput } from "@/components/chat-input";
 import { ChatMessages } from "@/components/chat-messages";
-import { useChatContext } from "@/context/ChatContext";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 export default function Chat() {
-  const { isPending, conversation } = useChatContext();
 
   const messagesRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (messagesRef.current) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }
-  }, [conversation]);
   return (
     <div
       ref={messagesRef}

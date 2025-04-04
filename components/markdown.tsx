@@ -5,6 +5,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkMath from "remark-math";
 import rehypeMathjax from "rehype-mathjax";
+import { table } from "console";
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   const components = {
@@ -74,14 +75,14 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     },
     p: ({ node, children, ...props }: any) => {
       return (
-        <p className="py-4" {...props}>
+        <p className="pt-4" {...props}>
           {children}
         </p>
       );
     },
     h1: ({ node, children, ...props }: any) => {
       return (
-        <h1 className=" font-bold mb-4 leading-tight text-lg" {...props}>
+        <h1 className=" font-bold leading-tight text-lg" {...props}>
           {children}
         </h1>
       );
@@ -98,6 +99,34 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
         <h3 className="font-semibold mt-5 mb-2 leading-tight" {...props}>
           {children}
         </h3>
+      );
+    },
+    table: ({ node, children, ...props }: any) => {
+      return (
+        <table className="w-full border border-white/10 mt-4 rounded-custom" {...props}>
+          {children}
+        </table>
+      );
+    },
+    th: ({ node,  children, ...props }: any) => {
+      return (
+        <th className="border border-white/10 px-2 py-1 text-center text-sm" {...props}>
+          {children}
+        </th>
+      );
+    },
+    td: ({ node, children, ...props }: any) => {
+      return (
+        <td className="border border-white/10 px-2 py-1 text-center text-sm" {...props}>
+          {children}
+        </td>
+      );
+    },
+    tr: ({ node, children, ...props }: any) => {
+      return (
+        <tr className="border border-white/10 px-2 py-1 text-sm" {...props}>
+          {children}
+        </tr>
       );
     },
   };
