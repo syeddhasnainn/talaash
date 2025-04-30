@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { SidebarChats } from "./nav-chats";
-import { SidebarLogo } from "./nav-logo";
-import { SidebarNewChat } from "./nav-main";
-import { NavUser } from "./nav-user";
+} from '@/components/ui/sidebar';
+import { SidebarChats } from './nav-chats';
+import { SidebarLogo } from './nav-logo';
+import { SidebarNewChat } from './nav-main';
+import { NavUser } from './nav-user';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

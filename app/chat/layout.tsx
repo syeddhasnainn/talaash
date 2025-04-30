@@ -2,15 +2,15 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+} from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 import {
   Select,
   SelectValue,
   SelectTrigger,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 export default function ChatLayout({
   children,
@@ -25,7 +25,6 @@ export default function ChatLayout({
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
           </div>
-         
         </header>
         {children}
       </SidebarInset>

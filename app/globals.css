@@ -10,7 +10,7 @@
   @apply rounded-lg;
 }
 
-@layer components {
+/* @layer components {
   .custom-scrollbar {
     @apply [&::-webkit-scrollbar]:w-2;
     @apply [&::-webkit-scrollbar]:rounded-full;
@@ -20,7 +20,7 @@
     @apply dark:[&::-webkit-scrollbar-track]:bg-neutral-700;
     @apply dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500;
   }
-}
+} */
 
 @layer base {
   :root {
@@ -89,4 +89,3 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
-

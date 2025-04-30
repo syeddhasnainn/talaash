@@ -1,20 +1,20 @@
-import React, { memo } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import remarkMath from "remark-math";
-import rehypeMathjax from "rehype-mathjax";
-import { table } from "console";
+import React, { memo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
+
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   const components = {
     code: ({ node, inline, className, children, ...props }: any) => {
-      const match = /language-(\w+)/.exec(className || "");
-      const language = match ? match[1] : "text";
+      const match = /language-(\w+)/.exec(className || '');
+      const language = match ? match[1] : 'text';
       return !inline && match ? (
-        <div className="my-4">
-          <div className=" text-white bg-[#1E1E1E] p-1.5 rounded-t-lg px-4 text-sm border-b-0 border border-white/10">
+        <div className="my-6">
+          <div className="bg-[#1E1E1E] text-white px-4 py-1.5 rounded-t-lg border border-white/10 border-b-0 text-sm">
             {language}
           </div>
           <SyntaxHighlighter
@@ -25,116 +25,99 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
             PreTag="div"
             language={language}
             style={dark}
-            className=" leading-6 !m-0 rounded-b-lg !px-4 text-sm border border-t border-white/10"
+            className="border border-white/10 rounded-b-lg px-4 py-2 text-sm leading-6 !m-0"
           />
         </div>
       ) : (
-        <code className={`${className}  rounded-md px-1.5 py-0.5`} {...props}>
+        <code className={`${className} rounded-md px-1.5 py-0.5`} {...props}>
           {children}
         </code>
       );
     },
-    ol: ({ node, children, ...props }: any) => {
-      return (
-        <ol
-          className="list-decimal list-outside ml-6 my-3 space-y-1.5"
-          {...props}
-        >
-          {children}
-        </ol>
-      );
-    },
-    li: ({ node, children, ...props }: any) => {
-      return <li {...props}>{children}</li>;
-    },
-    ul: ({ node, children, ...props }: any) => {
-      return (
-        <ul className="list-disc list-outside ml-6 my-3" {...props}>
-          {children}
-        </ul>
-      );
-    },
-    strong: ({ node, children, ...props }: any) => {
-      return (
-        <span className="font-semibold" {...props}>
-          {children}
-        </span>
-      );
-    },
-    a: ({ node, children, ...props }: any) => {
-      return (
-        <a
-          className="text-blue-500 hover:underline font-medium"
-          target="_blank"
-          rel="noreferrer"
-          {...props}
-        >
-          {children}
-        </a>
-      );
-    },
-    p: ({ node, children, ...props }: any) => {
-      return (
-        <p className="pt-4" {...props}>
-          {children}
-        </p>
-      );
-    },
-    h1: ({ node, children, ...props }: any) => {
-      return (
-        <h1 className=" font-bold leading-tight text-lg" {...props}>
-          {children}
-        </h1>
-      );
-    },
-    h2: ({ node, children, ...props }: any) => {
-      return (
-        <h2 className=" font-bold mt-8 leading-tight" {...props}>
-          {children}
-        </h2>
-      );
-    },
-    h3: ({ node, children, ...props }: any) => {
-      return (
-        <h3 className="font-semibold mt-5 mb-2 leading-tight" {...props}>
-          {children}
-        </h3>
-      );
-    },
-    table: ({ node, children, ...props }: any) => {
-      return (
-        <table className="w-full border border-white/10 mt-4 rounded-custom" {...props}>
-          {children}
-        </table>
-      );
-    },
-    th: ({ node,  children, ...props }: any) => {
-      return (
-        <th className="border border-white/10 px-2 py-1 text-center text-sm" {...props}>
-          {children}
-        </th>
-      );
-    },
-    td: ({ node, children, ...props }: any) => {
-      return (
-        <td className="border border-white/10 px-2 py-1 text-center text-sm" {...props}>
-          {children}
-        </td>
-      );
-    },
-    tr: ({ node, children, ...props }: any) => {
-      return (
-        <tr className="border border-white/10 px-2 py-1 text-sm" {...props}>
-          {children}
-        </tr>
-      );
-    },
+    p: ({ node, children, ...props }: any) => (
+      <p className="my-4" {...props}>
+        {children}
+      </p>
+    ),
+    hr: ({ node, ...props }: any) => <hr className={`hidden`} {...props} />,
+    h1: ({ node, children, ...props }: any) => (
+      <h1 className="font-bold leading-tight text-lg my-6" {...props}>
+        {children}
+      </h1>
+    ),
+    h2: ({ node, children, ...props }: any) => (
+      <h2 className="font-bold leading-tight text-lg my-5" {...props}>
+        {children}
+      </h2>
+    ),
+    h3: ({ node, children, ...props }: any) => (
+      <h3 className="font-semibold leading-tight text-base my-4" {...props}>
+        {children}
+      </h3>
+    ),
+    ol: ({ node, children, ...props }: any) => (
+      <ol
+        className="list-decimal list-outside ml-6 my-4 space-y-1.5"
+        {...props}
+      >
+        {children}
+      </ol>
+    ),
+    ul: ({ node, children, ...props }: any) => (
+      <ul className="list-disc list-outside ml-6 my-4 space-y-1.5" {...props}>
+        {children}
+      </ul>
+    ),
+    table: ({ node, children, ...props }: any) => (
+      <table
+        className="w-full border border-white/10 my-6 rounded-custom"
+        {...props}
+      >
+        {children}
+      </table>
+    ),
+    th: ({ node, children, ...props }: any) => (
+      <th
+        className="border border-white/10 px-2 py-1 text-center text-sm"
+        {...props}
+      >
+        {children}
+      </th>
+    ),
+    td: ({ node, children, ...props }: any) => (
+      <td
+        className="border border-white/10 px-2 py-1 text-center text-sm"
+        {...props}
+      >
+        {children}
+      </td>
+    ),
+    tr: ({ node, children, ...props }: any) => (
+      <tr className="border border-white/10 text-sm" {...props}>
+        {children}
+      </tr>
+    ),
+    a: ({ node, children, ...props }: any) => (
+      <a
+        className="text-blue-500 hover:underline font-medium"
+        target="_blank"
+        rel="noreferrer"
+        {...props}
+      >
+        {children}
+      </a>
+    ),
+    strong: ({ node, children, ...props }: any) => (
+      <span className="font-semibold" {...props}>
+        {children}
+      </span>
+    ),
   };
 
   return (
     <ReactMarkdown
-      rehypePlugins={[rehypeMathjax]}
-      remarkPlugins={[remarkGfm, remarkMath]}
+      remarkPlugins={[remarkGfm, [remarkMath, { output: 'mathml' }]]}
+      rehypePlugins={[[rehypeKatex, { singleDollarTextMath: true }]]}
       components={components}
     >
       {children}
@@ -144,5 +127,5 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children
+  (prevProps, nextProps) => prevProps.children === nextProps.children,
 );

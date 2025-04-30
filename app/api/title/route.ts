@@ -1,17 +1,17 @@
-import { NextResponse, NextRequest } from "next/server";
-import Together from "together-ai";
-import OpenAI from "openai";
+import { NextResponse, NextRequest } from 'next/server';
+import OpenAI from 'openai';
 
 const client = new OpenAI({
   apiKey: process.env.CEREBRAS_API_KEY,
-  baseURL: "https://api.cerebras.ai/v1",
+  baseURL: 'https://api.cerebras.ai/v1',
 });
 
 export async function POST(req: NextRequest) {
   try {
-    var { question } = await req.json();
+    const { question } = await req.json();
+    console.log('question', question);
     question.unshift({
-      role: "system",
+      role: 'system',
       content: `\n
     - you will generate a short title based on the first message a user begins a conversation with, the name should be descriptive and concise
     - ensure it is not more than 80 characters long
@@ -19,12 +19,12 @@ export async function POST(req: NextRequest) {
     - do not use quotes or colons`,
     });
     const completion = await client.chat.completions.create({
-      model: "llama-3.3-70b",
+      model: 'llama-3.3-70b',
       messages: question,
     });
 
     return NextResponse.json({ title: completion.choices[0].message.content });
   } catch (error) {
-    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
 }

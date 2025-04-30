@@ -1,5 +1,5 @@
-"use client";
-import Link from "next/link";
+'use client';
+import Link from 'next/link';
 
 import {
   ArrowUpRight,
@@ -7,16 +7,16 @@ import {
   MoreHorizontal,
   StarOff,
   Trash2,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { Spinner } from "@/components/spinner";
+import { Spinner } from '@/components/spinner';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -25,34 +25,46 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { getAllItems } from "@/utils/indexed-db";
-import useSWR from "swr";
+} from '@/components/ui/sidebar';
+import { getAllChats } from '@/utils/indexed-db';
+// import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 export function SidebarChats() {
   const { isMobile } = useSidebar();
 
-  const getAllChats = async () => {
-    const chats = await getAllItems();
+  // const getAllChats = async () => {
+  //   const chats = await getAllChats();
+  //   const filteredChats = chats.map((chat) => ({
+  //     id: chat.id,
+  //     title: chat.title,
+  //   }));
+  //   return filteredChats;
+  // };
+
+  
+
+  const fetchSidebarChats = async ()=> {
+    const chats = await getAllChats();
     const filteredChats = chats.map((chat) => ({
       id: chat.id,
       title: chat.title,
     }));
     return filteredChats;
-  };
+  }
 
-  const { data: sidebarChats, isLoading } = useSWR(
-    "sidebarChats",
-    getAllChats,
+  const { data: sidebarChats } = useSWR(
+    'sidebarchats',
+    fetchSidebarChats,
     {
       fallbackData: [],
-    }
+    },
   );
-
+    
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden scrollbar-hide">
       <SidebarGroupLabel>Recent</SidebarGroupLabel>
       <SidebarMenu>
-        {isLoading ? (
+        {sidebarChats.length === 0 ? (
           <SidebarMenuButton asChild>
             <span>
               <Spinner size="xs" />
@@ -79,8 +91,8 @@ export function SidebarChats() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   className="w-56 rounded-lg"
-                  side={isMobile ? "bottom" : "right"}
-                  align={isMobile ? "end" : "start"}
+                  side={isMobile ? 'bottom' : 'right'}
+                  align={isMobile ? 'end' : 'start'}
                 >
                   <DropdownMenuItem>
                     <StarOff className="text-muted-foreground" />

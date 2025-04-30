@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { ChatInput } from "@/components/chat-input";
-import { ChatMessages } from "@/components/chat-messages";
-import { useRef } from "react";
+import { ChatInput } from '@/components/chat-input';
+import { ChatMessages } from '@/components/chat-messages';
+import { useRef } from 'react';
 
 export default function Chat() {
-
   const messagesRef = useRef<HTMLDivElement>(null);
   return (
     <div
