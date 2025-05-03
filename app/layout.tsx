@@ -1,17 +1,17 @@
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Geist } from 'next/font/google';
 import './globals.css';
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
+
+// const inter = Inter({
+//   variable: '--font-inter',
+//   subsets: ['latin'],
+// });
 
 // const poppins = Poppins({
 //   subsets: ["latin"],
@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased `}>
+      <body className={`${geistSans.className} antialiased `}>
         {children}
         <Analytics />
       </body>

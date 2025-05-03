@@ -42,10 +42,10 @@ export function SidebarNewChat() {
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
-                className="outline outline-1 rounded-lg"
+                className="outline outline-1 rounded-sm"
               >
                 <Button
-                  className="bg-primary border-none outline-none py-4"
+                  className="bg-primary-400 hover:bg-primary-500 border-none outline-none py-4 text-black font-normal"
                   variant="ghost"
                   onClick={handleNewChat}
                 >

@@ -35,7 +35,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       );
     },
     p: ({ node, children, ...props }: any) => (
-      <p className="my-4" {...props}>
+      <p className="" {...props}>
         {children}
       </p>
     ),

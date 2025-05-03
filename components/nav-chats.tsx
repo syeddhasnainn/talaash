@@ -31,6 +31,8 @@ import {
 import useSWR from 'swr';
 import { getAllChats } from '@/actions/chatActions';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+
 export function SidebarChats() {
   const { isMobile } = useSidebar();
 
@@ -43,8 +45,6 @@ export function SidebarChats() {
   //   return filteredChats;
   // };
 
-
-
   // const fetchSidebarChats = async ()=> {
   //   const chats = await getAllChats();
   //   const filteredChats = chats.map((chat) => ({
@@ -54,22 +54,19 @@ export function SidebarChats() {
   //   return filteredChats;
   // }
 
-  const { data: sidebarChats } = useSWR(
-    'sidebarchats',
-    getAllChats,
-    {
-      fallbackData: [],
-      onError(err, key, config) {
-        console.log(err);
-      },
-      onSuccess(data, key, config) {
-        console.log(data);
-      },
-    
+  const { data: sidebarChats } = useSWR('sidebarchats', getAllChats, {
+    fallbackData: [],
+    onError(err, key, config) {
+      console.log(err);
     },
-  );
+    onSuccess(data, key, config) {
+      console.log(data);
+    },
+  });
 
-    
+  const chatid = usePathname().split('/')[2];
+  console.log(chatid);
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden scrollbar-hide">
       <SidebarGroupLabel>Recent</SidebarGroupLabel>
@@ -83,9 +80,14 @@ export function SidebarChats() {
         ) : (
           sidebarChats.map((item: any) => (
             <SidebarMenuItem key={item.id}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                className={`${
+                  chatid === item.id ? 'rounded-sm bg-base-100' : ''
+                }`}
+              >
                 <Link
-                  prefetch={true}
+                  // prefetch={true}
                   href={`/chat/${item.id}`}
                   title={item.title}
                 >
