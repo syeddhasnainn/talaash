@@ -83,6 +83,18 @@ export const providerConfigs = {
     apiKey: process.env.TOGETHER_AI_API_KEY,
     models: [
       {
+        id: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
+        name: 'llama3.1',
+        provider: 'together',
+        maxTokens: 8192,
+        capabilities: {
+          supportsImages: true,
+          supportsCode: true,
+          supportsStructuredOutput: true,
+          supportsFunctions: true,
+        },
+      },
+      {
         id: 'Qwen/Qwen3-235B-A22B-fp8-tput',
         name: 'qwen3-235b-fp8-tput',
         provider: 'together',

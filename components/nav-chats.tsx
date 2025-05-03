@@ -26,9 +26,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { getAllChats } from '@/utils/indexed-db';
+// import { useState } from 'react';
 // import { useEffect, useState } from 'react';
 import useSWR from 'swr';
+import { getAllChats } from '@/actions/chatActions';
+import { useEffect, useState } from 'react';
 export function SidebarChats() {
   const { isMobile } = useSidebar();
 
@@ -41,24 +43,32 @@ export function SidebarChats() {
   //   return filteredChats;
   // };
 
-  
 
-  const fetchSidebarChats = async ()=> {
-    const chats = await getAllChats();
-    const filteredChats = chats.map((chat) => ({
-      id: chat.id,
-      title: chat.title,
-    }));
-    return filteredChats;
-  }
+
+  // const fetchSidebarChats = async ()=> {
+  //   const chats = await getAllChats();
+  //   const filteredChats = chats.map((chat) => ({
+  //     id: chat.id,
+  //     title: chat.title,
+  //   }));
+  //   return filteredChats;
+  // }
 
   const { data: sidebarChats } = useSWR(
     'sidebarchats',
-    fetchSidebarChats,
+    getAllChats,
     {
       fallbackData: [],
+      onError(err, key, config) {
+        console.log(err);
+      },
+      onSuccess(data, key, config) {
+        console.log(data);
+      },
+    
     },
   );
+
     
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden scrollbar-hide">

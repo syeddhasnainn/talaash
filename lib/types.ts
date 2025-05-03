@@ -1,11 +1,11 @@
 export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
-}
+} 
 
 export interface ChatSession {
   id: string;
-  messages: Message[];
+  messages: Message[] | null;
   title: string;
 }
 

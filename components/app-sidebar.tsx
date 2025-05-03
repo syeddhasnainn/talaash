@@ -15,7 +15,7 @@ import { NavUser } from './nav-user';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar className="border-r-0 " {...props}>
+    <Sidebar className="border-r border-border bg-sidebar text-sidebar-foreground" {...props}>
       <SidebarHeader>
         <SidebarLogo />
         <SidebarNewChat />

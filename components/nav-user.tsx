@@ -3,16 +3,12 @@ import { Trash } from 'lucide-react';
 
 import { SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Button } from './ui/button';
-import { deleteAllChats } from '@/utils/indexed-db';
+// import { deleteAllChats } from '@/utils/indexed-db';
 import { mutate } from 'swr';
 import { useRouter } from 'next/navigation';
 export function NavUser() {
   const router = useRouter();
-  const handleClearAllChats = async () => {
-    await deleteAllChats();
-    mutate('sidebarchats');
-    router.push('/chat');
-  };
+
 
   return (
     <SidebarMenu>
@@ -30,7 +26,6 @@ export function NavUser() {
           />
         </div>
         <Button
-          onClick={handleClearAllChats}
           className="w-full justify-start bg-lgray gap-2 border border-white/10 text-white hover:text-red-600 
                      transition-colors group"
           variant="ghost"

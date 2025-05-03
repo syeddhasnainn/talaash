@@ -7,7 +7,6 @@ export function ChatMessages() {
     id: 'chat',
     api: '/api/chat',
   });
-console.log('status', status);
   return (
     <div className=" space-y-4 py-6 pb-8">
       {conversation &&
@@ -15,17 +14,22 @@ console.log('status', status);
           message.role === 'user' ? (
             <div
               key={index}
-              className="p-4 shadow-sm rounded-custom ml-auto max-w-fit bg-[#1A1A1A] px-4 py-3"
+              className="p-4 shadow-sm border rounded-custom ml-auto max-w-fit  text-foreground px-4 py-3"
             >
               {message.content}
             </div>
           ) : (
+
+            
             <div
               key={index}
-              className="shadow-sm max-w-fit  px-4 py-3 rounded-custom"
+              className="shadow-sm max-w-fit  px-4 py-3 rounded-custom border"
             >
               <Markdown>{message.content}</Markdown>
             </div>
+            
+            
+            
           ),
         )}
 
