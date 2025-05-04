@@ -5,6 +5,7 @@ import { LLMProvider } from '@/lib/types';
 import { addMessage } from '@/actions/messageActions';
 import { addChat, getChatById } from '@/actions/chatActions';
 import OpenAI from 'openai';
+import { auth } from '@clerk/nextjs/server'
 
 const client = new OpenAI({
   apiKey: process.env.CEREBRAS_API_KEY,
@@ -39,33 +40,29 @@ const generateChatTitle = async(question: string) => {
 export async function POST(req: NextRequest) {
   try {
     const { messages, id, model: modelName } = await req.json();
-    console.log('idddddddddddddddddddddddddddddddd', id);
+    const { userId } = await auth()
+
     const model = getProviderByModelName(modelName as LLMProvider);
     if (!model) {
       return NextResponse.json({ error: 'Model not found' }, { status: 400 });
     }
 
     const chat = await getChatById(id);
-    console.log('chat from db', chat);
     if (chat.length === 0) {
-      console.log('chat not found');
       try {
         const title = await generateChatTitle(messages[messages.length - 1].content);
-        await addChat(id, '0oTdkN4LWVxJSRjsqKW', title!);
-        console.log('chat added')
+        await addChat(id, userId!, title!);
       }
       catch (error) {
         console.log('error getting title', error);
       }
     }
-    await addMessage('0oTdkN4LWVxJSRjsqKW', id, 'user', messages[messages.length - 1].content);
-    console.log('user message added');
+    await addMessage(userId!, id, 'user', messages[messages.length - 1].content);
     const results = streamText({
       model,
       messages,
       onFinish: async(message) => {
-        await addMessage('0oTdkN4LWVxJSRjsqKW', id, 'assistant', message.text);
-        console.log('assistant message added');
+        await addMessage(userId!, id, 'assistant', message.text);
       },
       experimental_transform: smoothStream({
         delayInMs: 10,

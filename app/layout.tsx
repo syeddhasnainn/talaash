@@ -2,10 +2,17 @@ import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import './globals.css';
-
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 // const inter = Inter({
@@ -20,7 +27,7 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: 'Talaash',
-  description: 'Local only AI chat',
+  description: 'AI chat app',
 };
 
 export default function RootLayout({
@@ -29,11 +36,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.className} antialiased `}>
-        {children}
-        <Analytics />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${geistSans.className} antialiased `}>
+          {/* <SignedOut>
+            <SignInButton />
+            <SignUpButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn> */}
+          {children}
+          <Analytics />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
