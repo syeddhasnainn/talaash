@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       }
 
       try{
-        await addChat(id, userId!, chatTitle);
+        await addChat(id, userId, chatTitle);
       }
       catch (error) {
         console.log('error adding chat', error);
