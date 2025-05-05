@@ -48,13 +48,23 @@ export async function POST(req: NextRequest) {
     }
 
     const chat = await getChatById(id);
+    let chatTitle = ""
     if (chat.length === 0) {
       try {
-        const title = await generateChatTitle(messages[messages.length - 1].content);
-        await addChat(id, userId!, title!);
+        chatTitle = await generateChatTitle(messages[messages.length - 1].content);
+        await addChat(id, userId!, chatTitle!);
       }
       catch (error) {
-        console.log('error getting title', error);
+        console.log('error generating title', error);
+        return NextResponse.json({ error: 'Failed to generate title' }, { status: 500 });
+      }
+
+      try{
+        await addChat(id, userId!, chatTitle);
+      }
+      catch (error) {
+        console.log('error adding chat', error);
+        return NextResponse.json({ error: 'Failed to add chat' }, { status: 500 });
       }
     }
     await addMessage(userId!, id, 'user', messages[messages.length - 1].content);
