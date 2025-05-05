@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 export const ChatInput = ({ chatid }: { chatid: string }) => {
   const router = useRouter();
   const { userId } = useAuth();
-  const [model, setModel] = useState<string>('llama3.1');
+  const [model, setModel] = useState<string>('internvl3-2b');
 
   const queryClient = useQueryClient();
 
@@ -84,6 +84,7 @@ export const ChatInput = ({ chatid }: { chatid: string }) => {
                   <SelectValue placeholder="Select model" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="internvl3-2b">Internvl 3.2B</SelectItem>
                   <SelectItem value="llama3.1">
                     Llama 3.1 8B Instruct Turbo
                   </SelectItem>

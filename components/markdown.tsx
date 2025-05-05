@@ -18,7 +18,10 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
         <div className="my-6">
           <div className="flex justify-between bg-base-300 text-black px-4 py-1.5 rounded-t-lg border border-white/10 border-b-0 text-sm">
             {language}
-            <button className="ml-2" onClick={() => navigator.clipboard.writeText(children)}>
+            <button
+              className="ml-2"
+              onClick={() => navigator.clipboard.writeText(children)}
+            >
               <Copy width={14} height={14} />
             </button>
           </div>
@@ -62,10 +65,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       </h3>
     ),
     ol: ({ node, children, ...props }: any) => (
-      <ol
-        className="list-decimal list-outside ml-6 my-4 space-y-2"
-        {...props}
-      >
+      <ol className="list-decimal list-outside ml-6 my-4 space-y-2" {...props}>
         {children}
       </ol>
     ),

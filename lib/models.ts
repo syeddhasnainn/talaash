@@ -76,6 +76,30 @@ export const providerConfigs = {
           supportsFunctions: true,
         },
       },
+      // {
+      //   id: 'google/gemini-2.5-flash-preview',
+      //   name: 'gemini2.5-flash',
+      //   provider: 'openrouter',
+      //   maxTokens: 8192,
+      //   capabilities: {
+      //     supportsImages: true,
+      //     supportsCode: true,
+      //     supportsStructuredOutput: true,
+      //     supportsFunctions: true,
+      //   },
+      // },
+      {
+        id : 'opengvlab/internvl3-2b:free',
+        name: 'internvl3-2b',
+        provider: 'openrouter',
+        maxTokens: 4096,
+        capabilities: {
+          supportsImages: true,
+          supportsCode: true,
+          supportsStructuredOutput: true,
+          supportsFunctions: true,
+        },
+      }
     ],
   },
 

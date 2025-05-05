@@ -1,6 +1,7 @@
 import { Markdown } from '@/components/markdown';
 import { Spinner } from '@/components/spinner';
 import { useChat } from '@ai-sdk/react';
+import { Copy } from 'lucide-react';
 
 export function ChatMessages({
   chatid,
@@ -28,9 +29,15 @@ export function ChatMessages({
           ) : (
             <div
               key={index}
-              className=" shadow-sm max-w-fit rounded-sm px-4 py-2"
+              className=" shadow-sm max-w-fit rounded-sm px-4 py-2 space-y-1"
             >
-              <Markdown>{message.content}</Markdown>
+              <Markdown>{String.raw`${message.content}`}</Markdown>
+              <button
+                className="ml-2"
+                onClick={() => navigator.clipboard.writeText(message.content)}
+              >
+                <Copy width={16} height={16} />
+              </button>
             </div>
           ),
         )}
