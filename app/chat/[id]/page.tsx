@@ -4,6 +4,5 @@ import Chat from '@/components/chat';
 export default async function ChatPage({ params }: { params: { id: string } }) {
   const id = params.id;
   const messages = await getMessages(id);
-  console.log('messages', messages);
   return <Chat chatid={id} initialMessages={messages} />;
 }

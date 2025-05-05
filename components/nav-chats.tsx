@@ -26,64 +26,38 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-// import { useState } from 'react';
-// import { useEffect, useState } from 'react';
-import useSWR from 'swr';
-import { getAllChats } from '@/actions/chatActions';
-import { useEffect, useState } from 'react';
+import { fetchUserChats } from '@/actions/chatActions';
 import { usePathname } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@clerk/clerk-react';
 
 export function SidebarChats() {
   const { isMobile } = useSidebar();
-
-  // const getAllChats = async () => {
-  //   const chats = await getAllChats();
-  //   const filteredChats = chats.map((chat) => ({
-  //     id: chat.id,
-  //     title: chat.title,
-  //   }));
-  //   return filteredChats;
-  // };
-
-  // const fetchSidebarChats = async ()=> {
-  //   const chats = await getAllChats();
-  //   const filteredChats = chats.map((chat) => ({
-  //     id: chat.id,
-  //     title: chat.title,
-  //   }));
-  //   return filteredChats;
-  // }
-
-  const { data: sidebarChats } = useSWR('sidebarchats', getAllChats, {
-    fallbackData: [],
-    onError(err, key, config) {
-      console.log(err);
-    },
-    onSuccess(data, key, config) {
-      console.log(data);
-    },
+  const { userId } = useAuth();
+  const { data: chats, isLoading } = useQuery({
+    queryKey: ['chats', userId],
+    queryFn: () => fetchUserChats(userId!),
+    staleTime: 60 * 60 * 1000,
   });
-
   const chatid = usePathname().split('/')[2];
-  console.log(chatid);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden scrollbar-hide">
       <SidebarGroupLabel>Recent</SidebarGroupLabel>
       <SidebarMenu>
-        {sidebarChats.length === 0 ? (
+        {isLoading ? (
           <SidebarMenuButton asChild>
             <span>
               <Spinner size="xs" />
             </span>
           </SidebarMenuButton>
         ) : (
-          sidebarChats.map((item: any) => (
+          chats.map((item: any) => (
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton
                 asChild
                 className={`${
-                  chatid === item.id ? 'rounded-sm bg-base-100' : ''
+                  chatid === item.id ? 'rounded-sm bg-base-50 border' : ''
                 }`}
               >
                 <Link

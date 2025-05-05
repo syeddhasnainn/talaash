@@ -21,14 +21,14 @@ export function ChatMessages({
           message.role === 'user' ? (
             <div
               key={index}
-              className="bg-base-50 shadow-sm border rounded-sm ml-auto max-w-fit  text-foreground px-4 py-2"
+              className="bg-base-50 shadow-sm border rounded-sm ml-auto max-w-xl  text-foreground px-4 py-2"
             >
               {message.content}
             </div>
           ) : (
             <div
               key={index}
-              className="bg-base-50 shadow-sm max-w-fit rounded-sm border px-4 py-2"
+              className=" shadow-sm max-w-fit rounded-sm px-4 py-2"
             >
               <Markdown>{message.content}</Markdown>
             </div>

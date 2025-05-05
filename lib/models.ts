@@ -123,11 +123,9 @@ export const providerConfigs = {
 };
 
 export const getProviderByModelName = (name: string) => {
-  console.log('from func', name);
   for (const config of Object.values(providerConfigs)) {
     const model = config.models.find((model) => model.name === name);
     if (model) {
-      console.log(model);
       return createModelInstance(model.provider, model.id);
     }
   }

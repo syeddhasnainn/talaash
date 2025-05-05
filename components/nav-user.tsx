@@ -8,18 +8,18 @@ import {
   SignUpButton,
   UserButton,
 } from '@clerk/nextjs';
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from '@clerk/clerk-react';
+import { deleteAllChats } from '@/actions/chatActions';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export function NavUser() {
-
   const { user } = useUser();
-  console.log("user",user)
-  console.log(user?.fullName)
-
+  const queryClient = useQueryClient();
   return (
     <SidebarMenu>
       <SidebarMenuItem className="pb-1 px-1 space-y-1 m-1 mb-2">
-        <div className="space-y-1">
+        {/* <div className="space-y-1">
           <textarea
             id="system-prompt"
             rows={6}
@@ -30,16 +30,23 @@ export function NavUser() {
             name="system-prompt"
             placeholder="Customize AI behavior with your system prompt..."
           />
-        </div>
+        </div> */}
         <div className=" transition-colors space-y-2">
-          {/* <Button
+          <Button
+            onClick={() => {
+              deleteAllChats(user?.id);
+              queryClient.invalidateQueries({
+                queryKey: ['chats', user?.id],
+              });
+              toast.success('All chats deleted');
+            }}
             className="rounded-sm w-full justify-start bg-base-50 gap-2 border border-base-200 text-black hover:bg-red-600 hover:text-white 
                      transition-colors"
             variant="ghost"
           >
-            <Trash className="h-4 w-4" />
+            <Trash className="h-4 w-4 " />
             Delete all chats
-          </Button> */}
+          </Button>
           {/* <Button
             className="rounded-sm w-full justify-start bg-base-50 gap-2 border border-base-200 text-black hover:bg-primary-500 hover:text-white 
                      transition-colors"
@@ -48,13 +55,9 @@ export function NavUser() {
             <Settings className="h-4 w-4" />
             Settings
           </Button> */}
-          <div className="flex items-center gap-8">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
+          <div className="flex items-center gap-3">
             <UserButton />
-            {user?.fullName}
+            <span className="text-sm font-medium ">{user?.fullName}</span>
           </div>
         </div>
       </SidebarMenuItem>

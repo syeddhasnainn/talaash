@@ -1,3 +1,7 @@
+import { users } from "@/db/schema";
+
+export type Chat = typeof users.$inferSelect;
+
 export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
@@ -15,3 +19,4 @@ export type LLMProvider =
   | 'sambanova'
   | 'openrouter'
   | 'together';
+

@@ -45,7 +45,7 @@ export function SidebarNewChat() {
                 className="outline outline-1 rounded-sm"
               >
                 <Button
-                  className="bg-primary-400 hover:bg-primary-500 border-none outline-none py-4 text-black font-normal"
+                  className="bg-primary-400 border border-black/15 hover:bg-primary-500  outline-none py-4 text-black font-normal"
                   variant="ghost"
                   onClick={handleNewChat}
                 >

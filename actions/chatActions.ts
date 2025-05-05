@@ -20,8 +20,12 @@ export const getChat = async (id: string) => {
   return data;
 };
 
-export const getAllChats = async () => {
-  const data = await db.select().from(chats);
+export const deleteAllChats = async (userId: string) => {
+  await db.delete(chats).where(eq(chats.userId, userId));
+};
+
+export const fetchUserChats = async (userId: string) => {
+  const data = await db.select().from(chats).where(eq(chats.userId, userId));
   return data;
 };
 

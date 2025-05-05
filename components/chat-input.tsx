@@ -11,24 +11,48 @@ import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { CircleStop } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
+import { useAuth } from '@clerk/clerk-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { type Chat } from '@/lib/types';
+import { toast } from 'sonner';
 export const ChatInput = ({ chatid }: { chatid: string }) => {
   const router = useRouter();
-
+  const { userId } = useAuth();
   const [model, setModel] = useState<string>('llama3.1');
 
-  const { input, handleInputChange, handleSubmit, stop, status } = useChat({
-    id: chatid,
-    api: '/api/chat',
-    body: {
+  const queryClient = useQueryClient();
+
+  const { input, messages, handleInputChange, handleSubmit, stop, status } =
+    useChat({
       id: chatid,
-      model: model,
-    },
-  });
+      api: '/api/chat',
+      body: {
+        id: chatid,
+        model: model,
+      },
+      onFinish: async () => {
+        if (messages.length === 0) {
+          queryClient.invalidateQueries({
+            queryKey: ['chats', userId],
+          });
+        }
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
 
   const customHandleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     router.replace(`/chat/${chatid}`);
+    if (messages.length === 0) {
+      queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
+        if (oldData) {
+          return [...oldData, { id: chatid, title: 'New Chat' }];
+        }
+        return [{ id: chatid, title: 'New Chat' }];
+      });
+    }
     handleSubmit();
   };
 
