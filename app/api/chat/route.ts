@@ -47,12 +47,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Model not found' }, { status: 400 });
     }
 
+    if (!userId) {
+      return NextResponse.json({ error: 'User not found' }, { status: 400 });
+    }
+
     const chat = await getChatById(id);
     let chatTitle = ""
     if (chat.length === 0) {
       try {
         chatTitle = await generateChatTitle(messages[messages.length - 1].content);
-        await addChat(id, userId!, chatTitle!);
       }
       catch (error) {
         console.log('error generating title', error);
