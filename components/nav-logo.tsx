@@ -12,6 +12,13 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
+import { Geist_Mono } from 'next/font/google';
+
+const font = Geist_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+});
+
 export function SidebarLogo() {
   return (
     <SidebarMenu>
@@ -22,7 +29,11 @@ export function SidebarLogo() {
               {/* <div className="flex aspect-square size-5 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
                 <activeTeam.logo className="size-3" /> 
               </div> */}
-              <span className="truncate font-semibold">Talaash</span>
+              <span
+                className={`truncate font-medium text-md tracking-wider ${font.className}`}
+              >
+                TALAASH
+              </span>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
         </DropdownMenu>

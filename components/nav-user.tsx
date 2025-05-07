@@ -1,13 +1,8 @@
 'use client';
 import { SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Button } from './ui/button';
-import { Settings, Trash } from 'lucide-react';
-import {
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from '@clerk/nextjs';
+import { Trash, User } from 'lucide-react';
+import { UserButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
 import { deleteAllChats } from '@/actions/chatActions';
 import { useQueryClient } from '@tanstack/react-query';
@@ -19,18 +14,6 @@ export function NavUser() {
   return (
     <SidebarMenu>
       <SidebarMenuItem className="pb-1 px-1 space-y-1 m-1 mb-2">
-        {/* <div className="space-y-1">
-          <textarea
-            id="system-prompt"
-            rows={6}
-            className="w-full rounded-sm bg-base-50 text-sm p-3 
-                     border border-base-200 hover:border-gray-300
-                     transition-all resize-none outline-none
-                     placeholder:text-gray-400"
-            name="system-prompt"
-            placeholder="Customize AI behavior with your system prompt..."
-          />
-        </div> */}
         <div className=" transition-colors space-y-2">
           <Button
             onClick={() => {
@@ -40,25 +23,36 @@ export function NavUser() {
               });
               toast.success('All chats deleted');
             }}
-            className="rounded-sm w-full justify-start bg-base-50 gap-2 border border-base-200 text-black hover:bg-red-600 hover:text-white 
+            className="rounded-lg w-full justify-start bg-card gap-2 border border-white/10 text-foreground hover:bg-red-600 hover:text-white 
                      transition-colors"
             variant="ghost"
           >
             <Trash className="h-4 w-4 " />
             Delete all chats
           </Button>
-          {/* <Button
-            className="rounded-sm w-full justify-start bg-base-50 gap-2 border border-base-200 text-black hover:bg-primary-500 hover:text-white 
+
+          <Button
+            className="rounded-lg w-full justify-start bg-card gap-2 border border-white/10 text-foreground hover:text-white 
                      transition-colors"
             variant="ghost"
+            asChild
           >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Button> */}
-          <div className="flex items-center gap-3">
-            <UserButton />
-            <span className="text-sm font-medium ">{user?.fullName}</span>
-          </div>
+            <div>
+              <User className="h-4 w-4 shrink-0" />
+              <span className="truncate">{user?.fullName}</span>
+
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonTrigger:
+                      'absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-lg focus:opacity-25 focus:ring-2 focus:ring-offset-1 focus:ring-blue-500',
+                    userButtonAvatarBox: 'hidden',
+                    userButtonAvatarImage: 'hidden',
+                  },
+                }}
+              />
+            </div>
+          </Button>
         </div>
       </SidebarMenuItem>
     </SidebarMenu>

@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.className} antialiased `}>
+        <body className={`${geistSans.className} antialiased dark`}>
           {/* <SignedOut>
             <SignInButton />
             <SignUpButton />

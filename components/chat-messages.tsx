@@ -22,14 +22,14 @@ export function ChatMessages({
           message.role === 'user' ? (
             <div
               key={index}
-              className="bg-base-50 shadow-sm border rounded-sm ml-auto max-w-xl  text-foreground px-4 py-2"
+              className=" drop-shadow-lg border bg-[var(--card)] border-white/10 rounded-xl ml-auto max-w-xl w-fit  text-foreground px-4 py-3"
             >
               {message.content}
             </div>
           ) : (
             <div
               key={index}
-              className=" shadow-sm max-w-fit rounded-sm px-4 py-2 space-y-1"
+              className=" drop-shadow-lg max-w-fit rounded-sm px-4 py-2"
             >
               <Markdown>{String.raw`${message.content}`}</Markdown>
               <button

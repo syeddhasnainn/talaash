@@ -57,7 +57,7 @@ export function SidebarChats() {
               <SidebarMenuButton
                 asChild
                 className={`${
-                  chatid === item.id ? 'rounded-sm bg-base-50 border' : ''
+                  chatid === item.id ? 'rounded-lg bg-[var(--primary-foreground)] border border-white/10 drop-shadow-md' : ''
                 }`}
               >
                 <Link
