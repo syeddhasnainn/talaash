@@ -60,7 +60,7 @@ export const ChatInput = ({ chatid }: { chatid: string }) => {
     setModel(model);
   };
   return (
-    <div className="sticky inset-x-0 bottom-0 bg-[var(--card)] rounded-tl-lg rounded-tr-lg border border-white/10 drop-shadow-lg">
+    <div className="sticky inset-x-0 bottom-0 bg-[var(--card)] rounded-tl-2xl rounded-tr-2xl border border-white/10 drop-shadow-lg">
       <form onSubmit={customHandleSubmit}>
         <fieldset className="space-y-2 p-4 text-sm outline-none ">
           <div className="flex flex-col gap-2">
@@ -74,7 +74,7 @@ export const ChatInput = ({ chatid }: { chatid: string }) => {
               }}
               autoFocus
               value={input}
-              onChange={handleInputChange}  
+              onChange={handleInputChange}
               className="w-full outline-none resize-none custom-scrollbar bg-[var(--card)] text-foreground placeholder:text-muted-foreground"
               placeholder="Ask me a question"
             />
