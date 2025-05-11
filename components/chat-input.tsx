@@ -54,6 +54,9 @@ export const ChatInput = ({
   const customHandleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      if (status !== 'ready') {
+        return;
+      }
       window.history.pushState(null, '', `/chat/${chatid}`);
       if (messages.length === 0) {
       queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
@@ -78,7 +81,6 @@ export const ChatInput = ({
         <fieldset className="space-y-2 p-4 text-sm outline-none ">
           <div className="flex flex-col gap-2">
             <textarea
-              // disabled={status === 'streaming'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

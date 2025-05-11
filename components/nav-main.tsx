@@ -29,8 +29,8 @@ export function SidebarNewChat() {
     api: '/api/chat',
   });
   const handleNewChat = () => {
-    setMessages([]);
     router.push('/chat');
+    setMessages([]);
   };
 
   return (
