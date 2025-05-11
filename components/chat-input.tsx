@@ -54,14 +54,16 @@ export const ChatInput = ({
   const customHandleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (status !== 'ready') {
+      if (status !== 'ready' && status !== 'error') {
         return;
       }
+
       window.history.pushState(null, '', `/chat/${chatid}`);
+
       if (messages.length === 0) {
       queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
         if (oldData) {
-          return [...oldData, { id: chatid, title: 'New Chat' }];
+          return [{ id: chatid, title: 'New Chat' },...oldData];
         }
         return [{ id: chatid, title: 'New Chat' }];
       });
@@ -122,14 +124,12 @@ export const ChatInput = ({
                 </SelectContent>
               </Select>
               {status !== 'ready' && status !== 'error' && (
-                <div>
                   <button
                     onClick={stop}
                     className="rounded-custom bg-destructive/10 hover:bg-destructive/20 transition-colors"
                   >
                     <CircleStop className="text-destructive" />
                   </button>
-                </div>
               )}
             </div>
           </div>

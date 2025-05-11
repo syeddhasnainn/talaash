@@ -39,6 +39,7 @@ export function SidebarChats() {
     queryFn: () => fetchUserChats(userId!),
     staleTime: 60 * 60 * 1000,
   });
+  console.log('chats',chats);
   const chatid = usePathname().split('/')[2];
 
   return (
@@ -52,7 +53,7 @@ export function SidebarChats() {
             </span>
           </SidebarMenuButton>
         ) : (
-          chats.map((item: any) => (
+          chats?.map((item: any) => (
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton
                 asChild

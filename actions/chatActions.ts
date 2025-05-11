@@ -26,6 +26,7 @@ export const deleteAllChats = async (userId: string) => {
 
 export const fetchUserChats = async (userId: string) => {
   const data = await db.select().from(chats).where(eq(chats.userId, userId)).orderBy(desc(chats.createdAt));
+  console.log('data from db',data);
   return data;
 };
 
