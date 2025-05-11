@@ -1,5 +1,5 @@
 'use server';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 // import { revalidatePath } from 'next/cache';
 import { db } from '@/db/drizzle';
 import { chats } from '@/db/schema';
@@ -25,7 +25,7 @@ export const deleteAllChats = async (userId: string) => {
 };
 
 export const fetchUserChats = async (userId: string) => {
-  const data = await db.select().from(chats).where(eq(chats.userId, userId));
+  const data = await db.select().from(chats).where(eq(chats.userId, userId)).orderBy(desc(chats.createdAt));
   return data;
 };
 

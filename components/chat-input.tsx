@@ -24,7 +24,9 @@ export const ChatInput = ({
 }) => {
   const router = useRouter();
   const { userId } = useAuth();
-  const [model, setModel] = useState<string>('internvl3-2b');
+  const [model, setModel] = useState<string>(
+    localStorage.getItem('model') || 'internvl3-2b',
+  );
 
   const queryClient = useQueryClient();
 
@@ -67,6 +69,7 @@ export const ChatInput = ({
   );
 
   const handleModelChange = useCallback((model: string) => {
+    localStorage.setItem('model', model);
     setModel(model);
   }, []);
   return (
@@ -75,7 +78,7 @@ export const ChatInput = ({
         <fieldset className="space-y-2 p-4 text-sm outline-none ">
           <div className="flex flex-col gap-2">
             <textarea
-              disabled={status === 'streaming'}
+              // disabled={status === 'streaming'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
