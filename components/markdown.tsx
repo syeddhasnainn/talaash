@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vs as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vscDarkPlus as dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Copy } from 'lucide-react';
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
@@ -16,7 +16,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       const language = match ? match[1] : 'text';
       return !inline && match ? (
         <div className="my-6">
-          <div className="flex justify-between bg-base-300 text-black px-4 py-1.5 rounded-t-lg border border-white/10 border-b-0 text-sm">
+          <div className="flex justify-between bg-base-300 text-foreground px-4 py-1.5 rounded-t-lg border border-white/10 border-b-0 text-sm">
             {language}
             <button
               className="ml-2"

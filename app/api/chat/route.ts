@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       },
       experimental_transform: smoothStream({
         delayInMs: 10,
-        chunking: 'word',
+        chunking: 'line',
       }),
     });
     return results.toDataStreamResponse();

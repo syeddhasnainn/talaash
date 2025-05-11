@@ -30,7 +30,7 @@ const sizesClasses: SizeProps = {
 };
 
 const strokeClasses = {
-  slate: 'stroke-foreground',
+  slate: 'foreground',
   blue: 'stroke-blue-500',
   red: 'stroke-red-500',
   green: 'stroke-emerald-500',

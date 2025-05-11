@@ -15,6 +15,8 @@ export function ChatMessages({
     api: '/api/chat',
     initialMessages: initialMessages,
   });
+  console.log('initialMessages: ', initialMessages);
+
   return (
     <div className="space-y-4 py-6 pb-8">
       {conversation &&
@@ -29,11 +31,11 @@ export function ChatMessages({
           ) : (
             <div
               key={index}
-              className=" drop-shadow-lg max-w-fit rounded-sm px-4 py-2"
+              className="drop-shadow-lg max-w-fit rounded-sm px-4 py-2 group"
             >
               <Markdown>{String.raw`${message.content}`}</Markdown>
               <button
-                className="ml-2"
+                className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => navigator.clipboard.writeText(message.content)}
               >
                 <Copy width={16} height={16} />
@@ -43,10 +45,11 @@ export function ChatMessages({
         )}
 
       {status === 'submitted' && (
-        <div className="flex px-4 py-3">
-          <Spinner size="sm" />
+        <div className="flex px-4 py-3 text-[var(--foreground)]">
+          <Spinner size="md" />
         </div>
       )}
+      
     </div>
   );
 }

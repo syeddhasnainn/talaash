@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { CircleStop } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -15,7 +15,13 @@ import { useAuth } from '@clerk/clerk-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Chat } from '@/lib/types';
 import { toast } from 'sonner';
-export const ChatInput = ({ chatid }: { chatid: string }) => {
+export const ChatInput = ({
+  initialMessages,
+  chatid,
+}: {
+  initialMessages: any;
+  chatid: string;
+}) => {
   const router = useRouter();
   const { userId } = useAuth();
   const [model, setModel] = useState<string>('internvl3-2b');
@@ -25,6 +31,7 @@ export const ChatInput = ({ chatid }: { chatid: string }) => {
   const { input, messages, handleInputChange, handleSubmit, stop, status } =
     useChat({
       id: chatid,
+      initialMessages: initialMessages,
       api: '/api/chat',
       body: {
         id: chatid,
@@ -42,10 +49,11 @@ export const ChatInput = ({ chatid }: { chatid: string }) => {
       },
     });
 
-  const customHandleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    router.replace(`/chat/${chatid}`);
-    if (messages.length === 0) {
+  const customHandleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      window.history.pushState(null, '', `/chat/${chatid}`);
+      if (messages.length === 0) {
       queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
         if (oldData) {
           return [...oldData, { id: chatid, title: 'New Chat' }];
@@ -53,12 +61,14 @@ export const ChatInput = ({ chatid }: { chatid: string }) => {
         return [{ id: chatid, title: 'New Chat' }];
       });
     }
-    handleSubmit();
-  };
+      handleSubmit();
+    },
+    [handleSubmit, messages.length, queryClient, router, userId],
+  );
 
-  const handleModelChange = (model: string) => {
+  const handleModelChange = useCallback((model: string) => {
     setModel(model);
-  };
+  }, []);
   return (
     <div className="sticky inset-x-0 bottom-0 bg-[var(--card)] rounded-tl-2xl rounded-tr-2xl border border-white/10 drop-shadow-lg">
       <form onSubmit={customHandleSubmit}>
