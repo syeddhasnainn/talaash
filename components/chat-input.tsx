@@ -25,7 +25,7 @@ export const ChatInput = ({
   const router = useRouter();
   const { userId } = useAuth();
   const [model, setModel] = useState<string>(
-    localStorage.getItem('model') || 'internvl3-2b',
+    localStorage.getItem('model') || 'gemma3-27b-it',
   );
 
   const queryClient = useQueryClient();
@@ -61,13 +61,13 @@ export const ChatInput = ({
       window.history.pushState(null, '', `/chat/${chatid}`);
 
       if (messages.length === 0) {
-      queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
-        if (oldData) {
-          return [{ id: chatid, title: 'New Chat' },...oldData];
-        }
-        return [{ id: chatid, title: 'New Chat' }];
-      });
-    }
+        queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
+          if (oldData) {
+            return [{ id: chatid, title: 'New Chat' }, ...oldData];
+          }
+          return [{ id: chatid, title: 'New Chat' }];
+        });
+      }
       handleSubmit();
     },
     [handleSubmit, messages.length, queryClient, router, userId],
@@ -96,40 +96,14 @@ export const ChatInput = ({
               placeholder="Ask me a question"
             />
             <div className="flex justify-between items-center ">
-              <Select value={model} onValueChange={handleModelChange}>
-                <SelectTrigger className="w-[180px] ">
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="internvl3-2b">Internvl 3.2B</SelectItem>
-                  <SelectItem value="llama3.1">
-                    Llama 3.1 8B Instruct Turbo
-                  </SelectItem>
-                  <SelectItem value="deepseek3">Deepseek V3</SelectItem>
-                  <SelectItem value="deepseekr1-together">
-                    Deepseek R1
-                  </SelectItem>
-                  <SelectItem value="qwen3-30b">Qwen3 30B</SelectItem>
-                  <SelectItem value="qwen3-235b-fp8-tput">
-                    Qwen3 235B FP8
-                  </SelectItem>
-                  <SelectItem value="qwen25groq">Qwen 2.5 32B Groq</SelectItem>
-                  <SelectItem value="llama3">Llama 3.3 70B</SelectItem>
-                  <SelectItem value="qwen32">
-                    Qwen 2.5 Coder 32B Instruct
-                  </SelectItem>
-                  <SelectItem value="qwen72">
-                    Qwen2.5 72B Instruct Turbo
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <ModelSelector model={model} handleModelChange={handleModelChange} />
               {status !== 'ready' && status !== 'error' && (
-                  <button
-                    onClick={stop}
-                    className="rounded-custom bg-destructive/10 hover:bg-destructive/20 transition-colors"
-                  >
-                    <CircleStop className="text-destructive" />
-                  </button>
+                <button
+                  onClick={stop}
+                  className="rounded-custom bg-destructive/10 hover:bg-destructive/20 transition-colors"
+                >
+                  <CircleStop className="text-destructive" />
+                </button>
               )}
             </div>
           </div>
@@ -138,3 +112,41 @@ export const ChatInput = ({
     </div>
   );
 };
+
+const ModelSelector = ({ model, handleModelChange }: { model: string, handleModelChange: (model: string) => void }) => {
+  return (
+    <Select value={model} onValueChange={handleModelChange}>
+
+      <SelectTrigger className="w-[180px] ">
+        <SelectValue placeholder="Select model" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="gemini2.5-flash">Gemini 2.5 Flash</SelectItem>
+        <SelectItem value="internvl3-2b">Internvl 3.2B</SelectItem>
+        <SelectItem value="gemma3-27b-it">Gemma 3.27B</SelectItem>
+        <SelectItem value="llama3.1">
+          Llama 3.1 8B Instruct Turbo
+        </SelectItem>
+        <SelectItem value="deepseek3">Deepseek V3</SelectItem>
+        <SelectItem value="deepseekr1-together">
+          Deepseek R1
+        </SelectItem>
+        <SelectItem value="qwen3-30b">Qwen3 30B</SelectItem>
+        <SelectItem value="qwen3-235b-fp8-tput">
+          Qwen3 235B FP8
+        </SelectItem>
+        <SelectItem value="qwen25groq">Qwen 2.5 32B Groq</SelectItem>
+        <SelectItem value="llama3">Llama 3.3 70B</SelectItem>
+        <SelectItem value="qwen32">
+          Qwen 2.5 Coder 32B Instruct
+        </SelectItem>
+        <SelectItem value="qwen72">
+          Qwen2.5 72B Instruct Turbo
+        </SelectItem>
+        <SelectItem value="deepseekv3-together">
+          Deepseek V3 Together
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  )
+}

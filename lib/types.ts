@@ -13,6 +13,24 @@ export interface ChatSession {
   title: string;
 }
 
+
+export interface ModelCapabilities {
+  supportsImages: boolean
+}
+
+export interface ModelConfig  {
+  id: string, 
+  name: string, 
+  provider: LLMProvider,
+  maxTokens: number,
+  capabilities: ModelCapabilities
+}
+
+export interface ProviderConfig { 
+  apiKey: string | undefined,
+  models: ModelConfig[]
+}
+
 export type LLMProvider =
   | 'openai'
   | 'cerebras'

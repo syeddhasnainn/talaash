@@ -19,50 +19,47 @@ const SYSTEM_PROMPT = `
     - do not use quotes or colons
 `;
 
-const generateChatTitle = async(question: string) => {
+const generateChatTitle = async (question: string): Promise<string | undefined> => {
   const completion = await client.chat.completions.create({
-        model: 'llama-3.3-70b',
-        messages: [
-          {
-            role: 'system',
-            content: SYSTEM_PROMPT,
-          },
-          {
-            role: 'user',
-            content: question,
-          },
-        ],
-        max_completion_tokens: 15,
-      });
-  
-      return completion.choices[0].message.content
+    model: 'llama-3.3-70b',
+    messages: [
+      {
+        role: 'system',
+        content: SYSTEM_PROMPT,
+      },
+      {
+        role: 'user',
+        content: question,
+      },
+    ],
+    max_completion_tokens: 15,
+  });
+
+  return completion.choices[0].message.content ?? "Untitled Chat"
 }
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, id, model: modelName } = await req.json();
     const { userId } = await auth()
 
-    const model = getProviderByModelName(modelName as LLMProvider);
-    if (!model) {
-      return NextResponse.json({ error: 'Model not found' }, { status: 400 });
-    }
+    const provider = getProviderByModelName(modelName);
+    if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 400 })
+
+    const { instance, config } = provider
 
     if (!userId) {
       return NextResponse.json({ error: 'User not found' }, { status: 400 });
     }
 
     const chat = await getChatById(id);
-    let chatTitle = ""
+    let chatTitle: string | undefined = ""
     if (chat.length === 0) {
-      try {
-        chatTitle = await generateChatTitle(messages[messages.length - 1].content);
-      }
-      catch (error) {
-        console.log('error generating title', error);
-        return NextResponse.json({ error: 'Failed to generate title' }, { status: 500 });
-      }
 
-      try{
+      
+      chatTitle = await generateChatTitle(messages[messages.length - 1].content);
+      if (!chatTitle) return NextResponse.json({error: "Failed to generate title"})
+      try {
         await addChat(id, userId, chatTitle);
       }
       catch (error) {
@@ -72,9 +69,11 @@ export async function POST(req: NextRequest) {
     }
     await addMessage(userId!, id, 'user', messages[messages.length - 1].content);
     const results = streamText({
-      model,
+      model:instance,
       messages,
-      onFinish: async(message) => {
+      maxRetries: 2,
+      maxTokens: config.maxTokens,
+      onFinish: async (message) => {
         await addMessage(userId!, id, 'assistant', message.text);
       },
       experimental_transform: smoothStream({
