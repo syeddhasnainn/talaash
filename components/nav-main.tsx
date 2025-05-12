@@ -24,7 +24,10 @@ const items = [
 ];
 
 export function SidebarNewChat() {
-
+  const { setMessages } = useChat({
+    id: 'chat',
+    api: '/api/chat',
+  });
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -41,7 +44,9 @@ export function SidebarNewChat() {
                   variant="ghost"
                 >
                   <item.icon />
-                  <Link href={item.url}>
+                  <Link onClick={()=> {
+                    setMessages([]);
+                  }} href={item.url}>
                     <span>{item.title}</span>
                   </Link>
                 </Button>

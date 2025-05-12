@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
     let chatTitle: string | undefined = ""
     if (chat.length === 0) {
       chatTitle = await generateChatTitle(messages[messages.length - 1].content);
-      console.log("chat title", chatTitle)
       if (!chatTitle) return NextResponse.json({error: "Failed to generate title"})
       try { 
         await addChat(id, userId, chatTitle);
