@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { useChat } from '@ai-sdk/react';
+import Link from 'next/link';
 
 const items = [
   {
@@ -23,15 +24,6 @@ const items = [
 ];
 
 export function SidebarNewChat() {
-  const router = useRouter();
-  const { setMessages } = useChat({
-    id: 'chat',
-    api: '/api/chat',
-  });
-  const handleNewChat = () => {
-    router.push('/chat');
-    setMessages([]);
-  };
 
   return (
     <SidebarGroup>
@@ -47,10 +39,11 @@ export function SidebarNewChat() {
                 <Button
                   className="rounded-lg text-[var(--primary-foreground)] bg-[var(--primary)] drop-shadow-lg hover:bg-[var(--primary)]/ hover:text-[var(--primary-foreground)]"
                   variant="ghost"
-                  onClick={handleNewChat}
                 >
                   <item.icon />
-                  <span>{item.title}</span>
+                  <Link href={item.url}>
+                    <span>{item.title}</span>
+                  </Link>
                 </Button>
               </SidebarMenuButton>
             </SidebarMenuItem>

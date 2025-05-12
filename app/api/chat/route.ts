@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       
       chatTitle = await generateChatTitle(messages[messages.length - 1].content);
       if (!chatTitle) return NextResponse.json({error: "Failed to generate title"})
-      try {
+      try { 
         await addChat(id, userId, chatTitle);
       }
       catch (error) {

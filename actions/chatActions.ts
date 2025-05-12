@@ -8,11 +8,17 @@ export const getData = async () => {
   return data;
 };
 export const addChat = async (id: string, userId: string, title: string) => {
-  await db.insert(chats).values({
-    id, // uuid
-    userId,
-    title,
-  });
+  try {
+    await db.insert(chats).values({
+      id, // uuid
+      userId,
+      title,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding chat:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
+  }
 };
 
 export const getChat = async (id: string) => {
