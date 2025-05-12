@@ -35,7 +35,7 @@ export function ChatMessages({
             key={index}
             className="drop-shadow-lg max-w-fit rounded-sm px-4 py-2 group"
           >
-            <Markdown>{String.raw`${message.content}`}</Markdown>
+            <Markdown>{message.content}</Markdown>
             <button
               className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={() => navigator.clipboard.writeText(message.content)}

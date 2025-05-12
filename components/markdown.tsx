@@ -126,7 +126,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       rehypePlugins={[rehypeKatex]}
       components={components}
     >
-      {children}
+      {String.raw`${children}`}
     </ReactMarkdown>
   );
 };

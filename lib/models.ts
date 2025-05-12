@@ -92,7 +92,7 @@ export const providerConfigs: Partial<Record<LLMProvider, ProviderConfig>> = {
         id: 'deepseek-ai/DeepSeek-V3',
         name: 'deepseekv3-together',
         provider: 'together',
-        maxTokens: 4096,
+        maxTokens: 16384,
         capabilities: {
           supportsImages: true,
         },
@@ -101,7 +101,7 @@ export const providerConfigs: Partial<Record<LLMProvider, ProviderConfig>> = {
         id: 'deepseek-ai/DeepSeek-R1',
         name: 'deepseekr1-together',
         provider: 'together',
-        maxTokens: 4096,
+        maxTokens: 16384,
         capabilities: {
           supportsImages: true,
         },
