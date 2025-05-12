@@ -32,7 +32,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
             PreTag="div"
             language={language}
             style={dark}
-            className="border border-white/10 rounded-b-lg px-4 py-2 text-sm leading-6 !m-0"
+            className="!bg-transparent shadow-md border border-white/10 rounded-b-lg px-4 py-2 leading-6 !m-0"
           >
             {children}
           </SyntaxHighlighter>

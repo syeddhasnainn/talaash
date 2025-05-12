@@ -1,30 +1,19 @@
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Inter} from 'next/font/google';
 import './globals.css';
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
 } from '@clerk/nextjs';
 import { Toaster } from "sonner"
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+
+
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
-// const inter = Inter({
-//   variable: '--font-inter',
-//   subsets: ['latin'],
-// });
-
-// const poppins = Poppins({
-//   subsets: ["latin"],
-//   weight: ["100",'200','300','400','500','600','700','800','900']
-// });
 
 export const metadata: Metadata = {
   title: 'Talaash',
@@ -39,14 +28,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.className} antialiased dark`}>
-          {/* <SignedOut>
-            <SignInButton />
-            <SignUpButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn> */}
+        <body className={`${inter.className} antialiased dark`}>
           {children}
           <Analytics />
           <Toaster />
