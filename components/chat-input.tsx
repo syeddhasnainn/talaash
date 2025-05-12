@@ -38,6 +38,7 @@ export const ChatInput = ({
       body: {
         id: chatid,
         model: model,
+        
       },
       onFinish: async () => {
         if (messages.length === 0) {

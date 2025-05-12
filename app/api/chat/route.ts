@@ -53,20 +53,18 @@ export async function POST(req: NextRequest) {
     }
 
     const chat = await getChatById(id);
+
     let chatTitle: string | undefined = ""
     if (chat.length === 0) {
-
-      
       chatTitle = await generateChatTitle(messages[messages.length - 1].content);
       if (!chatTitle) return NextResponse.json({error: "Failed to generate title"})
-      try { 
-        await addChat(id, userId, chatTitle);
-      }
-      catch (error) {
-        console.log('error adding chat', error);
+      const result = await addChat(id, userId, chatTitle);
+      if (!result.success) {
+        console.log('Failed to add chat:', result.error);
         return NextResponse.json({ error: 'Failed to add chat' }, { status: 500 });
       }
     }
+
     await addMessage(userId!, id, 'user', messages[messages.length - 1].content);
     const results = streamText({
       model:instance,
@@ -81,6 +79,7 @@ export async function POST(req: NextRequest) {
         chunking: 'line',
       }),
     });
+
     return results.toDataStreamResponse();
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });

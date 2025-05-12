@@ -3,10 +3,12 @@ import { desc, eq } from 'drizzle-orm';
 // import { revalidatePath } from 'next/cache';
 import { db } from '@/db/drizzle';
 import { chats } from '@/db/schema';
+
 export const getData = async () => {
   const data = await db.select().from(chats);
   return data;
 };
+
 export const addChat = async (id: string, userId: string, title: string) => {
   try {
     await db.insert(chats).values({
