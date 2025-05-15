@@ -8,12 +8,21 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  async redirects() {
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/chat',
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
+
+  async rewrites() {
     return [
       {
-        source: '/',
-        destination: '/chat',
-        permanent: true,
+        source: '/:path*',
+        destination: '/',
       },
     ];
   },

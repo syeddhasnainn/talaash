@@ -1,3 +1,5 @@
+import App from './app';
+
 export default async function Page() {
-  return <div>hi</div>;
+  return <App />;
 }

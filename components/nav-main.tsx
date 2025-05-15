@@ -12,12 +12,12 @@ import {
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { useChat } from '@ai-sdk/react';
-import Link from 'next/link';
+import {Link} from 'react-router';
 
 const items = [
   {
     title: 'New Chat',
-    url: '/chat',
+    url: '/',
     icon: Plus,
     isActive: true,
   },
@@ -44,9 +44,12 @@ export function SidebarNewChat() {
                   variant="ghost"
                 >
                   <item.icon />
-                  <Link onClick={()=> {
-                    setMessages([]);
-                  }} href={item.url}>
+                  <Link
+                    onClick={() => {
+                      setMessages([]);
+                    }}
+                    to={item.url}
+                  >
                     <span>{item.title}</span>
                   </Link>
                 </Button>

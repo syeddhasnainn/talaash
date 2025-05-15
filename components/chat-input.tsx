@@ -7,14 +7,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { CircleStop } from 'lucide-react';
+import { CircleStop, Paperclip } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/clerk-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Chat } from '@/lib/types';
 import { toast } from 'sonner';
+import { NavLink, useNavigate } from "react-router";import router from 'next/router';
 export const ChatInput = ({
   initialMessages,
   chatid,
@@ -22,11 +23,18 @@ export const ChatInput = ({
   initialMessages: any;
   chatid: string;
 }) => {
-  const router = useRouter();
+  // const router = useRouter();
+  let navigate = useNavigate();
   const { userId } = useAuth();
   const [model, setModel] = useState<string>(
     localStorage.getItem('model') || 'gemma3-27b-it',
   );
+  const [attachments, setAttachments] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAttachmentClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const queryClient = useQueryClient();
 
@@ -38,7 +46,6 @@ export const ChatInput = ({
       body: {
         id: chatid,
         model: model,
-        
       },
       onFinish: async () => {
         if (messages.length === 0) {
@@ -59,7 +66,8 @@ export const ChatInput = ({
         return;
       }
 
-      window.history.pushState(null, '', `/chat/${chatid}`);
+      // window.history.pushState(null, '', `/chat/${chatid}`);
+      navigate(`/chat/${chatid}`);
 
       if (messages.length === 0) {
         queryClient.setQueryData(['chats', userId], (oldData: Chat[]) => {
@@ -71,7 +79,7 @@ export const ChatInput = ({
       }
       handleSubmit();
     },
-    [handleSubmit, messages.length, queryClient, router, userId],
+    [handleSubmit, messages.length, queryClient, navigate, userId],
   );
 
   const handleModelChange = useCallback((model: string) => {
@@ -80,8 +88,13 @@ export const ChatInput = ({
   }, []);
   return (
     <div className="sticky inset-x-0 bottom-0 bg-[var(--card)] rounded-tl-2xl rounded-tr-2xl border border-white/10 drop-shadow-lg">
-      <form onSubmit={customHandleSubmit}>
-        <fieldset className="space-y-2 p-4 text-sm outline-none ">
+      <form className="p-4" onSubmit={customHandleSubmit}>
+        <div className="space-x-2">
+          {attachments.map((attachment) => (
+            <div key={attachment}>{attachment}</div>
+          ))}
+        </div>
+        <fieldset className="space-y-2 text-sm outline-none ">
           <div className="flex flex-col gap-2">
             <textarea
               onKeyDown={(e) => {
@@ -97,7 +110,10 @@ export const ChatInput = ({
               placeholder="Ask me a question"
             />
             <div className="flex justify-between items-center ">
-              <ModelSelector model={model} handleModelChange={handleModelChange} />
+              <ModelSelector
+                model={model}
+                handleModelChange={handleModelChange}
+              />
               {status !== 'ready' && status !== 'error' && (
                 <button
                   onClick={stop}
@@ -106,6 +122,42 @@ export const ChatInput = ({
                   <CircleStop className="text-destructive" />
                 </button>
               )}
+
+              <div>
+                <div
+                  onClick={handleAttachmentClick}
+                  className="bg-muted/50 rounded-full p-1 cursor-pointer"
+                >
+                  <Paperclip className="text-muted-foreground" />
+                </div>
+                <input
+                  hidden
+                  ref={fileInputRef}
+                  multiple={true}
+                  type="file"
+                  name="file"
+                  id="file"
+                  onChange={async (e) => {
+                    const formData = new FormData();
+                    const files = Array.from(e.target.files || []);
+                    files.forEach((file) => {
+                      formData.append('files', file);
+                      setAttachments((prev) => [...prev, file.name]);
+                    });
+
+                    const response = await fetch('/api/upload', {
+                      method: 'POST',
+                      body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                      console.log('uploaded files', data.files);
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </fieldset>
@@ -114,10 +166,15 @@ export const ChatInput = ({
   );
 };
 
-const ModelSelector = ({ model, handleModelChange }: { model: string, handleModelChange: (model: string) => void }) => {
+const ModelSelector = ({
+  model,
+  handleModelChange,
+}: {
+  model: string;
+  handleModelChange: (model: string) => void;
+}) => {
   return (
     <Select value={model} onValueChange={handleModelChange}>
-
       <SelectTrigger className="w-[180px] ">
         <SelectValue placeholder="Select model" />
       </SelectTrigger>
@@ -125,29 +182,18 @@ const ModelSelector = ({ model, handleModelChange }: { model: string, handleMode
         <SelectItem value="gemini2.5-flash">Gemini 2.5 Flash</SelectItem>
         <SelectItem value="internvl3-2b">Internvl 3.2B</SelectItem>
         <SelectItem value="gemma3-27b-it">Gemma 3.27B</SelectItem>
-        <SelectItem value="llama3.1">
-          Llama 3.1 8B Instruct Turbo
-        </SelectItem>
-        <SelectItem value="deepseek3">Deepseek V3</SelectItem>
-        <SelectItem value="deepseekr1-together">
-          Deepseek R1
-        </SelectItem>
+        <SelectItem value="llama3.1">Llama 3.1 8B Instruct Turbo</SelectItem>
+        <SelectItem value="deepseekr1-together">Deepseek R1</SelectItem>
         <SelectItem value="qwen3-30b">Qwen3 30B</SelectItem>
-        <SelectItem value="qwen3-235b-fp8-tput">
-          Qwen3 235B FP8
-        </SelectItem>
+        <SelectItem value="qwen3-235b-fp8-tput">Qwen3 235B FP8</SelectItem>
         <SelectItem value="qwen25groq">Qwen 2.5 32B Groq</SelectItem>
         <SelectItem value="llama3">Llama 3.3 70B</SelectItem>
-        <SelectItem value="qwen32">
-          Qwen 2.5 Coder 32B Instruct
-        </SelectItem>
-        <SelectItem value="qwen72">
-          Qwen2.5 72B Instruct Turbo
-        </SelectItem>
+        <SelectItem value="qwen32">Qwen 2.5 Coder 32B Instruct</SelectItem>
+        <SelectItem value="qwen72">Qwen2.5 72B Instruct Turbo</SelectItem>
         <SelectItem value="deepseekv3-together">
           Deepseek V3 Together
         </SelectItem>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
+'use client';
 import Chat from '@/components/chat';
-export const dynamic = 'force-dynamic';
 
-export default async function ChatPage() {
+export default function ChatPage() {
   const chatid = crypto.randomUUID();
 
   return <Chat chatid={chatid} initialMessages={[]} />;

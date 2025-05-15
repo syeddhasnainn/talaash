@@ -8,6 +8,7 @@ export const addUser = async (userId: string, name: string, email: string) => {
         userId,
         name,
         email,
+        
     })
 }
 

@@ -43,6 +43,10 @@ export async function POST(req: NextRequest) {
     const { messages, id, model: modelName } = await req.json();
     const { userId } = await auth()
 
+    console.log('modelName', modelName)
+    console.log('modelName', modelName)
+    console.log('modelName', modelName)
+
     const provider = getProviderByModelName(modelName);
     if (!provider) return NextResponse.json({ error: "Provider not found" }, { status: 400 })
 

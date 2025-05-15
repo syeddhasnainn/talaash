@@ -1,15 +1,14 @@
+'use client';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
+import { Outlet } from 'react-router';
 import { QueryProvider } from '@/components/query-provider';
-export default function ChatLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+
+export default function ChatLayout() {
   return (
     <QueryProvider>
       <SidebarProvider>
@@ -20,7 +19,7 @@ export default function ChatLayout({
               <SidebarTrigger className="-ml-1" />
             </div>
           </header>
-          {children}
+         <Outlet />
         </SidebarInset>
       </SidebarProvider>
     </QueryProvider>

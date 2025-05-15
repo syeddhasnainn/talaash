@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import { Link } from "react-router";
 
 import {
   ArrowUpRight,
@@ -62,8 +62,9 @@ export function SidebarChats() {
                 }`}
               >
                 <Link
-                  // prefetch={true}
-                  href={`/chat/${item.id}`}
+                  to={{
+                    pathname: `/chat/${item.id}`,
+                  }}
                   title={item.title}
                 >
                   <span>{item.title}</span>
