@@ -38,6 +38,9 @@ export function SidebarChats() {
     queryKey: ['chats', userId],
     queryFn: () => fetchUserChats(userId!),
     staleTime: 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
   });
   console.log('chats',chats);
   const chatid = usePathname().split('/')[2];
